@@ -1,63 +1,80 @@
 <script>
-import { slide } from 'svelte/transition';
-import { quintOut } from 'svelte/easing';
+  import { slide, fade } from "svelte/transition";
+  import { quintOut, quadInOut } from "svelte/easing";
+  import { fly } from "svelte/transition";
 
-let showContentA = true; // Initially show Content A
+  let showContentA = false; // Initially show Content A
 
-function showNextContent() {
+  function showNextContent() {
     showContentA = false;
   }
 
-function showPreviousContent() {
+  function showPreviousContent() {
     showContentA = true;
   }
-
-
 </script>
 
-<main class="starter-container flex justify-between">
-    <div class="left-container flex w-1/5">
-        <div class="recent-folder-container h-screen ">
-            <div class="list flex flex-col h-full items-center">
-                <li>Blank</li>
-                <li>Blank</li>
-                <li>Blank</li>
-            </div>
-      </div>
+<main class="starter-container flex">
+  <div class="left-container flex w-1/3  h-screen">
+    <div class="recent-folder-container mx-2 my-5">
+      <ul class="list">
+        <li>Blank</li>
+        <li>Blank</li>
+        <li>Blank</li>
+      </ul>
     </div>
-    <div class="main-area flex flex-row h-screen">
-        {#if showContentA}
-        <div>
-            <div
-        class="content-block content-a flex flex-col h-screen w-full items-center justify-center absolute"
-        transition:slide={{ duration: 1000, easing: quintOut, axis: 'x' }}
-      >
-        <h2>Content A</h2>
-        <p>This is the initial content.</p>
-        <button on:click={showNextContent}>Go to Content B</button>
-      </div>
-        </div>
-        {/if}
-
-        {#if !showContentA}
+  </div>
+  <!-- Vertical Divider -->
+  <div class="vertical-divider w-px bg-divider h-screen"></div>
+  <div class="main-area flex flex-row">
+    {#if showContentA}
       <div
-        class="content-block content-b flex flex-col h-full w-full items-center justify-center absolute"
-        transition:slide={{ duration: 1000, easing: quintOut, axis: 'x' }}
+        class="content-block content-a flex flex-col justify-center"
+        in:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
+        out:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
       >
-        <h2>Content B</h2>
-        <p>This is the new content that slid in.</p>
-        <button on:click={showPreviousContent}>Go Back to Content A</button>
+        <div class="flex my-5 justify-between mx-10 items-center">
+          <div class="w-64">
+            <div class="text-lg">Create a new NoteBook</div>
+            <div class="text-sm">Create a new folder to store notes in.</div>
+          </div>
+
+          <button on:click={showNextContent} class="btn-primary w-24 h-7 bg-test text-sm"
+            >Create</button
+          >
+        </div>
+        <div class="horizontal-divider h-px bg-divider my-1 mx-10"></div>
+        <div class="flex my-5 justify-between mx-10 items-center">
+          <div class="w-64">
+            <div class="text-base">Open an existing NoteBook</div>
+            <div class="text-xs">This is the initial content.</div>
+          </div>
+
+          <button class="btn-primary w-24">Open</button>
+        </div>
       </div>
     {/if}
-    </div>
+
+    {#if !showContentA}
+      <div
+        class="content-block content-b flex flex-col h-full items-center justify-center"
+        in:fly={{ x: "100%", duration: 300, easing: quadInOut }}
+        out:fly={{ x: "100%", duration: 300, easing: quadInOut }}
+      >
+        <div>Content B</div>
+        <div>This is the new content that slid in.</div>
+        <button class="btn-primary bg-test" on:click={showPreviousContent}>Go Back to Content A</button>
+      </div>
+    {/if}
+  </div>
+  
 </main>
 
 <style>
   .main-area {
     position: relative; /* Important for positioning the absolute content blocks */
     overflow: hidden; /* Crucial to hide the content that slides out */
-    width: 100%; /* Or your desired width */
-    height: 300px; /* Or your desired height - adjust as needed */
+    width: 100%; /* Or your desired width */ /* Or your desired height - adjust as needed */
   }
 
   .content-block {

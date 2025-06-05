@@ -27,6 +27,8 @@
     "cross-env": "^7.0.3",
     "electron": "^34.0.1",
     "electron-reload": "2.0.0-alpha.1",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "svelte": "^5.19.5",
     "tailwindcss": "^4.0.0",
     "vite": "^6.0.11"
