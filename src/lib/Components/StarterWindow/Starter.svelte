@@ -28,10 +28,10 @@
   </div>
   <!-- Vertical Divider -->
   <div class="vertical-divider w-px bg-divider h-screen"></div>
-  <div class="main-area flex flex-row mx-10">
+  <div class="main-container w-full overflow-hidden relative flex flex-row mx-10">
     {#if showContentA}
       <div
-        class="content-block content-a flex flex-col justify-center"
+        class="content-block absolute w-full h-full content-a flex flex-col justify-center"
         in:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
         out:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
       >
@@ -92,7 +92,7 @@
 
     {#if !showContentA}
       <div
-        class="content-block content-b flex flex-col h-full justify-center items"
+        class="content-block absolute w-full h-full content-b flex flex-col justify-center items"
         in:fly={{ x: "100%", duration: 300, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 300, easing: quadInOut }}
       >
@@ -113,7 +113,9 @@
               fill=""
             />
           </svg>
-          <div class="text-text-primary-hover group-hover:text-text-primary">back</div>
+          <div class="text-text-primary-hover group-hover:text-text-primary">
+            back
+          </div>
         </button>
 
         <div class="my-2 text-4xl">Create new notebook</div>
@@ -136,27 +138,21 @@
             <div class="text-xs">This is the initial content.</div>
           </div>
 
-          <button class="rounded-md hover:cursor-pointer shadow-md  h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover">Browse</button>
+          <button
+            class="rounded-md hover:cursor-pointer shadow-md h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover"
+            >Browse</button
+          >
         </div>
 
-        <button class="rounded-md shadow-md h-8 w-24 hover:cursor-pointer bg-primary hover:bg-primary-hover self-center">Create</button>
+        <button
+          class="rounded-md shadow-md h-8 w-24 hover:cursor-pointer bg-primary hover:bg-primary-hover self-center"
+          >Create</button
+        >
       </div>
     {/if}
   </div>
 </main>
 
 <style>
-  .main-area {
-    position: relative; /* Important for positioning the absolute content blocks */
-    overflow: hidden; /* Crucial to hide the content that slides out */
-    width: 100%; /* Or your desired width */ /* Or your desired height - adjust as needed */
-  }
 
-  .content-block {
-    position: absolute; /* Allows content blocks to overlap and slide */
-    width: 100%;
-    height: 100%;
-    /* Add any other common styling for content blocks here */
-  }
 </style>
-

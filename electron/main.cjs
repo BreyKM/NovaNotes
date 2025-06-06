@@ -16,13 +16,16 @@ if (isDevEnvironment) {
 }
 
 let mainWindow;
+let starterWindow;
 
 const createWindow = () => {
     
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 820,
-        height: 700,
+        width: 1050,
+        height: 800,
+        autoHideMenuBar: true,
+        center: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -50,10 +53,43 @@ const createWindow = () => {
     }
 }
 
+/* const createStarterWindow = () => {
+    
+    if(starterWindow) {
+        starterWindow.focus();
+        return;
+    }
+
+    starterWindow= new BrowserWindow({
+        width:820,
+        height:700,
+        autoHideMenuBar: true,
+        center: true,
+        title: "Nova Starter Page",
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    })
+
+    if (isDevEnvironment) {
+        starterWindow.loadURL('http://localhost:5173/starter.html');
+
+        starterWindow.webContents.on("did-frame-finish-load", () => {
+            starterWindow.webContents.openDevTools();
+        })
+
+        log('Electron running in dev mode: 🧪')
+    } else {
+        starterWindow.loadFile(path.join(__dirname, 'build', 'starter.html'))
+    }
+}
+*/
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+// app.on('ready', createStarterWindow);
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the

@@ -1,7 +1,14 @@
 <script>
-	import Starter from "./lib/Components/StarterWindow/Starter.svelte";
+	import Content from "./lib/Components/Content.svelte";
+
+	let contentContainerRef;
+
 </script>
 
-<main>
-	<Starter />
+<main class="relative flex h-full">
+	<div class="left-container min-w-1/6 bg-background-secondary">
+    <div class="recent-folder-container">
+    </div>
+  </div>
+	<Content bind:this={contentContainerRef} />
 </main>
