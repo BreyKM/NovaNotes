@@ -9,7 +9,24 @@
   --font-main: "Outfit", sans-serif;
 
   /* Colors */
-  --color-test: #7899D4;
+  --color-primary: #3E92CC;
+  --color-secondary: ;
+
+  --color-primary-hover: #69B5EC;
+
+  --color-text-primary: #f2f2f2;
+  --color-text-secondary:  ;
+
+  --color-text-primary-hover: #9A9A9A;
+
+  --color-background-primary: #1B1B1B;
+  --color-background-secondary: #262626;
+
+  --color-background-primary-hover: ;
+  --color-background-secondary-hover: #3D3D3D;
+
+  
+  --color-test: #3E92CC;
   --color-divider: #808080;
 
   /*  */
@@ -18,7 +35,7 @@
 
 @layer components {
   .btn-primary {
-    border-radius: 4px;
+    border-radius: 1rem;
     color: var(--color-white);
     box-shadow: var(--shadow-md);
     &:hover {
@@ -35,8 +52,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(246, 252, 255, 0.925);
-  background-color: #242424;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
