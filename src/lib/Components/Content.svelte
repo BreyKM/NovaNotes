@@ -45,7 +45,7 @@
       },
 
       onUpdate: () => {
-        console.log("editor.getJSON()");
+        console.log(editor.getJSON());
       },
     });
   });

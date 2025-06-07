@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
 const api = {
     node: () => process.versions.node,
@@ -7,3 +7,20 @@ const api = {
 }
 
 contextBridge.exposeInMainWorld('api', api)
+
+contextBridge.exposeInMainWorld('directory', {
+    openDirSelection: () => ipcRenderer.send("openDirSelection"),
+
+    getNoteBookDirFilePath: () => {
+        return new Promise((resolve) => {
+            ipcRenderer.once(
+                "NoteBookDirSelected",
+                (event, NoteBookDirFilePath) => {
+                    resolve(NoteBookDirFilePath);
+                    console.log("Store NoteBookDirFilePath: ", NoteBookDirFilePath);
+                }
+            )
+        })
+    }
+
+})

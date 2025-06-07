@@ -3,7 +3,14 @@
   import { quintOut, quadInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
 
-  let showContentA = $state(true); // Initially show Content A
+
+  import { openDirectory, NewNotebookDir, NoteBookDirFilePathStore } from "../../../store/Store";
+
+
+  let noteBookName = $state("");
+
+  //State for Sliding content
+  let showContentA = $state(false); // Initially show Content A
 
   function showNextContent() {
     showContentA = false;
@@ -12,8 +19,6 @@
   function showPreviousContent() {
     showContentA = true;
   }
-
-  let noteBookName = $state("");
 </script>
 
 <main class="starter-container flex">
@@ -28,7 +33,9 @@
   </div>
   <!-- Vertical Divider -->
   <div class="vertical-divider w-px bg-divider h-screen"></div>
-  <div class="main-container w-full overflow-hidden relative flex flex-row mx-10">
+  <div
+    class="main-container w-full overflow-hidden relative flex flex-row mx-10"
+  >
     {#if showContentA}
       <div
         class="content-block absolute w-full h-full content-a flex flex-col justify-center"
@@ -122,8 +129,8 @@
         <div class="horizontal-divider h-px bg-divider my-1"></div>
         <div class="flex my-5 justify-between items-center">
           <div class="w-64">
-            <div class="text-base">Name your notebook</div>
-            <div class="text-xs">Pick a name for your new notebook.</div>
+            <div class="text-lg">Name your notebook</div>
+            <div class="text-sm">Pick a name for your new notebook.</div>
           </div>
 
           <input
@@ -132,13 +139,22 @@
             placeholder="Notebook name"
           />
         </div>
-        <div class="flex my-5 justify-between items-center">
+        <div class=" flex my-5 justify-between items-center">
           <div class="w-64">
-            <div class="text-base">Location</div>
-            <div class="text-xs">This is the initial content.</div>
+            <div class="text-lg">Location</div>
+            {#if $NoteBookDirFilePathStore != null}
+            <div class="text-sm wrap-break-word text-primary">{$NoteBookDirFilePathStore}</div>
+            {:else}
+            <div class="text-xs">Choose a location for Notebook folder</div>
+            {/if}
           </div>
 
           <button
+            onclick={() => {
+              openDirectory()
+              NewNotebookDir()
+            }}
+            
             class="rounded-md hover:cursor-pointer shadow-md h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover"
             >Browse</button
           >
@@ -154,5 +170,4 @@
 </main>
 
 <style>
-
 </style>

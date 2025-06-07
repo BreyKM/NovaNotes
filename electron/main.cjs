@@ -1,7 +1,9 @@
 // Modules to control application life and create native browser window
 const { log } = require('console')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+
+const { NoteBookDirSelection } = require("./util.cjs")
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -17,6 +19,9 @@ if (isDevEnvironment) {
 
 let mainWindow;
 let starterWindow;
+
+let NotebookFolderName;
+let NoteBookDirFilePath;
 
 const createWindow = () => {
     
@@ -53,7 +58,7 @@ const createWindow = () => {
     }
 }
 
-/* const createStarterWindow = () => {
+ const createStarterWindow = () => {
     
     if(starterWindow) {
         starterWindow.focus();
@@ -83,13 +88,34 @@ const createWindow = () => {
         starterWindow.loadFile(path.join(__dirname, 'build', 'starter.html'))
     }
 }
-*/
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+
+
+// app.on('ready', createWindow);
 // app.on('ready', createStarterWindow);
+
+
+app.whenReady().then(() => {
+
+    createStarterWindow();
+
+    //Opens dialog and select Notebook location
+    ipcMain.on("openDirSelection", (event) => {
+        NoteBookDirSelection().then((result) => {
+            NoteBookDirFilePath = result;
+            console.log("main.cjs console log", NoteBookDirFilePath);
+            event.reply("NoteBookDirSelected", NoteBookDirFilePath);
+        });
+    });
+
+
+
+
+})
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -106,3 +132,5 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
