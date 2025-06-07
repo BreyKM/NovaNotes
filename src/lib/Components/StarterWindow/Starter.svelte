@@ -3,11 +3,47 @@
   import { quintOut, quadInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
 
+  import {
+    openDirectory,
+    NewNotebookDir,
+    NoteBookDirFilePathStore,
+    NotebookNameStore,
+    createNewNotebookDir,
+  } from "../../../store/Store";
 
-  import { openDirectory, NewNotebookDir, NoteBookDirFilePathStore } from "../../../store/Store";
-
+  import isValidFilename from "valid-filename";
 
   let noteBookName = $state("");
+
+  let isNoteBookNameValid = $state(null);
+
+  let isNoteBookNameValidPopupShow = $state(null);
+
+  let popupTimer;
+
+  $effect(() => {
+    if (isValidFilename(noteBookName) == true) {
+      isNoteBookNameValid = true;
+      NotebookNameStore.set(noteBookName);
+      console.log("name is valid");
+    } else {
+      isNoteBookNameValid = false;
+      NotebookNameStore.set("");
+      console.log("invalid directory name");
+    }
+  });
+
+  function showInvalidNotebookNamePopup() {
+    isNoteBookNameValidPopupShow = true;
+
+    // Clear any existing timer to prevent multiple popups overlapping
+    clearTimeout(popupTimer);
+
+    // Set a new timer to hide the popup after 3 seconds (adjust as needed)
+    popupTimer = setTimeout(() => {
+      isNoteBookNameValidPopupShow = false;
+    }, 3000); // 3000 milliseconds = 3 seconds
+  }
 
   //State for Sliding content
   let showContentA = $state(false); // Initially show Content A
@@ -143,30 +179,49 @@
           <div class="w-64">
             <div class="text-lg">Location</div>
             {#if $NoteBookDirFilePathStore != null}
-            <div class="text-sm wrap-break-word text-primary">{$NoteBookDirFilePathStore}</div>
+              <div class="text-sm wrap-break-word text-primary">
+                {$NoteBookDirFilePathStore}
+              </div>
             {:else}
-            <div class="text-xs">Choose a location for Notebook folder</div>
+              <div class="text-xs">Choose a location for Notebook folder</div>
             {/if}
           </div>
 
           <button
             onclick={() => {
-              openDirectory()
-              NewNotebookDir()
+              openDirectory();
+              NewNotebookDir();
             }}
-            
             class="rounded-md hover:cursor-pointer shadow-md h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover"
             >Browse</button
           >
         </div>
 
         <button
+          onclick={(e) => {
+            if (isNoteBookNameValid === false) {
+              console.log("button: invalid directory name");
+              showInvalidNotebookNamePopup();
+            } else {
+              createNewNotebookDir(e);
+              isNoteBookNameValidPopupShow = false;
+              clearTimeout(popupTimer);
+            }
+          }}
           class="rounded-md shadow-md h-8 w-24 hover:cursor-pointer bg-primary hover:bg-primary-hover self-center"
           >Create</button
         >
       </div>
     {/if}
+    {#if isNoteBookNameValidPopupShow === true}
+    <div class="invalid-directory absolute top-4 right-0 p-2 text-sm rounded-lg bg-background-error shadow-lg"
+        in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
+        out:fly={{ x: "100%", duration: 250, easing: quadInOut }}>
+      Invalid NoteBook name
+    </div>
+  {/if}
   </div>
+  
 </main>
 
 <style>

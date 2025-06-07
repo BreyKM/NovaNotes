@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('directory', {
                 }
             )
         })
-    }
+    },
+
+    createNewNotebookDir: (...args) => ipcRenderer.invoke('createNewNotebookDir', ...args),
 
 })
+
