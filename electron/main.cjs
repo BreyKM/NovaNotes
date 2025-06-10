@@ -18,12 +18,13 @@ if (isDevEnvironment) {
   });
 }
 
+// window variables
 let mainWindow;
 let starterWindow;
 
-let NotebookFolderName;
+// Directory variables
 let NoteBookDirFilePath;
-let NewNotebookDirName;
+let NewNotebookDirPath;
 
 const createWindow = () => {
   // Create the main browser window.
@@ -96,11 +97,15 @@ const createStarterWindow = () => {
 // app.on('ready', createStarterWindow);
 
 app.whenReady().then(() => {
+  //
   createStarterWindow();
 
   //Opens dialog and select Notebook directory location
   ipcMain.on("openDirSelection", (event) => {
+    //
     NoteBookDirSelection().then((result) => {
+      // assign the promise result path to the variable, then
+      // send the path back to renderer through ipc
       NoteBookDirFilePath = result;
       console.log("main.cjs console log", NoteBookDirFilePath);
       event.reply("NoteBookDirSelected", NoteBookDirFilePath);
@@ -108,23 +113,34 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle("createNewNotebookDir", async (_, ...args) => {
-    NewNotebookDirPath = createNotebookDir(...args);
-    console.log("path: ", await NewNotebookDirPath);
+    try {
+        NewNotebookDirPath = await createNotebookDir(...args);
+        console.log("path: ", NewNotebookDirPath);
+        return NewNotebookDirPath;
+    } catch (err) {
+        console.error("Error creating notebook directory: ", err);
+        throw err;
+    }
+    
   });
+
+  ipcMain.on('open-main-window', () => {
+    if (starterWindow) {
+      starterWindow.close()
+    }
+
+    createWindow()
+  });
+
 });
 
-app.on("activate", () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
-});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
- app.on('window-all-closed', () => {
-   if (process.platform !== 'darwin') app.quit()
- })
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
