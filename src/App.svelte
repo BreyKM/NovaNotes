@@ -4,6 +4,8 @@
 
 	let contentContainerRef;
 
+	let showNoNoteScreen = $state(false)
+
 </script>
 
 <main class="relative flex h-full">
@@ -15,8 +17,11 @@
 	
 	 
   </div>
-  <!-- <NewNoteScreen />-->
+  	{#if (showNoNoteScreen)}
+ 	 <NewNoteScreen />
   
-	<Content bind:this={contentContainerRef} />
-	
+	 <!--<Content bind:this={contentContainerRef} />-->
+	{:else}
+	 <Content bind:this={contentContainerRef} />
+	 {/if}
 </main>

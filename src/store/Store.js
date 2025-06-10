@@ -19,7 +19,9 @@ export async function NewNotebookDir() {
 export const createNewNotebookDir = async (e) => {
   e.preventDefault();
   try {
-    await window.directory.createNewNotebookDir(get(NotebookNameStore));
+    let NewNoteBookDir = await window.directory.createNewNotebookDir(get(NotebookNameStore));
+    console.log(NewNoteBookDir.fullPath, NewNoteBookDir.name)
+
   } catch (error) {
     console.error("Failed to create notebook directory:", error);
     // Consider setting an error state or showing user feedback

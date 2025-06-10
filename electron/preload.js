@@ -29,4 +29,5 @@ contextBridge.exposeInMainWorld("directory", {
 
 contextBridge.exposeInMainWorld("main", {
   openMainWindow: () => ipcRenderer.send("open-main-window")
-})
+});
+

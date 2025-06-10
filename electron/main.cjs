@@ -2,6 +2,7 @@
 const { log } = require("console");
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const ElectronStore = require("./electronStore.cjs")
 
 // util functions
 const { NoteBookDirSelection, createNotebookDir } = require("./util.cjs");
@@ -24,7 +25,10 @@ let starterWindow;
 
 // Directory variables
 let NoteBookDirFilePath;
-let NewNotebookDirPath;
+let NewNotebookFullPath;
+let NewNotebookPathName;
+
+const ElectronStoreRef = new ElectronStore();
 
 const createWindow = () => {
   // Create the main browser window.
@@ -99,6 +103,7 @@ const createStarterWindow = () => {
 app.whenReady().then(() => {
   //
   createStarterWindow();
+  //createWindow();
 
   //Opens dialog and select Notebook directory location
   ipcMain.on("openDirSelection", (event) => {
@@ -114,26 +119,35 @@ app.whenReady().then(() => {
 
   ipcMain.handle("createNewNotebookDir", async (_, ...args) => {
     try {
-        NewNotebookDirPath = await createNotebookDir(...args);
-        console.log("path: ", NewNotebookDirPath);
-        return NewNotebookDirPath;
+      NewNotebookFullPath = await createNotebookDir(...args);
+      console.log("path: ", NewNotebookFullPath);
+
+      ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath)
+      
+      NewNotebookPathName = path.basename(NewNotebookFullPath);
+
+      ElectronStoreRef.set("activeNotebookName", NewNotebookPathName)
+
+
+      console.log("pathTest", NewNotebookPathName);
+      return {
+        fullPath: NewNotebookFullPath,
+        name: NewNotebookPathName,
+      };
     } catch (err) {
-        console.error("Error creating notebook directory: ", err);
-        throw err;
+      console.error("Error creating notebook directory: ", err);
+      throw err;
     }
-    
   });
 
-  ipcMain.on('open-main-window', () => {
+  ipcMain.on("open-main-window", () => {
     if (starterWindow) {
-      starterWindow.close()
+      //starterWindow.close();
     }
 
-    createWindow()
+    createWindow();
   });
-
 });
-
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
