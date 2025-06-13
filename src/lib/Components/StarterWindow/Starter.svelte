@@ -1,50 +1,53 @@
 <script>
-  import { onDestroy } from 'svelte';
+  import { onDestroy } from "svelte";
   import { slide, fade } from "svelte/transition";
   import { quintOut, quadInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
 
   import {
-    openDirectory,
-    NewNotebookDir,
-    NoteBookDirFilePathStore,
-    NotebookNameStore,
-    createNewNotebookDir,
+    rootDirSelection,
+    // NewNotebookDir,
+    rootNotebookDirPathStore,
+    userInputNotebookNameStore,
+    createNotebookDir,
   } from "../../../store/Store";
 
   import isValidFilename from "valid-filename";
 
-  let noteBookName = $state("");
 
-  let isNoteBookNameValid = $state(null);
+  //variables
+  let userInputNotebookName = $state("");
 
-  let isNoteBookNameValidPopupShow = $state(null);
+  let isNotebookNameValid = $state(null);
+
+  let isNotebookNameValidPopupShow = $state(false);
 
   let isFilePathMissingPopupShow = $state(false);
 
   let popupTimer;
 
+  // check if inputted Notebook directory name is valid
+  //  and update store
   $effect(() => {
-    if (isValidFilename(noteBookName) && !noteBookName.endsWith(".")) {
-      isNoteBookNameValid = true;
-      NotebookNameStore.set(noteBookName);
+    if (
+      isValidFilename(userInputNotebookName) &&
+      !userInputNotebookName.endsWith(".")
+    ) {
+      isNotebookNameValid = true;
+      userInputNotebookNameStore.set(userInputNotebookName);
       console.log("name is valid");
     } else {
-      isNoteBookNameValid = false;
-      NotebookNameStore.set("");
+      isNotebookNameValid = false;
+      userInputNotebookNameStore.set("");
       console.log("invalid directory name");
     }
   });
 
   function showInvalidNotebookNamePopup() {
-    isNoteBookNameValidPopupShow = true;
-
-    // Clear any existing timer to prevent multiple popups overlapping
+    isNotebookNameValidPopupShow = true;
     clearTimeout(popupTimer);
-
-    // Set a new timer to hide the popup after 3 seconds (adjust as needed)
     popupTimer = setTimeout(() => {
-      isNoteBookNameValidPopupShow = false;
+      isNotebookNameValidPopupShow = false;
     }, 3000); // 3000 milliseconds = 3 seconds
   }
 
@@ -68,10 +71,10 @@
   }
 
   onDestroy(() => {
-  if (popupTimer) {
-     clearTimeout(popupTimer);
-   }
- });
+    if (popupTimer) {
+      clearTimeout(popupTimer);
+    }
+  });
 </script>
 
 <main class="starter-container flex">
@@ -188,16 +191,16 @@
 
           <input
             class="w-48 bg-background-secondary rounded-sm px-2 py-2 text-sm"
-            bind:value={noteBookName}
+            bind:value={userInputNotebookName}
             placeholder="Notebook name"
           />
         </div>
         <div class=" flex my-5 justify-between items-center">
           <div class="w-64">
             <div class="text-lg">Location</div>
-            {#if $NoteBookDirFilePathStore != null}
+            {#if $rootNotebookDirPathStore != null}
               <div class="text-sm wrap-break-word text-primary">
-                {$NoteBookDirFilePathStore}
+                {$rootNotebookDirPathStore}
               </div>
             {:else}
               <div class="text-xs">Choose a location for Notebook folder</div>
@@ -206,8 +209,7 @@
 
           <button
             onclick={() => {
-              openDirectory();
-              NewNotebookDir();
+              rootDirSelection();
             }}
             class="rounded-md hover:cursor-pointer shadow-md h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover"
             >Browse</button
@@ -215,18 +217,18 @@
         </div>
 
         <button
-          onclick={(e) => {
-            if (isNoteBookNameValid === false) {
+          onclick={async (e) => {
+            if (isNotebookNameValid === false) {
               console.log("button: invalid directory name");
               showInvalidNotebookNamePopup();
-            } else if ($NoteBookDirFilePathStore == null) {
+            } else if ($rootNotebookDirPathStore == null) {
               console.log("button: file path is missing");
-              showFilePathMissingPopup(); // Trigger the new popup
+              showFilePathMissingPopup(); 
             } else {
-              createNewNotebookDir(e);
-              isNoteBookNameValidPopupShow = false;
+             await createNotebookDir(e);
+              isNotebookNameValidPopupShow = false;
               clearTimeout(popupTimer);
-              window.main.openMainWindow()
+              window.main.openMainWindow();
             }
           }}
           class="rounded-md shadow-md h-8 w-24 hover:cursor-pointer bg-primary hover:bg-primary-hover self-center"
@@ -234,7 +236,7 @@
         >
       </div>
     {/if}
-    {#if isNoteBookNameValidPopupShow === true}
+    {#if isNotebookNameValidPopupShow === true}
       <div
         class="invalid-directory absolute top-4 right-0 p-2 text-sm rounded-lg bg-background-error shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}

@@ -1,25 +1,26 @@
 <script>
-  import { onMount, onDestroy, afterUpdate } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
-  import Document from "@tiptap/extension-document";
   import Placeholder from "@tiptap/extension-placeholder";
+
+  import { userInputCurrentNoteTitle } from "../../store/Store"
 
   let unsubscribe;
   let editor;
   let element;
 
-  const CustomDocument = Document.extend({
-    content: "heading block*",
-  });
+  $effect(() => {
+    console.log($userInputCurrentNoteTitle)
+  })
+
 
   onMount(() => {
     editor = new Editor({
       element: element,
       extensions: [
-        CustomDocument,
         StarterKit.configure({
-          document: false,
+          document: true,
         }),
         Placeholder.configure({
           placeholder: ({ node }) => {
@@ -33,8 +34,7 @@
       ],
       editorProps: {
         attributes: {
-          class:
-            " prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-lg relative m-10 focus:outline-none",
+          class: "dark:prose-invert pt-8 relative focus:outline-none w-full",
         },
       },
       autofocus: "end",
@@ -50,6 +50,20 @@
     });
   });
 
+  function handleTitleKeydown(event) {
+    // Check if the pressed key was 'Enter'
+    if (event.key === "Enter") {
+      // Prevent the default 'Enter' behavior (like adding a newline or submitting a form)
+      event.preventDefault();
+
+      // Use the Tiptap editor's built-in command to focus the editor.
+      // The 'end' argument places the cursor at the very end of the content.
+      if (editor) {
+        editor.commands.focus("end");
+      }
+    }
+  }
+
   onDestroy(() => {
     if (editor) {
       editor.destroy();
@@ -61,8 +75,19 @@
 </script>
 
 <div
-  class="editor-container relative w-full h-screen overflow-y-auto"
-  bind:this={element}
-></div>
-
-
+  class="pt-16 px-48 flex flex-col content-container w-screen h-screen overflow-hidden"
+>
+    <div
+      class=" note-title text-4xl outline-none font-bold"
+      tabindex="-1"
+      onkeydown={handleTitleKeydown}
+      contenteditable="true"
+      role="none"
+      bind:textContent={$userInputCurrentNoteTitle}
+    >
+  </div>
+  <div
+    class="editor-container relative w-full h-screen overflow-y-auto"
+    bind:this={element}
+  ></div>
+</div>

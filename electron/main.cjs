@@ -2,10 +2,9 @@
 const { log } = require("console");
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const fse = require("fs-extra")
 const ElectronStore = require("./electronStore.cjs")
 
-// util functions
-const { NoteBookDirSelection, createNotebookDir } = require("./util.cjs");
 
 if (require("electron-squirrel-startup")) app.quit();
 
@@ -19,14 +18,21 @@ if (isDevEnvironment) {
   });
 }
 
+// util functions
+const { NoteBookDirSelection, createNotebookDir, createWelcomeNote } = require("./util.cjs");
+
 // window variables
 let mainWindow;
 let starterWindow;
 
 // Directory variables
 let NoteBookDirFilePath;
+
 let NewNotebookFullPath;
+
 let NewNotebookPathName;
+
+let ActiveFolderPath;
 
 const ElectronStoreRef = new ElectronStore();
 
@@ -101,12 +107,26 @@ const createStarterWindow = () => {
 // app.on('ready', createStarterWindow);
 
 app.whenReady().then(() => {
+
+  // if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
+  //   fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
+  //     if (!error && ElectronStoreRef.get("activeNotebookPath") !={}) {
+  //       createWindow()
+  //       ActiveFolderPath = ElectronStoreRef.get("activeNotebookPath")
+  //       console.log(ActiveFolderPath)
+  //     } else {
+  //       createStarterWindow()
+  //       console.log("Folder does not exist")
+  //       console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"))
+  //     }
+  //   })
+  // }
   //
   createStarterWindow();
-  //createWindow();
+  // createWindow();
 
   //Opens dialog and select Notebook directory location
-  ipcMain.on("openDirSelection", (event) => {
+  ipcMain.on("openRootDirSelection", (event) => {
     //
     NoteBookDirSelection().then((result) => {
       // assign the promise result path to the variable, then
@@ -117,7 +137,8 @@ app.whenReady().then(() => {
     });
   });
 
-  ipcMain.handle("createNewNotebookDir", async (_, ...args) => {
+  ipcMain.handle("createNotebookDir", async (_, ...args) => {
+    console.log("Number of arguments:", args.length)
     try {
       NewNotebookFullPath = await createNotebookDir(...args);
       console.log("path: ", NewNotebookFullPath);
@@ -139,6 +160,17 @@ app.whenReady().then(() => {
       throw err;
     }
   });
+
+
+  ipcMain.handle("getActiveFolder", async () => {
+    const result = await ElectronStoreRef.get("activeNotebookName")
+    console.log("getActiveFolder",  result)
+    return result
+  })
+
+  ipcMain.handle("createWelcomeNote", (_, ...args) => createWelcomeNote(...args, ElectronStoreRef))
+
+
 
   ipcMain.on("open-main-window", () => {
     if (starterWindow) {

@@ -40,6 +40,7 @@
     "@tiptap/starter-kit": "^2.13.0",
     "electron-squirrel-startup": "^1.0.1",
     "fs-extra": "^11.3.0",
+    "lodash": "^4.17.21",
     "valid-filename": "^4.0.0"
   }
 }

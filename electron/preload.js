@@ -11,23 +11,27 @@ contextBridge.exposeInMainWorld("api", api);
 //directory ipc connections
 contextBridge.exposeInMainWorld("directory", {
   //
-  openDirSelection: () => ipcRenderer.send("openDirSelection"),
+  openRootDirSelection: () => ipcRenderer.send("openRootDirSelection"),
 
-  getNoteBookDirFilePath: () => {
+  getRootNotebookDirPath: () => {
     return new Promise((resolve) => {
-      ipcRenderer.once("NoteBookDirSelected", (event, NoteBookDirFilePath) => {
-        resolve(NoteBookDirFilePath);
-        console.log("Store NoteBookDirFilePath: ", NoteBookDirFilePath);
+      ipcRenderer.once("NoteBookDirSelected", (event, rootNoteBookDirPath) => {
+        resolve(rootNoteBookDirPath);
+        console.log("Store NoteBookDirFilePath: ", rootNoteBookDirPath);
       });
     });
   },
 
-  createNewNotebookDir: (...args) =>
-    ipcRenderer.invoke("createNewNotebookDir", ...args),
+  createNotebookDir: (...args) => ipcRenderer.invoke("createNotebookDir", ...args),
 });
-
 
 contextBridge.exposeInMainWorld("main", {
-  openMainWindow: () => ipcRenderer.send("open-main-window")
+  openMainWindow: () => ipcRenderer.send("open-main-window"),
+
+  getActiveFolder: () => ipcRenderer.invoke("getActiveFolder"),
 });
 
+
+contextBridge.exposeInMainWorld("notes", {
+  createWelcomeNote: (...args) => ipcRenderer.invoke("createWelcomeNote", ...args)
+})

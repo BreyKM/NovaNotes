@@ -1,29 +1,50 @@
 import { get, writable } from "svelte/store";
+import  welcome  from "../assets/Welcome.json" assert { type: 'json' }
 
-export const NoteBookDirFilePathStore = writable(null);
+//store variables
+export const notesStore = writable(null);
 
-export const NotebookNameStore = writable(null);
+export const rootNotebookDirPathStore = writable(null);
 
-export function openDirectory() {
-  window.directory.openDirSelection();
+export const userInputNotebookNameStore = writable(null);
+
+export const userInputCurrentNoteTitle = writable(null);
+
+export const ActiveNoteBookNameStore = writable(null);
+
+export async function rootDirSelection() {
+  window.directory.openRootDirSelection();
+  let rootNotebookDirPath = await window.directory.getRootNotebookDirPath();
+  rootNotebookDirPathStore.set(rootNotebookDirPath);
+  console.log("NoteBookDirFilePathStore", get(rootNotebookDirPathStore));
 }
 
-export async function NewNotebookDir() {
-  let NoteBookDirFilePath = await window.directory.getNoteBookDirFilePath();
-
-  NoteBookDirFilePathStore.set(NoteBookDirFilePath);
-
-  console.log("NoteBookDirFilePathStore", get(NoteBookDirFilePathStore));
-}
-
-export const createNewNotebookDir = async (e) => {
+export async function createNotebookDir(e) {
   e.preventDefault();
   try {
-    let NewNoteBookDir = await window.directory.createNewNotebookDir(get(NotebookNameStore));
-    console.log(NewNoteBookDir.fullPath, NewNoteBookDir.name)
-
+    console.log(get(userInputNotebookNameStore));
+    let NewNoteBookDir = await window.directory.createNotebookDir(
+      get(userInputNotebookNameStore),
+      get(rootNotebookDirPathStore),
+    );
+    
+    console.log(NewNoteBookDir.fullPath, NewNoteBookDir.name);
+    createWelcomeNote()
   } catch (error) {
     console.error("Failed to create notebook directory:", error);
-    // Consider setting an error state or showing user feedback
   }
 };
+
+async function createWelcomeNote() {
+  try {
+    await window.notes.createWelcomeNote(welcome)
+  } catch (e) {
+    console.error("Unable to create welcome note: ", e)
+  }
+}
+
+export async function getActiveFolder() {
+  let ActiveNoteBook = await window.main.getActiveFolder();
+  console.log(ActiveNoteBook);
+  ActiveNoteBookNameStore.set(ActiveNoteBook);
+}

@@ -1,0 +1,40 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "paragraph",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "This is your new  "
+                },
+                {
+                    "type": "text",
+                    "marks": [
+                        {
+                            "type": "bold"
+                        }
+                    ],
+                    "text": "Notebook"
+                },
+                {
+                    "type": "text",
+                    "text": "."
+                }
+            ]
+        },
+        {
+            "type": "paragraph"
+        },
+        {
+            "type": "paragraph",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "When you're ready, delete this note and make the vault your own."
+                }
+            ]
+        }
+    ]
+}
+
