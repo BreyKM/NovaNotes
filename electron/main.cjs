@@ -2,9 +2,8 @@
 const { log } = require("console");
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const fse = require("fs-extra")
-const ElectronStore = require("./electronStore.cjs")
-
+const fse = require("fs-extra");
+const ElectronStore = require("./electronStore.cjs");
 
 if (require("electron-squirrel-startup")) app.quit();
 
@@ -19,7 +18,14 @@ if (isDevEnvironment) {
 }
 
 // util functions
-const { NoteBookDirSelection, createNotebookDir, createWelcomeNote } = require("./util.cjs");
+const {
+  NoteBookDirSelection,
+  createNotebookDir,
+  createWelcomeNote,
+  getNotes,
+  createNote,
+  readNote
+} = require("./util.cjs");
 
 // window variables
 let mainWindow;
@@ -32,7 +38,7 @@ let NewNotebookFullPath;
 
 let NewNotebookPathName;
 
-let ActiveFolderPath;
+let activeFolderPath;
 
 const ElectronStoreRef = new ElectronStore();
 
@@ -43,6 +49,7 @@ const createWindow = () => {
     height: 800,
     autoHideMenuBar: true,
     center: true,
+    title: "Nova Notes",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -107,22 +114,27 @@ const createStarterWindow = () => {
 // app.on('ready', createStarterWindow);
 
 app.whenReady().then(() => {
+  if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
+    fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
+      if (!error && ElectronStoreRef.get("activeNotebookPath")) {
+        createWindow()
+        activeFolderPath = ElectronStoreRef.get("activeNotebookPath")
+        require("./util.cjs").updateActiveFolderPathInUtil(activeFolderPath);
+        console.log(activeFolderPath)
+      } else {
+        createStarterWindow()
+        console.log("Folder does not exist")
+        console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"))
+        ElectronStoreRef.delete("activeNotebookPath");
+        console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"));
+      }
+    })
+  } else {
+    createStarterWindow();
+  }
 
-  // if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
-  //   fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
-  //     if (!error && ElectronStoreRef.get("activeNotebookPath") !={}) {
-  //       createWindow()
-  //       ActiveFolderPath = ElectronStoreRef.get("activeNotebookPath")
-  //       console.log(ActiveFolderPath)
-  //     } else {
-  //       createStarterWindow()
-  //       console.log("Folder does not exist")
-  //       console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"))
-  //     }
-  //   })
-  // }
   //
-  createStarterWindow();
+  // createStarterWindow();
   // createWindow();
 
   //Opens dialog and select Notebook directory location
@@ -138,17 +150,17 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle("createNotebookDir", async (_, ...args) => {
-    console.log("Number of arguments:", args.length)
+    console.log("Number of arguments:", args.length);
     try {
       NewNotebookFullPath = await createNotebookDir(...args);
       console.log("path: ", NewNotebookFullPath);
+      require("./util.cjs").updateNewNotebookDirPathMain(NewNotebookFullPath);
 
-      ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath)
-      
+      ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath);
+
       NewNotebookPathName = path.basename(NewNotebookFullPath);
 
-      ElectronStoreRef.set("activeNotebookName", NewNotebookPathName)
-
+      ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
 
       console.log("pathTest", NewNotebookPathName);
       return {
@@ -161,20 +173,25 @@ app.whenReady().then(() => {
     }
   });
 
-
   ipcMain.handle("getActiveFolder", async () => {
-    const result = await ElectronStoreRef.get("activeNotebookName")
-    console.log("getActiveFolder",  result)
-    return result
-  })
+    const result = await ElectronStoreRef.get("activeNotebookName");
+    console.log("getActiveFolder", result);
+    return result;
+  });
 
-  ipcMain.handle("createWelcomeNote", (_, ...args) => createWelcomeNote(...args, ElectronStoreRef))
+  ipcMain.handle("createWelcomeNote", (_, ...args) =>
+    createWelcomeNote(...args, ElectronStoreRef),
+  );
 
+  ipcMain.handle("getNotes", (_, ...args) => getNotes(ElectronStoreRef))
 
+  ipcMain.handle("createNote", (_, ...args) => createNote(...args));
+
+  ipcMain.handle("readNote", (_, ...args) => readNote(...args));
 
   ipcMain.on("open-main-window", () => {
     if (starterWindow) {
-      //starterWindow.close();
+      starterWindow.close();
     }
 
     createWindow();

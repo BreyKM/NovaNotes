@@ -1,7 +1,7 @@
 <script>
 	import Content from "./lib/Components/Content.svelte";
 	import NewNoteScreen from "./lib/Components/NewNoteScreen.svelte";
-	import MainSideBar from "./lib/Components/MainSideBar.svelte";
+	import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
 
 	let contentContainerRef;
 

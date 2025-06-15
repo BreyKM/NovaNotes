@@ -1,6 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import { getActiveFolder, ActiveNoteBookNameStore } from "../../store/Store";
+  import { getActiveFolder, ActiveNoteBookNameStore, createEmptyNote } from "../../../store/Store";
+    import NotePreviewList from "./notePreviewList.svelte";
+
 
   onMount(() => {
     getActiveFolder();
@@ -19,6 +21,7 @@
   </div>
   <div class="new-icons flex self-center justify-between">
     <button
+    on:click={createEmptyNote}
       class=" flex items-center justify-center p-1 hover:bg-background-secondary-hover hover:cursor-pointer rounded-md"
       aria-label="Add folder icon"
       >
@@ -61,4 +64,5 @@
       </svg></button
     >
   </div>
+<NotePreviewList />
 </div>

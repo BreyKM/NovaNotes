@@ -33,5 +33,13 @@ contextBridge.exposeInMainWorld("main", {
 
 
 contextBridge.exposeInMainWorld("notes", {
-  createWelcomeNote: (...args) => ipcRenderer.invoke("createWelcomeNote", ...args)
-})
+  createWelcomeNote: (...args) => ipcRenderer.invoke("createWelcomeNote", ...args),
+
+  getNotes: (...args) => ipcRenderer.invoke("getNotes", ...args),
+
+  createNote: (...args) => ipcRenderer.invoke("createNote", ...args),
+
+  readNote: (...args) => ipcRenderer.invoke("readNote", ...args),
+});
+
+

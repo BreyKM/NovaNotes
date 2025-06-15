@@ -4,7 +4,7 @@
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
 
-  import { userInputCurrentNoteTitle } from "../../store/Store"
+  import { loadNotes, userInputCurrentNoteTitle } from "../../store/Store"
 
   let unsubscribe;
   let editor;
@@ -12,10 +12,13 @@
 
   $effect(() => {
     console.log($userInputCurrentNoteTitle)
+    loadNotes()
   })
 
 
   onMount(() => {
+
+
     editor = new Editor({
       element: element,
       extensions: [

@@ -1,8 +1,31 @@
-const { ensureDir, writeFile, readFile } = require("fs-extra");
+const { ensureDir, writeFile, readdir, stat, readJSON } = require("fs-extra");
 const { fileEncoding } = require("../shared/constants.cjs");
 const { dialog } = require("electron");
 const path = require("path");
 
+let { activeFolderPath, NewNotebookFullPath } = require("./main.cjs");
+
+module.exports.updateNewNotebookDirPathMain = async (newPath) => {
+  NewNotebookFullPath = await Promise.resolve(newPath);
+};
+
+module.exports.updateActiveFolderPathInUtil = async (newPath) => {
+  activeFolderPath = await Promise.resolve(newPath);
+};
+
+const getRootDir = () => {
+  if (!activeFolderPath) {
+    return;
+  } else {
+    if (!activeFolderPath || activeFolderPath.length === 0) {
+      console.log("getRootDir: ", NewNotebookFullPath);
+      return `${NewNotebookFullPath}`;
+    } else {
+      console.log("getRootDir: ", activeFolderPath);
+      return `${activeFolderPath}`;
+    }
+  }
+};
 
 module.exports.NoteBookDirSelection = async () => {
   const result = await dialog.showOpenDialog({
@@ -18,10 +41,10 @@ module.exports.NoteBookDirSelection = async () => {
   return result.filePaths[0];
 };
 
-module.exports.createNotebookDir = async (input, NoteBookDirFilePath ) => {
+module.exports.createNotebookDir = async (input, NoteBookDirFilePath) => {
   if (input === "" || NoteBookDirFilePath === undefined) {
-    console.log(input)
-    console.log(NoteBookDirFilePath)
+    console.log(input);
+    console.log(NoteBookDirFilePath);
     console.log("input is null");
     return Promise.reject(new Error("Invalid input or missing directory path"));
   } else {
@@ -39,16 +62,80 @@ module.exports.createNotebookDir = async (input, NoteBookDirFilePath ) => {
 };
 
 module.exports.createWelcomeNote = async (welcomeNote, store) => {
-  console.log("util ElectronStore active Notebook path: ", store.get("activeNotebookPath"))
-  const rootDir = store.get("activeNotebookPath")
+  console.log(
+    "util ElectronStore active Notebook path: ",
+    store.get("activeNotebookPath"),
+  );
+  const rootDir = store.get("activeNotebookPath");
 
-  console.log(JSON.stringify(welcomeNote))
+  console.log(JSON.stringify(welcomeNote));
 
-  return writeFile(`${rootDir}/welcomeNote.json`, JSON.stringify(welcomeNote),  {
+  return writeFile(`${rootDir}/welcome.json`, JSON.stringify(welcomeNote), {
     encoding: fileEncoding,
   });
+};
 
-  
+module.exports.getNotes = async (store) => {
+  const rootDir = store.get("activeNotebookPath");
+  console.log("getNotes RootDir: ", rootDir);
 
+  const notesFileNames = await readdir(rootDir, {
+    encoding: fileEncoding,
+    withFileTypes: false,
+  });
 
-}
+  console.log(
+    "MAIN-UTIL notesFileNameLength: ",
+    await Promise.resolve(notesFileNames),
+  );
+  if (
+    (await Promise.resolve(notesFileNames).length) == 0 ||
+    !notesFileNames ||
+    notesFileNames == undefined ||
+    notesFileNames == null
+  ) {
+    return Promise.resolve([]);
+  } else {
+    const notes = await notesFileNames.filter((filename) =>
+      filename.endsWith(".json"),
+    );
+    console.log("notes: ", Promise.resolve(notes));
+
+    return Promise.all(notes.map(getNoteInfo(rootDir)));
+  }
+};
+
+const getNoteInfo = (rootDir) => async (filename) => {
+  const fileStats = await stat(`${rootDir}/${filename}`);
+
+  return {
+    title: filename.replace(/\.json$/, ""),
+    creationTime: fileStats.birthtimeMs,
+    lastEditTime: fileStats.mtimeMs,
+    id: fileStats.ino,
+  };
+};
+
+module.exports.createNote = (file) => {
+  const rootDir = getRootDir();
+  console.log("createNote rootDir ", rootDir);
+  console.log("createNote filename ", file.title);
+  console.log("createNote content ", file.content);
+
+  const noteContent =
+    typeof file.content === "string"
+      ? file.content
+      : JSON.stringify(file.content);
+
+  return writeFile(`${rootDir}/${file.title}.json`, noteContent, {
+    encoding: fileEncoding,
+  });
+};
+
+module.exports.readNote = (filename) => {
+  const rootDir = getRootDir();
+
+  return readJSON(`${rootDir}/${filename}.json`, {
+    encoding: fileEncoding,
+  });
+};
