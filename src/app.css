@@ -27,6 +27,9 @@
   --color-background-primary-hover: ;
   --color-background-secondary-hover: #3D3D3D;
 
+  --color-background-nav: #3D3D3D;
+  --color-background-nav-hover: #757575;
+
   
   --color-test: #3E92CC;
   --color-divider: #808080;
@@ -62,6 +65,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+.nav-container {
+    
+    height: 40px;
+    -webkit-app-region: drag;
+    top: 0;
+}
+
+nav *:not(div) {
+    -webkit-app-region: no-drag;
 }
 
 

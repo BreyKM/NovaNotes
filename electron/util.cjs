@@ -3,6 +3,8 @@ const { fileEncoding } = require("../shared/constants.cjs");
 const { dialog } = require("electron");
 const path = require("path");
 
+const fse = require("fs-extra");
+
 let { activeFolderPath, NewNotebookFullPath } = require("./main.cjs");
 
 module.exports.updateNewNotebookDirPathMain = async (newPath) => {
@@ -127,15 +129,58 @@ module.exports.createNote = (file) => {
       ? file.content
       : JSON.stringify(file.content);
 
+  console.log("createNote noteContent ", noteContent);
+
   return writeFile(`${rootDir}/${file.title}.json`, noteContent, {
+    encoding: fileEncoding,
+  });
+};
+
+module.exports.writeNote = (filename, content) => {
+  const rootDir = getRootDir();
+  console.log("writing file");
+
+  return writeFile(`${rootDir}/${filename}.json`, content, {
     encoding: fileEncoding,
   });
 };
 
 module.exports.readNote = (filename) => {
   const rootDir = getRootDir();
+  console.log("readNote RootDir", rootDir);
 
   return readJSON(`${rootDir}/${filename}.json`, {
     encoding: fileEncoding,
   });
+};
+
+module.exports.renameNote = async (oldTitle, newTitle) => {
+  const rootDir = getRootDir();
+  if(!rootDir) {
+    console.error("renameNote called before rootDir is set.")
+    return false;
+  }
+
+  const oldPath = path.join(rootDir, `${oldTitle}.json`);
+  const newPath = path.join(rootDir, `${newTitle}.json`);
+
+  console.log(`Attempting to rename: ${oldPath} -> ${newPath}`);
+
+  try {
+    await fse.access(newPath, fse.constants.F_OK);
+
+    console.error(
+      `Rename failed: A file named "${newTitle}.json" already exists.`,
+    );
+    return false;
+  } catch (error) {
+    try {
+      await fse.rename(oldPath, newPath);
+      console.log("Rename successful.");
+      return true;
+    } catch (renameError) {
+      console.error("Error during file rename operation: ", renameError);
+      return false;
+    }
+  }
 };

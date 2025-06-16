@@ -1,22 +1,23 @@
 <script>
-	import Content from "./lib/Components/Content.svelte";
-	import NewNoteScreen from "./lib/Components/NewNoteScreen.svelte";
+	import Content from "./lib/Components/Content/Content.svelte";
+	import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
 	import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
+    import Nav from "./lib/Components/Nav/Nav.svelte";
 
-	let contentContainerRef;
+	import { selectedNoteIndexStore } from "./store/Store";
 
-	let showNoNoteScreen = $state(false)
+	let contentContainerRef = $state();
 
 </script>
 
+<Nav />
 <main class="relative flex h-full">
 	
 	<MainSideBar />
 
-  	{#if (showNoNoteScreen)}
+  	{#if $selectedNoteIndexStore === null}
  	 <NewNoteScreen />
-  
-	 <!--<Content bind:this={contentContainerRef} />-->
+
 	{:else}
 	 <Content bind:this={contentContainerRef} />
 	 {/if}

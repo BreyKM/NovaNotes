@@ -8,6 +8,16 @@ const api = {
 
 contextBridge.exposeInMainWorld("api", api);
 
+contextBridge.exposeInMainWorld("nav", {
+  
+  minimize: () => ipcRenderer.send("minimize"),
+
+  maximize: () => ipcRenderer.send("maximize"),
+
+  close: () => ipcRenderer.send("close"),
+
+} )
+
 //directory ipc connections
 contextBridge.exposeInMainWorld("directory", {
   //
@@ -40,6 +50,10 @@ contextBridge.exposeInMainWorld("notes", {
   createNote: (...args) => ipcRenderer.invoke("createNote", ...args),
 
   readNote: (...args) => ipcRenderer.invoke("readNote", ...args),
+
+  writeNote: (...args) => ipcRenderer.invoke("writeNote", ...args),
+
+  renameNote: (...args) => ipcRenderer.invoke("renameNote", ...args),
 });
 
 

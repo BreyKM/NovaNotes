@@ -26,9 +26,6 @@
     isLoading = true;
     await loadNotes();
     isLoading = false;
-    console.log("NPL: ", $notesStore);
-    console.log($selectedNoteIndexStore);
-    console.log("slectedNoteStore", $selectedNoteStore);
   });
 </script>
 

@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex flex-col left-container ite min-w-1/5 bg-background-secondary">
-  <div class="Notebook-name-container mx-2 my-2">
+  <div class="Notebook-name-container mx-2 my-2 mt-12">
     {#if $ActiveNoteBookNameStore}
       <div class=" text-sm hover:bg-background-secondary-hover py-px px-2 rounded-sm hover:cursor-pointer ">{$ActiveNoteBookNameStore}</div>
     {:else}

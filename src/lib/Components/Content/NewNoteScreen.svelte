@@ -1,5 +1,5 @@
 <script>
-
+import { createEmptyNote } from "../../../store/Store";
 </script>
 
 <div class="relative w-full h-screen flex flex-col justify-center items-center">
@@ -7,7 +7,9 @@
         <div class="text-3xl">No file is open</div>
     </div>
     <div class="mb-4 text-md">
-        <button class="text-primary hover:cursor-pointer">
+        <button class="text-primary hover:cursor-pointer"
+                on:click={createEmptyNote}
+        >
             Create new note (Crtl + N)
         </button>
     </div>

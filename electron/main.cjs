@@ -24,7 +24,9 @@ const {
   createWelcomeNote,
   getNotes,
   createNote,
-  readNote
+  readNote,
+  writeNote,
+  renameNote
 } = require("./util.cjs");
 
 // window variables
@@ -50,6 +52,8 @@ const createWindow = () => {
     autoHideMenuBar: true,
     center: true,
     title: "Nova Notes",
+    frame: false,
+    icon: 'src/assets/icon.png',
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -72,7 +76,25 @@ const createWindow = () => {
 
     log("Electron running in prod mode: 🚀");
   }
+
+  
+  ipcMain.on("minimize", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.on("maximize", () => {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
+
+  ipcMain.on("close", () => {
+    app.quit();
+  });
 };
+
 
 // Create the Directory selector window
 const createStarterWindow = () => {
@@ -158,9 +180,12 @@ app.whenReady().then(() => {
 
       ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath);
 
+      require("./util.cjs").updateActiveFolderPathInUtil(NewNotebookFullPath)
+
       NewNotebookPathName = path.basename(NewNotebookFullPath);
 
       ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
+
 
       console.log("pathTest", NewNotebookPathName);
       return {
@@ -188,6 +213,10 @@ app.whenReady().then(() => {
   ipcMain.handle("createNote", (_, ...args) => createNote(...args));
 
   ipcMain.handle("readNote", (_, ...args) => readNote(...args));
+
+  ipcMain.handle("writeNote", (_, ...args) => writeNote(...args));
+
+  ipcMain.handle("renameNote", (_, ...args) => renameNote(...args));
 
   ipcMain.on("open-main-window", () => {
     if (starterWindow) {

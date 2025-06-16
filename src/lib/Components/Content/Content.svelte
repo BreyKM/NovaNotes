@@ -1,24 +1,24 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, afterUpdate } from "svelte";
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
 
-  import { loadNotes, userInputCurrentNoteTitle } from "../../store/Store"
+  import {
+    loadNotes,
+    userInputCurrentNoteTitle,
+    selectedNoteStore,
+    handleAutoSaving,
+    renameNote,
+  } from "../../../store/Store";
 
   let unsubscribe;
   let editor;
   let element;
 
-  $effect(() => {
-    console.log($userInputCurrentNoteTitle)
-    loadNotes()
-  })
+  let debounceTimer;
 
-
-  onMount(() => {
-
-
+  onMount(async () => {
     editor = new Editor({
       element: element,
       extensions: [
@@ -48,16 +48,45 @@
       },
 
       onUpdate: () => {
-        console.log(editor.getJSON());
+        handleAutoSaving(editor.getJSON());
+        console.log("editor.getJSON()", editor.getJSON());
       },
     });
   });
+
+  afterUpdate(() => {
+    if (editor && $selectedNoteStore) {
+      editor.commands.setContent($selectedNoteStore.content);
+      console.log("note.content", $selectedNoteStore.content);
+      console.log("note.title", $selectedNoteStore.title);
+    }
+  });
+  
+  $: if($userInputCurrentNoteTitle && $selectedNoteStore) {
+    if($userInputCurrentNoteTitle !== $selectedNoteStore.title) {
+      clearTimeout(debounceTimer)
+
+      debounceTimer = setTimeout(() => {
+        renameNote()
+      }, 1500)
+    }
+  }
+
+  function handleTitleBlur() {
+    clearTimeout(debounceTimer)
+
+    renameNote()
+  }
 
   function handleTitleKeydown(event) {
     // Check if the pressed key was 'Enter'
     if (event.key === "Enter") {
       // Prevent the default 'Enter' behavior (like adding a newline or submitting a form)
       event.preventDefault();
+
+      if ($userInputCurrentNoteTitle === "") {
+        userInputCurrentNoteTitle.set($selectedNoteStore.title)
+      }
 
       // Use the Tiptap editor's built-in command to focus the editor.
       // The 'end' argument places the cursor at the very end of the content.
@@ -75,19 +104,20 @@
       unsubscribe();
     }
   });
-</script>
+</script> 
 
 <div
   class="pt-16 px-48 flex flex-col content-container w-screen h-screen overflow-hidden"
 >
-    <div
-      class=" note-title text-4xl outline-none font-bold"
-      tabindex="-1"
-      onkeydown={handleTitleKeydown}
-      contenteditable="true"
-      role="none"
-      bind:textContent={$userInputCurrentNoteTitle}
-    >
+  <div
+    class=" note-title text-4xl outline-none font-bold"
+    tabindex="-1"
+    onkeydown={handleTitleKeydown}
+    onblur={handleTitleBlur}
+    contenteditable="true"
+    role="none"
+    bind:textContent={$userInputCurrentNoteTitle}
+  >
   </div>
   <div
     class="editor-container relative w-full h-screen overflow-y-auto"
