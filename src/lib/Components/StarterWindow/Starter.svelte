@@ -6,7 +6,6 @@
 
   import {
     rootDirSelection,
-    // NewNotebookDir,
     rootNotebookDirPathStore,
     userInputNotebookNameStore,
     createNotebookDir,
@@ -26,8 +25,6 @@
 
   let popupTimer;
 
-  // check if inputted Notebook directory name is valid
-  //  and update store
   $effect(() => {
     if (
       isValidFilename(userInputNotebookName) &&
@@ -48,19 +45,19 @@
     clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
       isNotebookNameValidPopupShow = false;
-    }, 3000); // 3000 milliseconds = 3 seconds
+    }, 3000);
   }
 
   function showFilePathMissingPopup() {
     isFilePathMissingPopupShow = true;
-    clearTimeout(popupTimer); // Clear previous timer
+    clearTimeout(popupTimer); 
     popupTimer = setTimeout(() => {
       isFilePathMissingPopupShow = false;
-    }, 3000); // Hide after 3 seconds
+    }, 3000);
   }
 
   //State for Sliding content
-  let showContentA = $state(false); // Initially show Content A
+  let showContentA = $state(true); // Initially show Content A
 
   function showNextContent() {
     showContentA = false;

@@ -6,6 +6,7 @@
     selectedNoteIndexStore,
     handleNoteSelect,
     selectedNoteStore,
+    userInputCurrentNoteTitle,
   } from "../../../store/Store";
   import { isEmpty } from "lodash";
   import NotePreview from "./notePreview.svelte";
@@ -26,9 +27,6 @@
     isLoading = true;
     await loadNotes();
     isLoading = false;
-    console.log("NPL: ", $notesStore);
-    console.log($selectedNoteIndexStore);
-    console.log("slectedNoteStore", $selectedNoteStore);
   });
 </script>
 

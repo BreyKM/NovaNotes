@@ -1,5 +1,6 @@
 import { get, writable, derived } from "svelte/store";
 import welcome from "../assets/Welcome.json" assert { type: "json" };
+import { throttle } from "lodash";
 
 //store variables
 export const notesStore = writable([]);
@@ -15,6 +16,33 @@ export const userInputNotebookNameStore = writable(null);
 export const userInputCurrentNoteTitle = writable(null);
 
 export const ActiveNoteBookNameStore = writable(null);
+
+export const tabStore = writable([]);
+
+export const noteContentCache = writable({});
+
+export const isSwitchingTabs = writable(false);
+
+export function getNoteContent(note) {
+  const cache = get(noteContentCache);
+
+  if (cache[note.id] !== undefined) {
+    console.log(`Cache HIT for note: ${note.title}`);
+    noteContentStore.set(cache[note.id]);
+  } else {
+    console.log(`Cache MISS for note: ${note.title}. Reading from disk.`);
+    noteContentStore.set("");
+
+    window.notes.readNote(note.title).then((content) => {
+      noteContentStore.set(content);
+
+      noteContentCache.update((c) => {
+        c[note.id] = content;
+        return c;
+      });
+    });
+  }
+}
 
 export const selectedNoteStore = derived(
   [notesStore, selectedNoteIndexStore, noteContentStore],
@@ -42,9 +70,13 @@ export async function handleNoteSelect(index, onSelectCallback) {
   const selectedNote = get(selectedNoteStore);
   console.log("handleNoteSelect selectedNote: ", selectedNote);
 
+  if (selectedNote) {
+    userInputCurrentNoteTitle.set(selectedNote.title);
+  }
+
+  await window.tab.loadNoteIntoActiveTab(selectedNote);
+
   window.notes.readNote(selectedNote.title).then((content) => {
-    console.log("selectedNote read : ", get(selectedNoteIndexStore));
-    console.log("content readNote: ", content);
     noteContentStore.set(content);
   });
 
@@ -53,6 +85,37 @@ export async function handleNoteSelect(index, onSelectCallback) {
     console.log("onSelect callback executed");
   }
 }
+
+export function updateNoteContent(newContent) {
+  noteContentStore.set(newContent);
+
+  const selectedNote = get(selectedNoteStore);
+  if (selectedNote) {
+    noteContentCache.update((c) => {
+      c[selectedNote.id] = newContent;
+      return c;
+    });
+  }
+  handleAutoSaving(newContent);
+}
+
+export const handleAutoSaving = throttle(
+  (content) => {
+    const selectedNote = get(selectedNoteStore);
+    if (!selectedNote) return;
+
+    let jsonString = JSON.stringify(content, null, 2);
+    console.log(jsonString);
+    void window.notes
+      .writeNote(selectedNote.title, jsonString)
+      .catch((err) => console.error("Auto-save failed:", err));
+  },
+  2000,
+  {
+    leading: false,
+    trailing: true,
+  },
+);
 
 export function findNextAvailableTitle(allNotes) {
   const untitledRegex = /^Untitled(?: (\d+))?$/;
@@ -150,4 +213,38 @@ export async function loadNotes() {
   console.log("sortedNotes:", sortedNotes);
   notesStore.set(sortedNotes);
   console.log("notesStore:", get(notesStore));
+}
+
+export async function renameNote() {
+  const newTitle = get(userInputCurrentNoteTitle).trim();
+  const selectedNote = get(selectedNoteStore);
+
+  if (!selectedNote || !newTitle || newTitle === selectedNote.title) {
+    return;
+  }
+
+  try {
+    const success = await window.notes.renameNote(selectedNote.title, newTitle);
+
+    if (success) {
+      console.log(
+        `Successfully renamed "${selectedNote.title}" to "${newTitle}"`,
+      );
+
+      const updatedNote = { ...selectedNote, title: newTitle };
+
+      notesStore.update((allNotes) => {
+        const index = get(selectedNoteIndexStore);
+        allNotes[index] = updatedNote;
+        return allNotes;
+      });
+
+      console.log("renameNotes notesStore", get(notesStore));
+    } else {
+      console.error("Backend failed to rename note.");
+      userInputCurrentNoteTitle.set(selectedNote.title);
+    }
+  } catch (error) {
+    console.error("Error renaming note: ", error);
+  }
 }

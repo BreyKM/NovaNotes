@@ -24,7 +24,9 @@ const {
   createWelcomeNote,
   getNotes,
   createNote,
-  readNote
+  readNote,
+  writeNote,
+  renameNote,
 } = require("./util.cjs");
 
 // window variables
@@ -40,6 +42,10 @@ let NewNotebookPathName;
 
 let activeFolderPath;
 
+let mainTabs = [];
+
+let activeTabIndex = 0;
+
 const ElectronStoreRef = new ElectronStore();
 
 const createWindow = () => {
@@ -50,6 +56,8 @@ const createWindow = () => {
     autoHideMenuBar: true,
     center: true,
     title: "Nova Notes",
+    frame: false,
+    icon: "src/assets/icon.png",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -72,6 +80,22 @@ const createWindow = () => {
 
     log("Electron running in prod mode: 🚀");
   }
+
+  ipcMain.on("minimize", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.on("maximize", () => {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
+
+  ipcMain.on("close", () => {
+    app.quit();
+  });
 };
 
 // Create the Directory selector window
@@ -117,18 +141,24 @@ app.whenReady().then(() => {
   if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
     fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
       if (!error && ElectronStoreRef.get("activeNotebookPath")) {
-        createWindow()
-        activeFolderPath = ElectronStoreRef.get("activeNotebookPath")
+        createWindow();
+        activeFolderPath = ElectronStoreRef.get("activeNotebookPath");
         require("./util.cjs").updateActiveFolderPathInUtil(activeFolderPath);
-        console.log(activeFolderPath)
+        console.log(activeFolderPath);
       } else {
-        createStarterWindow()
-        console.log("Folder does not exist")
-        console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"))
+        createStarterWindow();
+        console.log("Folder does not exist");
+        console.log(
+          "activeNotebookPath: ",
+          ElectronStoreRef.get("activeNotebookPath"),
+        );
         ElectronStoreRef.delete("activeNotebookPath");
-        console.log("activeNotebookPath: ", ElectronStoreRef.get("activeNotebookPath"));
+        console.log(
+          "activeNotebookPath: ",
+          ElectronStoreRef.get("activeNotebookPath"),
+        );
       }
-    })
+    });
   } else {
     createStarterWindow();
   }
@@ -158,6 +188,8 @@ app.whenReady().then(() => {
 
       ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath);
 
+      require("./util.cjs").updateActiveFolderPathInUtil(NewNotebookFullPath);
+
       NewNotebookPathName = path.basename(NewNotebookFullPath);
 
       ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
@@ -183,11 +215,76 @@ app.whenReady().then(() => {
     createWelcomeNote(...args, ElectronStoreRef),
   );
 
-  ipcMain.handle("getNotes", (_, ...args) => getNotes(ElectronStoreRef))
+  ipcMain.handle("getNotes", (_, ...args) => getNotes(ElectronStoreRef));
 
   ipcMain.handle("createNote", (_, ...args) => createNote(...args));
 
   ipcMain.handle("readNote", (_, ...args) => readNote(...args));
+
+  ipcMain.handle("writeNote", (_, ...args) => writeNote(...args));
+
+  ipcMain.handle("renameNote", (_, ...args) => renameNote(...args));
+
+  function broadcastTabUpdate() {
+    if (mainWindow) {
+      mainWindow.webContents.send("tabsUpdated", {
+        tabs: mainTabs,
+        activeIndex: activeTabIndex,
+      });
+    }
+  }
+
+  ipcMain.handle("getTabs", () => {
+    if (mainTabs.length === 0) {
+      mainTabs.push({
+        tabId: Date.now(),
+        noteId: null,
+        title: "new tab",
+      });
+      activeTabIndex = 0;
+    }
+    return { tabs: mainTabs, activeIndex: activeTabIndex };
+  });
+
+  ipcMain.on("createTab", () => {
+    const newTab = {
+      tabId: Date.now() + Math.random(),
+      notedId: null,
+      title: "new tab",
+    };
+    mainTabs.push(newTab);
+    activeTabIndex = mainTabs.length - 1;
+    broadcastTabUpdate();
+  });
+
+  ipcMain.handle("loadNoteIntoActiveTab", (event, selectedNote) => {
+    if (!selectedNote || !mainTabs[activeTabIndex]) {
+      return;
+    }
+
+    mainTabs[activeTabIndex].noteId = selectedNote.id;
+    mainTabs[activeTabIndex].title = selectedNote.title;
+
+    console.log(
+      `Main: Loaded note '${selectedNote.title} into active tab index ${activeTabIndex}'`,
+    );
+    broadcastTabUpdate();
+  });
+
+  ipcMain.handle("updateTabs", (event, tabs) => {
+    mainTabs = tabs;
+    if (activeTabIndex >= mainTabs.length) {
+      activeTabIndex = Math.max(0, mainTabs.length - 1);
+    }
+    broadcastTabUpdate();
+  });
+
+  ipcMain.handle("activeTabIndex", (event, index) => {
+    if (index >= 0 && index < mainTabs.length) {
+      activeTabIndex = index;
+      console.log("MAIN: activeTabIndex", activeTabIndex);
+    }
+  });
 
   ipcMain.on("open-main-window", () => {
     if (starterWindow) {
@@ -205,5 +302,4 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+

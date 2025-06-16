@@ -3,6 +3,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@config "../tailwind.config.js";
+
 
 @theme {
 
@@ -27,9 +29,14 @@
   --color-background-primary-hover: ;
   --color-background-secondary-hover: #3D3D3D;
 
+  --color-background-nav: #3D3D3D;
+  --color-background-nav-hover: #757575;
+
   
   --color-test: #3E92CC;
   --color-divider: #808080;
+
+  --rounded-tab: 8 8 8 8;
 
   /*  */
    
@@ -64,6 +71,129 @@
   -webkit-text-size-adjust: 100%;
 }
 
+.nav-container {
+    
+    height: 40px;
+    -webkit-app-region: drag;
+    top: 0;
+}
 
+nav *:not(div) {
+    -webkit-app-region: no-drag;
+}
 
+.tab-bar {
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  z-index: 11;
+  height: 40px;
+  width: 60%;
+  max-width: 60%;
+  overflow-x: auto;
+  overflow: hidden;
+}
+.tab {
+  -webkit-app-region: no-drag;
+  display: flex;
+  flex-basis: 192px;
+  flex-shrink: 1;
+  flex-grow: 0;
+  height: 32px;
+  padding-top: 3px;
+  margin-right: -11px;
+  z-index: 12;
+  min-width: 0;
+}
+
+.tab:not(.active):not(:first-child)::before {
+  padding-left: 1rem;
+  content: "|";
+  color: var(--color-background-primary);
+}
+
+.inner,
+.tab-close {
+  cursor: pointer;
+}
+.inner {
+  height: calc(32px * 0.8);
+}
+.inner.sides {
+  flex-basis: 8px;
+  min-width: 0;
+}
+.inner.center {
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  flex-basis: 178px;
+  min-width: 0;
+}
+.inner.center:hover {
+  background-color: #4d4d4d;
+}
+
+.tab-close,
+.tab-text {
+  padding: 6px;
+}
+.tab-text {
+  width: calc(100% - 20px);
+  min-width: 0;
+}
+.tab-close {
+}
+
+.tab.active {
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-nav) 50%,
+    var(--color-background-primary) 50%
+  );
+  z-index: 99;
+}
+.tab.active > .inner {
+  cursor: default;
+}
+.tab.active,
+.tab.active > .inner {
+  height: 32px;
+  margin-top: -3px;
+}
+.tab.active > .sides {
+  background-color: var(--color-background-nav);
+}
+.tab.active > .left {
+  border-radius: 0 0 4px 0;
+  z-index: 99;
+}
+.tab.active > .right {
+  border-radius: 0 0 0 4px;
+}
+.tab.active > .center {
+  background-color: var(--color-background-primary);
+  border-radius: 12px 12px 0 0;
+}
+.tab-close-svg {
+  fill: #fafafab7;
+  z-index: 20;
+}
+
+:not(.active) .tab-close-svg:hover {
+  fill: #fafafa;
+}
+
+.active .tab-close-svg:hover {
+  fill: #fafafa;
+  padding: 0.1rem;
+  background-color: #383838;
+  border-radius: 5px;
+}
+
+.new-tab-btn {
+  -webkit-app-region: no-drag;
+}
 

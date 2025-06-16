@@ -8,6 +8,14 @@ const api = {
 
 contextBridge.exposeInMainWorld("api", api);
 
+contextBridge.exposeInMainWorld("nav", {
+  minimize: () => ipcRenderer.send("minimize"),
+
+  maximize: () => ipcRenderer.send("maximize"),
+
+  close: () => ipcRenderer.send("close"),
+});
+
 //directory ipc connections
 contextBridge.exposeInMainWorld("directory", {
   //
@@ -22,7 +30,8 @@ contextBridge.exposeInMainWorld("directory", {
     });
   },
 
-  createNotebookDir: (...args) => ipcRenderer.invoke("createNotebookDir", ...args),
+  createNotebookDir: (...args) =>
+    ipcRenderer.invoke("createNotebookDir", ...args),
 });
 
 contextBridge.exposeInMainWorld("main", {
@@ -31,15 +40,32 @@ contextBridge.exposeInMainWorld("main", {
   getActiveFolder: () => ipcRenderer.invoke("getActiveFolder"),
 });
 
-
 contextBridge.exposeInMainWorld("notes", {
-  createWelcomeNote: (...args) => ipcRenderer.invoke("createWelcomeNote", ...args),
+  createWelcomeNote: (...args) =>
+    ipcRenderer.invoke("createWelcomeNote", ...args),
 
   getNotes: (...args) => ipcRenderer.invoke("getNotes", ...args),
 
   createNote: (...args) => ipcRenderer.invoke("createNote", ...args),
 
   readNote: (...args) => ipcRenderer.invoke("readNote", ...args),
+
+  writeNote: (...args) => ipcRenderer.invoke("writeNote", ...args),
+
+  renameNote: (...args) => ipcRenderer.invoke("renameNote", ...args),
 });
 
+contextBridge.exposeInMainWorld("tab", {
+  getTabs: () => ipcRenderer.invoke("getTabs"),
 
+  updateTabs: (tabs) => ipcRenderer.invoke("updateTabs", tabs),
+
+  activeTabIndex: (index) => ipcRenderer.invoke("activeTabIndex", index),
+
+  loadNoteIntoActiveTab: (selectedNote) => ipcRenderer.invoke("loadNoteIntoActiveTab", selectedNote),
+
+  createTab: () => ipcRenderer.send("createTab"),
+
+  onTabsUpdated: (callback) =>
+    ipcRenderer.on("tabsUpdated", (_event, value) => callback(value)),
+});
