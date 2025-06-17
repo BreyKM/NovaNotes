@@ -194,6 +194,7 @@ app.whenReady().then(() => {
 
       ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
 
+
       console.log("pathTest", NewNotebookPathName);
       return {
         fullPath: NewNotebookFullPath,
