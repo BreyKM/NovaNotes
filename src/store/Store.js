@@ -228,7 +228,7 @@ export async function getActiveFolder() {
 
 export async function loadNotes() {
   const notes = await window.notes.getNotes();
-  console.log("loadnotes notes: ", notes);
+  console.log("loadNotes notes: ", notes);
   const sortedNotes = notes.sort((a, b) => b.lastEditTime - a.lastEditTime);
   console.log("sortedNotes:", sortedNotes);
   notesStore.set(sortedNotes);
