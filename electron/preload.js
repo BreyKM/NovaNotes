@@ -62,10 +62,14 @@ contextBridge.exposeInMainWorld("tab", {
 
   activeTabIndex: (index) => ipcRenderer.invoke("activeTabIndex", index),
 
-  loadNoteIntoActiveTab: (selectedNote) => ipcRenderer.invoke("loadNoteIntoActiveTab", selectedNote),
+  loadNoteIntoActiveTab: (selectedNote) =>
+    ipcRenderer.invoke("loadNoteIntoActiveTab", selectedNote),
 
   createTab: () => ipcRenderer.send("createTab"),
 
-  onTabsUpdated: (callback) =>
-    ipcRenderer.on("tabsUpdated", (_event, value) => callback(value)),
+  onTabsUpdated: (callback) => {
+    const listener = (_e, v) => callback(v);
+    ipcRenderer.on("tabsUpdated", listener);
+    return () => ipcRenderer.removeListener("tabsUpdated", listener);
+  },
 });

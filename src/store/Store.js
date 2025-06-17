@@ -23,6 +23,8 @@ export const noteContentCache = writable({});
 
 export const isSwitchingTabs = writable(false);
 
+export const activeTabIndexStore = writable(0)
+
 export function getNoteContent(note) {
   const cache = get(noteContentCache);
 
@@ -36,10 +38,10 @@ export function getNoteContent(note) {
     window.notes.readNote(note.title).then((content) => {
       noteContentStore.set(content);
 
-      noteContentCache.update((c) => {
-        c[note.id] = content;
-        return c;
-      });
+      noteContentCache.update((c) => ({
+        ...c,
+        [note.id]: content,
+      }));
     });
   }
 }
@@ -84,6 +86,24 @@ export async function handleNoteSelect(index, onSelectCallback) {
     onSelectCallback();
     console.log("onSelect callback executed");
   }
+}
+
+export function closeTab(indexToClose) {
+  const tabs = get(tabStore)
+  const activeIndex = get(activeTabIndexStore)
+
+  if (tabs.length <= 1) {
+    return
+  }
+  const updatedTabs = tabs.filter((_, i) => i !== indexToClose)
+  console.log(updatedTabs)
+
+  const newActiveIndex = (activeIndex >= indexToClose && activeIndex > 0) ? activeIndex - 1 : activeIndex
+
+  activeTabIndexStore.set(newActiveIndex)
+
+  window.tab.updateTabs(updatedTabs)
+  window.tab.activeTabIndex(newActiveIndex)
 }
 
 export function updateNoteContent(newContent) {

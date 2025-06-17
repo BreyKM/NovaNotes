@@ -28,7 +28,7 @@
   let isNoteFileNameValidPopupShow = false;
   let isNoteFileNameValid;
 
-  const invalidCharacters = ' * " \ / < > : | ?' 
+  const invalidCharacters = ' * " \\\ / < > : | ?' 
 
   onMount(async () => {
     editor = new Editor({
@@ -117,7 +117,7 @@
     clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
       isNoteFileNameValidPopupShow = false;
-    }, 3000); 
+    }, 500); 
   }
 
   onDestroy(() => {

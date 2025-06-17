@@ -249,7 +249,7 @@ app.whenReady().then(() => {
   ipcMain.on("createTab", () => {
     const newTab = {
       tabId: Date.now() + Math.random(),
-      notedId: null,
+      noteId: null,
       title: "new tab",
     };
     mainTabs.push(newTab);
@@ -283,6 +283,7 @@ app.whenReady().then(() => {
     if (index >= 0 && index < mainTabs.length) {
       activeTabIndex = index;
       console.log("MAIN: activeTabIndex", activeTabIndex);
+      broadcastTabUpdate()
     }
   });
 

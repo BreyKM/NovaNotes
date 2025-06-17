@@ -10,42 +10,47 @@
     tabStore,
     isSwitchingTabs,
     userInputCurrentNoteTitle,
+    activeTabIndexStore,
+    closeTab
   } from "../../../store/Store";
   import { get } from "svelte/store";
-
-  let activeTab = 0;
 
   onMount(() => {
     window.tab.getTabs().then(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
+      activeTabIndexStore.set(activeIndex)
       syncContentView(activeIndex, false);
     });
 
     window.tab.onTabsUpdated(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
+      activeTabIndexStore.set(activeIndex)
       syncContentView(activeIndex, false);
     });
   });
 
-  function handleTabClick(index) {
-    syncContentView(index, true);
-  }
+//   function handleTabClick(index) {
+//     syncContentView(index, true);
+//   }
 
   async function syncContentView(index, isDirectClick) {
     isSwitchingTabs.set(true);
 
-    const tabToSync = $tabStore[index];
+    const tabToSync = get(tabStore)[index];
+
     if (tabToSync === undefined) {
       await tick();
       isSwitchingTabs.set(false);
       return;
     }
 
-    activeTab = index;
+    $activeTabIndexStore = index;
+
     if (isDirectClick) {
       window.tab.activeTabIndex(index);
     }
 
+    noteContentStore.set("")
     if (tabToSync.noteId) {
       const noteIndexToSelect = get(notesStore).findIndex(
         (note) => note.id === tabToSync.noteId,
@@ -61,24 +66,23 @@
     } else {
       selectedNoteIndexStore.set(null);
       userInputCurrentNoteTitle.set("");
-      noteContentStore.set("");
     }
     await tick();
     isSwitchingTabs.set(false);
   }
 
-  function handleCloseTab(index) {
-    if ($tabStore.length <= 1) return;
+//   export function handleCloseTab(index) {
+//     if ($tabStore.length <= 1) return;
 
-    const updatedTabs = $tabStore.filter((_, i) => i !== index);
+//     const updatedTabs = $tabStore.filter((_, i) => i !== index);
 
-    const newActiveIndex =
-      activeTab >= index && activeTab > 0 ? activeTab - 1 : activeTab;
+//     const newActiveIndex =
+//       activeTab >= index && activeTab > 0 ? activeTab - 1 : activeTab;
 
-    window.tab.updateTabs(updatedTabs);
+//     window.tab.updateTabs(updatedTabs);
 
-    window.tab.activeTabIndex(newActiveIndex);
-  }
+//     window.tab.activeTabIndex(newActiveIndex);
+//   }
 
   async function createTab() {
     await window.tab.createTab();
@@ -91,9 +95,9 @@
   {#each $tabStore as tab, i}
     <Tab
       title={tab.title}
-      active={i === activeTab}
-      on:close={() => handleCloseTab(i)}
-      on:click={() => handleTabClick(i)}
+      active={i === $activeTabIndexStore}
+      on:close={() => closeTab(i)}
+      on:click={() => syncContentView(i, true)}
     />
   {/each}
   <button
