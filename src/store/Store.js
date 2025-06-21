@@ -23,7 +23,7 @@ export const noteContentCache = writable({});
 
 export const isSwitchingTabs = writable(false);
 
-export const activeTabIndexStore = writable(0)
+export const activeTabIndexStore = writable(0);
 
 export function getNoteContent(note) {
   const cache = get(noteContentCache);
@@ -89,21 +89,24 @@ export async function handleNoteSelect(index, onSelectCallback) {
 }
 
 export function closeTab(indexToClose) {
-  const tabs = get(tabStore)
-  const activeIndex = get(activeTabIndexStore)
+  const tabs = get(tabStore);
+  const activeIndex = get(activeTabIndexStore);
 
   if (tabs.length <= 1) {
-    return
+    return;
   }
-  const updatedTabs = tabs.filter((_, i) => i !== indexToClose)
-  console.log(updatedTabs)
+  const updatedTabs = tabs.filter((_, i) => i !== indexToClose);
+  console.log(updatedTabs);
 
-  const newActiveIndex = (activeIndex >= indexToClose && activeIndex > 0) ? activeIndex - 1 : activeIndex
+  const newActiveIndex =
+    activeIndex >= indexToClose && activeIndex > 0
+      ? activeIndex - 1
+      : activeIndex;
 
-  activeTabIndexStore.set(newActiveIndex)
+  activeTabIndexStore.set(newActiveIndex);
 
-  window.tab.updateTabs(updatedTabs)
-  window.tab.activeTabIndex(newActiveIndex)
+  window.tab.updateTabs(updatedTabs);
+  window.tab.activeTabIndex(newActiveIndex);
 }
 
 export function updateNoteContent(newContent) {
@@ -156,34 +159,52 @@ export function findNextAvailableTitle(allNotes) {
   return i === 0 ? "Untitled" : `Untitled ${i}`;
 }
 
+
 export async function createEmptyNote() {
   try {
     let notes = get(notesStore);
-    if (!notes) {
-      await loadNotes();
-      notes = get(notesStore);
-    }
+
 
     const title = findNextAvailableTitle(notes);
     console.log(`New note title will be: ${title}`);
-
     const newNote = {
       title: title,
       content: `{
-      "type": "doc",
-      "content": [
-        {
-          "type": "paragraph"
-        }
-      ]
-    }`,
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph"
+          }
+        ]
+      }`,
     };
 
+    // 1. Create the note file on disk
     await window.notes.createNote(newNote);
-
     await loadNotes();
+    const newlyCreatedNote = get(notesStore)[0];
 
-    handleNoteSelect(0);
+    if (!newlyCreatedNote) {
+       console.error("Could not find the newly created note after loading.");
+       return;
+    }
+
+    const allTabs = get(tabStore)
+    const activeIndex =get(activeTabIndexStore)
+    const activeTab = allTabs[activeIndex]
+
+    if (activeTab && activeTab.noteId !== null) {
+      console.log("Active tab has a note. Creating a new tab.");
+      await window.tab.createTabForNewNote(newlyCreatedNote);
+    } else {
+      console.log("Active tab is empty. Loading note into the current tab.");
+      await window.tab.loadNoteIntoActiveTab(newlyCreatedNote);
+    }
+
+    selectedNoteIndexStore.set(0); // Selects the new note in the NotePreviewList
+    noteContentStore.set(newNote.content); // Populates the editor with the new note's content
+    userInputCurrentNoteTitle.set(newlyCreatedNote.title); // Updates the title input field
+
   } catch (error) {
     console.error("Failed to create a new note: ", error);
   }

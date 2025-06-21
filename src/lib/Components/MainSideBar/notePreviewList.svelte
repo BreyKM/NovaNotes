@@ -20,7 +20,7 @@
   $effect(() => {
     console.log("NPL: ", $notesStore);
     console.log($selectedNoteIndexStore);
-    console.log("slectedNoteStore", $selectedNoteStore);
+    console.log("selectedNoteStore", $selectedNoteStore);
   });
 
   onMount(async () => {
@@ -30,7 +30,15 @@
   });
 </script>
 
-<div class="note-preview-list-container">
+<div class="note-preview-list-container overflow-y-auto ml-2 mr-0.5 pr-2 text-sm flex flex-col
+    [&::-webkit-scrollbar]:w-2
+    [&::-webkit-scrollbar]:m-3
+  [&::-webkit-scrollbar-track]:bg-transparent
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-transparent
+  dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-thumb]:rounded-full">
   <ul>
     {#if isLoading}
       <p class="flex justify-center items-center w-full h-full text-2xl">

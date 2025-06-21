@@ -1,8 +1,15 @@
 <script>
   import { onMount } from "svelte";
-  import { getActiveFolder, ActiveNoteBookNameStore, createEmptyNote } from "../../../store/Store";
-    import NotePreviewList from "./notePreviewList.svelte";
+  import {
+    getActiveFolder,
+    ActiveNoteBookNameStore,
+    createEmptyNote,
+  } from "../../../store/Store";
+  import NotePreviewList from "./notePreviewList.svelte";
 
+  export let style = ''
+
+  export let containerElement;
 
   onMount(() => {
     getActiveFolder();
@@ -11,20 +18,28 @@
   console.log($ActiveNoteBookNameStore);
 </script>
 
-<div class="flex flex-col left-container ite min-w-1/5 bg-background-secondary">
-  <div class="Notebook-name-container mx-2 my-2 mt-12">
+<div
+  bind:this={containerElement}
+  class="flex flex-col left-container min-w-1/5 max-w-3/4 h-auto mt-10 bg-background-secondary"
+  style={style}
+>
+  <div class="Notebook-name-container mx-2 my-2">
     {#if $ActiveNoteBookNameStore}
-      <div class=" text-sm hover:bg-background-secondary-hover py-px px-2 rounded-sm hover:cursor-pointer ">{$ActiveNoteBookNameStore}</div>
+      <div
+        class=" text-sm hover:bg-background-secondary-hover py-px px-2 rounded-sm hover:cursor-pointer"
+      >
+        {$ActiveNoteBookNameStore}
+      </div>
     {:else}
       <p>Loading...</p>
     {/if}
   </div>
   <div class="new-icons flex self-center justify-between">
     <button
-    on:click={createEmptyNote}
-      class=" flex items-center justify-center p-1 hover:bg-background-secondary-hover hover:cursor-pointer rounded-md"
+      on:click={createEmptyNote}
+      class=" create-note flex items-center justify-center p-1 hover:bg-background-secondary-hover hover:cursor-pointer rounded-md"
       aria-label="Add folder icon"
-      >
+    >
       <svg
         width="1.5rem"
         height="1.5rem"
@@ -64,5 +79,5 @@
       </svg></button
     >
   </div>
-<NotePreviewList />
+  <NotePreviewList />
 </div>

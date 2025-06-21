@@ -130,13 +130,6 @@ const createStarterWindow = () => {
   }
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-
-// app.on('ready', createWindow);
-// app.on('ready', createStarterWindow);
-
 app.whenReady().then(() => {
   if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
     fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
@@ -257,6 +250,27 @@ app.whenReady().then(() => {
     activeTabIndex = mainTabs.length - 1;
     broadcastTabUpdate();
   });
+
+  ipcMain.handle("createTabForNewNote", (event, newNote) => {
+    if (!newNote || !newNote.id || !newNote.title) {
+      console.error("createTabForNewNote called with invalid note object.")
+      return;
+    }
+
+
+    const newTab = {
+      tabId: Date.now() + Math.random(),
+      noteId: newNote.id,
+      title: newNote.title,
+    };
+
+    mainTabs.push(newTab)
+    activeTabIndex = mainTabs.length - 1
+
+    console.log(`Main: Created new tab for note '${newNote.title}' and set it as active index ${activeTabIndex}'`);
+
+    broadcastTabUpdate()
+  })
 
   ipcMain.handle("loadNoteIntoActiveTab", (event, selectedNote) => {
     if (!selectedNote || !mainTabs[activeTabIndex]) {

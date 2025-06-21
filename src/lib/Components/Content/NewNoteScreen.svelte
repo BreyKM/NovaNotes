@@ -2,7 +2,7 @@
 import { closeTab, createEmptyNote, activeTabIndexStore } from "../../../store/Store";
 </script>
 
-<div class="relative w-full h-screen flex flex-col justify-center items-center">
+<div class="relative h-screen flex flex-col justify-center items-center">
     <div class="mb-6">
         <div class="text-3xl">No file is open</div>
     </div>
