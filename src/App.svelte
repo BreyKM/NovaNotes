@@ -10,6 +10,7 @@
   import { selectedNoteIndexStore } from "./store/Store";
 
   import { onDrag } from "./lib/placeholder/dragMe";
+  import ContentCopy from "./lib/Components/Content/ContentCopy.svelte";
 
   let width;
   let resizeWidth = width;
@@ -63,7 +64,7 @@
     on:drag={handleDrag}
     on:dragEnd={handleDragEnd}
   />
-  <div class="MainContent w-full h-full overflow-hidden">
+  <div class="MainContent w-full overflow-x-hidden h-full flex flex-col">
     <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
       Live Width: {Math.round(resizeWidth)}px
     </div> -->
@@ -71,7 +72,7 @@
     {#if $selectedNoteIndexStore === null}
       <NewNoteScreen />
     {:else}
-      <Content bind:this={contentContainerRef} />
+      <ContentCopy bind:this={contentContainerRef} />
     {/if}
   </div>
 </main>

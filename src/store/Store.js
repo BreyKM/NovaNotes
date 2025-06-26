@@ -1,6 +1,9 @@
 import { get, writable, derived } from "svelte/store";
-import welcome from "../assets/Welcome.json" assert { type: "json" };
 import { throttle } from "lodash";
+
+const welcome = `This is your new **Notebook**.
+
+When you're ready, delete this note and make the vault your own.`;
 
 //store variables
 export const notesStore = writable([]);
@@ -28,12 +31,15 @@ export const activeTabIndexStore = writable(0);
 export function getNoteContent(note) {
   const cache = get(noteContentCache);
 
+  console.log('cache: ', cache[note.id], note.id)
+
   if (cache[note.id] !== undefined) {
     console.log(`Cache HIT for note: ${note.title}`);
     noteContentStore.set(cache[note.id]);
   } else {
     console.log(`Cache MISS for note: ${note.title}. Reading from disk.`);
     noteContentStore.set("");
+    console.log("getNoteContent: ", note.title);
 
     window.notes.readNote(note.title).then((content) => {
       noteContentStore.set(content);
@@ -127,10 +133,8 @@ export const handleAutoSaving = throttle(
     const selectedNote = get(selectedNoteStore);
     if (!selectedNote) return;
 
-    let jsonString = JSON.stringify(content, null, 2);
-    console.log(jsonString);
     void window.notes
-      .writeNote(selectedNote.title, jsonString)
+      .writeNote(selectedNote.title, content)
       .catch((err) => console.error("Auto-save failed:", err));
   },
   2000,
@@ -159,24 +163,16 @@ export function findNextAvailableTitle(allNotes) {
   return i === 0 ? "Untitled" : `Untitled ${i}`;
 }
 
-
 export async function createEmptyNote() {
   try {
     let notes = get(notesStore);
-
+    console.log("createEmptyNote notes: ", notes);
 
     const title = findNextAvailableTitle(notes);
     console.log(`New note title will be: ${title}`);
     const newNote = {
       title: title,
-      content: `{
-        "type": "doc",
-        "content": [
-          {
-            "type": "paragraph"
-          }
-        ]
-      }`,
+      content: "",
     };
 
     // 1. Create the note file on disk
@@ -185,13 +181,13 @@ export async function createEmptyNote() {
     const newlyCreatedNote = get(notesStore)[0];
 
     if (!newlyCreatedNote) {
-       console.error("Could not find the newly created note after loading.");
-       return;
+      console.error("Could not find the newly created note after loading.");
+      return;
     }
 
-    const allTabs = get(tabStore)
-    const activeIndex =get(activeTabIndexStore)
-    const activeTab = allTabs[activeIndex]
+    const allTabs = get(tabStore);
+    const activeIndex = get(activeTabIndexStore);
+    const activeTab = allTabs[activeIndex];
 
     if (activeTab && activeTab.noteId !== null) {
       console.log("Active tab has a note. Creating a new tab.");
@@ -204,7 +200,6 @@ export async function createEmptyNote() {
     selectedNoteIndexStore.set(0); // Selects the new note in the NotePreviewList
     noteContentStore.set(newNote.content); // Populates the editor with the new note's content
     userInputCurrentNoteTitle.set(newlyCreatedNote.title); // Updates the title input field
-
   } catch (error) {
     console.error("Failed to create a new note: ", error);
   }

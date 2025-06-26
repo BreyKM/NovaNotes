@@ -60,6 +60,7 @@
         selectedNoteIndexStore.set(noteIndexToSelect);
 
         const noteToRead = get(notesStore)[noteIndexToSelect];
+        console.log("noteToRead: ",noteToRead)
         userInputCurrentNoteTitle.set(noteToRead.title);
         getNoteContent(noteToRead);
       }

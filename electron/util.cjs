@@ -72,7 +72,7 @@ module.exports.createWelcomeNote = async (welcomeNote, store) => {
 
   console.log(JSON.stringify(welcomeNote));
 
-  return writeFile(`${rootDir}/welcome.json`, JSON.stringify(welcomeNote), {
+  return writeFile(`${rootDir}/welcome.md`, welcomeNote, {
     encoding: fileEncoding,
   });
 };
@@ -99,7 +99,7 @@ module.exports.getNotes = async (store) => {
     return Promise.resolve([]);
   } else {
     const notes = await notesFileNames.filter((filename) =>
-      filename.endsWith(".json"),
+      filename.endsWith(".md"),
     );
     console.log("notes: ", Promise.resolve(notes));
 
@@ -111,7 +111,7 @@ const getNoteInfo = (rootDir) => async (filename) => {
   const fileStats = await stat(`${rootDir}/${filename}`);
 
   return {
-    title: filename.replace(/\.json$/, ""),
+    title: filename.replace(/\.md$/, ""),
     creationTime: fileStats.birthtimeMs,
     lastEditTime: fileStats.mtimeMs,
     id: fileStats.ino,
@@ -124,14 +124,11 @@ module.exports.createNote = (file) => {
   console.log("createNote filename ", file.title);
   console.log("createNote content ", file.content);
 
-  const noteContent =
-    typeof file.content === "string"
-      ? file.content
-      : JSON.stringify(file.content);
+ 
 
-  console.log("createNote noteContent ", noteContent);
+  console.log("createNote noteContent ", file.content);
 
-  return writeFile(`${rootDir}/${file.title}.json`, noteContent, {
+  return writeFile(`${rootDir}/${file.title}.md`, file.content, {
     encoding: fileEncoding,
   });
 };
@@ -139,8 +136,9 @@ module.exports.createNote = (file) => {
 module.exports.writeNote = (filename, content) => {
   const rootDir = getRootDir();
   console.log("writing file");
+  console.log("WriteNote: ", content)
 
-  return writeFile(`${rootDir}/${filename}.json`, content, {
+  return writeFile(`${rootDir}/${filename}.md`, content, {
     encoding: fileEncoding,
   });
 };
@@ -149,7 +147,7 @@ module.exports.readNote = (filename) => {
   const rootDir = getRootDir();
   console.log("readNote RootDir", rootDir);
 
-  return readJSON(`${rootDir}/${filename}.json`, {
+  return fse.readFile(`${rootDir}/${filename}.md`, {
     encoding: fileEncoding,
   });
 };
@@ -161,8 +159,8 @@ module.exports.renameNote = async (oldTitle, newTitle) => {
     return false;
   }
 
-  const oldPath = path.join(rootDir, `${oldTitle}.json`);
-  const newPath = path.join(rootDir, `${newTitle}.json`);
+  const oldPath = path.join(rootDir, `${oldTitle}.md`);
+  const newPath = path.join(rootDir, `${newTitle}.md`);
 
   console.log(`Attempting to rename: ${oldPath} -> ${newPath}`);
 
@@ -170,7 +168,7 @@ module.exports.renameNote = async (oldTitle, newTitle) => {
     await fse.access(newPath, fse.constants.F_OK);
 
     console.error(
-      `Rename failed: A file named "${newTitle}.json" already exists.`,
+      `Rename failed: A file named "${newTitle}.md" already exists.`,
     );
     return false;
   } catch (error) {
