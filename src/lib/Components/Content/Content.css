@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+
+.milkdown {
+  width:100%;
+}
+
+.milkdown .ProseMirror {
+  white-space: pre-wrap;
+}
+
+.editor {
+  outline: none;
+  margin-top: 1rem;
+}
+
+/* .milkdown .editor h1 {
+  font-size: var(--h1-size);
+}
+
+.milkdown .editor h2 {
+  font-size: var(--h2-size);
+}
+
+.milkdown .editor h3 {
+  font-size: var(--h3-size);
+}
+
+.milkdown .editor h4 {
+  font-size: var(--h4-size);
+}
+
+.milkdown .editor h5 {
+  font-size: var(--h5-size);
+} */
