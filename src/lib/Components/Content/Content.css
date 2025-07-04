@@ -6,6 +6,16 @@
   width:100%;
 }
 
+.milkdown * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.milkdown :focus-visible, .milkdown button:focus, .milkdown input:focus {
+    outline: none;
+}
+
 .milkdown .ProseMirror {
   white-space: pre-wrap;
 }
@@ -15,22 +25,534 @@
   margin-top: 1rem;
 }
 
-/* .milkdown .editor h1 {
+.milkdown .ProseMirror h1 {
   font-size: var(--h1-size);
+  
 }
 
-.milkdown .editor h2 {
+.milkdown .ProseMirror h2 {
   font-size: var(--h2-size);
 }
 
-.milkdown .editor h3 {
+.milkdown .ProseMirror h3 {
   font-size: var(--h3-size);
 }
 
-.milkdown .editor h4 {
+.milkdown .ProseMirror h4 {
   font-size: var(--h4-size);
 }
 
-.milkdown .editor h5 {
+.milkdown .ProseMirror h5 {
   font-size: var(--h5-size);
-} */
+}
+
+.milkdown .ProseMirror hr {
+    background-clip: content-box;
+    height: 13px;
+    position: relative;
+    padding: 6px 0px;
+}
+
+.milkdown .ProseMirror hr {
+    background-color: var(--color-background-secondary-hover);
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+}
+
+.milkdown .ProseMirror blockquote {
+    box-sizing: content-box;
+    margin: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.milkdown .ProseMirror blockquote::before {
+    content: "";
+    background: var(--color-primary);
+    border-radius: 100px;
+    width: 2px;
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0px;
+}
+
+.milkdown .ProseMirror ol,
+.milkdown .ProseMirror ul {
+    padding: 0;
+}
+
+.milkdown .milkdown-list-item-block {
+    padding: 0;
+    display: block;
+}
+
+.milkdown .milkdown-list-item-block>.list-item {
+    display: flex;
+    align-items: flex-start;
+    
+}
+
+.milkdown .milkdown-list-item-block li {
+    gap: 10px;
+}
+
+.ProseMirror li {
+    position: relative;
+}
+
+
+.ProseMirror [draggable][contenteditable=false] {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.milkdown button, .milkdown input {
+    box-shadow: none;
+    background: 0 0;
+    border: none;
+}
+
+
+
+
+
+.ProseMirror table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+}
+
+
+
+.milkdown .milkdown-table-block {
+    margin: 4px 0;
+    display: block;
+}
+
+.milkdown .milkdown-table-block .cell-handle {
+    z-index: 50;
+    cursor: grab;
+    background-color: var(--color-background-table-icons);
+    color: var(--color-text-primary);
+    box-shadow: var(--box-shadow-table-icons);
+    border-radius: 100px;
+    transition: background-color .2s ease-in-out;
+    top: 999px;
+    left: 999px;
+}
+
+.milkdown .milkdown-table-block .cell-handle:hover {
+    opacity: 1;
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group:after {
+    content: "";
+    background-color: #0000;
+    width: 100%;
+    height: 8px;
+    position: absolute;
+    bottom: -8px
+}
+
+.milkdown .milkdown-table-block .cell-handle[data-role=col-drag-handle] {
+    width: 28px;
+    height: 16px;
+    padding: 0 6px;
+    transform: translateY(50%);
+}
+
+.milkdown .milkdown-table-block .cell-handle[data-role=row-drag-handle] {
+    width: 16px;
+    height: 28px;
+    padding: 6px 0;
+    transform: translate(50%);
+}
+
+.milkdown .milkdown-table-block .cell-handle[data-role=row-drag-handle]:hover {
+    opacity: 1;
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group {
+    background-color: var(--color-background-table-icons);
+    box-shadow: var(--box-shadow-table-icons);
+    border-radius: 8px;
+    display: flex;
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group[data-show=false] {
+    display: none;
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group button {
+    cursor: pointer;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    margin: 6px;
+    padding: 4px;
+    display: flex;
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group button:hover {
+    background-color: var(--color-background-nav-hover);
+    border-radius: 8px;
+}
+
+.milkdown .milkdown-table-block .cell-handle .button-group button:active {
+    background: var(--color-primary);
+}
+
+
+
+
+
+.milkdown .milkdown-table-block .drag-preview {
+    background-color: var(--color-background-table-icons);
+    opacity: .4;
+    z-index: 100;
+    outline: 1px solid var(--color-primary);
+    outline-offset: -1px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+}
+
+.milkdown .milkdown-table-block .drag-preview[data-show=false] {
+    display: none;
+}
+
+
+
+
+
+
+
+.milkdown .milkdown-table-block .line-handle[data-role=x-line-drag-handle] {
+    z-index: 2;
+    height: 2px;
+}
+
+.milkdown .milkdown-table-block .line-handle[data-role=y-line-drag-handle] {
+    z-index: 1;
+    width: 2px;
+}
+
+.milkdown .milkdown-table-block .handle[data-show=false] {
+    opacity: 0;
+}
+
+.milkdown .milkdown-table-block .line-handle {
+    z-index: 20;
+    background-color: var(--color-primary);
+}
+
+.milkdown .milkdown-table-block .line-handle:hover {
+    opacity: 1;
+}
+
+.milkdown .milkdown-table-block .handle {
+    font-size: 14px;
+    transition: opacity .2s ease-in-out;
+    position: absolute;
+}
+
+
+
+.milkdown .milkdown-table-block .line-handle .add-button {
+    cursor: pointer;
+    background-color: var(--color-background-table-icons);
+    color: var(--color-text-primary);
+    box-shadow: var(--box-shadow-table-icons);
+    border-radius: 100px;
+    transition: background-color .2s ease-in-out;
+}
+
+.milkdown .milkdown-table-block .line-handle[data-role=x-line-drag-handle] .add-button {
+    width: 16px;
+    height: 28px;
+    padding: 6px 0;
+    position: absolute;
+    transform: translate(-50%) translateY(-50%);
+}
+
+.milkdown .milkdown-table-block .line-handle[data-role=y-line-drag-handle] .add-button {
+    width: 28px;
+    height: 16px;
+    padding: 0 6px;
+    position: absolute;
+    transform: translateY(-50%) translate(-50%);
+}
+
+
+
+.milkdown .milkdown-icon {
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+}
+
+.ProseMirror td, .ProseMirror th {
+    vertical-align: top;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.milkdown .milkdown-table-block td,
+.milkdown .milkdown-table-block th {
+    border: 1px solid color-mix(in srgb, var(--color-background-nav-hover), transparent 80%);
+}
+
+.milkdown .milkdown-table-block td,
+.milkdown .milkdown-table-block th {
+    padding: 4px 16px;
+}
+
+
+
+/* code block */
+
+.milkdown .milkdown-code-block {
+    background: var(--color-background-code-block);
+    margin: 4px 0;
+    padding: 8px 20px 20px;
+    display: block;
+    position: relative;
+}
+
+.milkdown .milkdown-code-block .cm-editor {
+    background: var(--color-background-code-block);
+}
+
+.milkdown .milkdown-code-block .cm-gutters {
+    background: var(--color-background-code-block);
+    border-right: none;
+}
+
+.cm-editor {
+    height: 100%;
+}
+
+.cm-scroller {
+    scroll-behavior: auto;
+}
+
+
+
+
+
+.milkdown .milkdown-code-block .tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.milkdown .milkdown-code-block .tools .language-button {
+    font-family: var(--font-main);
+    background: var(--color-background-secondary);
+    opacity: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    padding: 2px 4px 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    transition: opacity .2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.milkdown .milkdown-code-block .tools .tools-button-group button {
+    display: flex;
+    cursor: pointer;
+    opacity: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    justify-content: center;
+    align-items: center;
+    background: var(--color-background-secondary-hover);
+    border-radius: 4px;
+    gap: 4px;
+    padding: 4px 10px;
+    transition: opacity 0.2s ease-in-out;
+}
+
+
+
+.milkdown .milkdown-code-block .tools .language-button .expand-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    transition: transform .2s ease-in-out;
+}
+
+.milkdown .milkdown-code-block .tools .language-button[data-expanded=true] .expand-icon {
+    transform: rotate(180deg);
+}
+
+
+
+
+
+
+
+.milkdown .milkdown-code-block:hover .language-button, .milkdown .milkdown-code-block:hover .tools-button-group>button {
+    opacity: 1;
+}
+
+.milkdown .milkdown-code-block .language-picker {
+    z-index: 999;
+    width: max-content;
+    padding-top: 10px;
+    position: absolute;
+}
+
+.milkdown .milkdown-code-block .list-wrapper {
+    background: var(--color-background-code-block);
+    box-shadow: var(--box-shadow-table-icons);
+    border-radius: 12px;
+    width: 240px;
+    padding-top: 12px;
+}
+
+ /* CODE BLOCK SEARCH */
+
+.milkdown .milkdown-code-block .search-box {
+    outline: 1px solid var(--color-primary);
+    background: 0 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 12px 8px;
+    padding: 6px 10px;
+}
+
+.milkdown .milkdown-code-block .search-box .search-icon {
+    display: none;
+}
+
+.milkdown .milkdown-code-block .search-box .search-input {
+    width: 100%;
+}
+
+.milkdown .milkdown-code-block .search-box input {
+    background: 0 0;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.milkdown .milkdown-code-block .search-box .clear-icon {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.milkdown .milkdown-code-block .hidden {
+    display: none !important;
+}
+
+
+ /* CODE BLOCK SEARCH LIST */
+
+.milkdown .milkdown-code-block .language-list {
+    overscroll-behavior: contain;
+    max-height: min(410px, 50vh);
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+}
+
+.milkdown .milkdown-code-block .language-list-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 4px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.milkdown .milkdown-code-block .language-list-item:hover {
+    background: var(--color-background-primary);
+}
+
+
+
+
+
+
+
+
+.milkdown .milkdown-code-block .tools .tools-button-group {
+    gap: 2px;
+    display: flex;
+}
+
+
+.milkdown .milkdown-code-block .tools .tools-button-group button:first-child {
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+}
+
+.milkdown .milkdown-code-block .tools .tools-button-group button:last-child {
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+}
+
+.milkdown .milkdown-code-block .tools .tools-button-group button svg {
+    width: 14px;
+    height: 14px;
+}
+
+
+
+
+.milkdown .ProseMirror code {
+    font-size: 87.5%;
+    line-height: 1.4286;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0px 2px;
+    color: var(--color-text-inline-code);
+    background: var(--color-background-code-block)
+}
+
+.milkdown .ProseMirror a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.ProseMirror a[href]::after {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    vertical-align:text-top;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    filter: invert(50%);
+
+}
+
+
+

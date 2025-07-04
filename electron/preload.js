@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, shell } = require("electron");
 
 const api = {
   node: () => process.versions.node,
@@ -38,6 +38,8 @@ contextBridge.exposeInMainWorld("main", {
   openMainWindow: () => ipcRenderer.send("open-main-window"),
 
   getActiveFolder: () => ipcRenderer.invoke("getActiveFolder"),
+
+  openLink: (...args) => ipcRenderer.invoke("openLink", ...args),
 });
 
 contextBridge.exposeInMainWorld("notes", {

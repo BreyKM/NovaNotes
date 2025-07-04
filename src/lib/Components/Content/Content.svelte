@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
   import { onMount, onDestroy, afterUpdate } from "svelte";
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
@@ -182,4 +182,4 @@
     class="editor-container relative w-full h-screen overflow-y-auto"
     bind:this={element}
   ></div>
-</div>
+</div> -->

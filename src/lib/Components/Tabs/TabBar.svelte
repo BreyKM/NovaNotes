@@ -91,7 +91,7 @@
 </script>
 
 <div
-  class="tab-bar fixed top-0 flex items-end z-11 h-10 w-6/10 max-w-6/10 overflow-x-hidden overflow-hidden mr-10 rounded-t"
+  class="tab-bar flex items-end z-11 h-10 w-6/10 max-w-6/10 overflow-x-hidden overflow-hidden mr-10 rounded-t"
 >
   {#each $tabStore as tab, i}
     <Tab

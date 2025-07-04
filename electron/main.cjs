@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const { log } = require("console");
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const path = require("path");
 const fse = require("fs-extra");
 const ElectronStore = require("./electronStore.cjs");
@@ -218,6 +218,24 @@ app.whenReady().then(() => {
   ipcMain.handle("writeNote", (_, ...args) => writeNote(...args));
 
   ipcMain.handle("renameNote", (_, ...args) => renameNote(...args));
+
+
+
+  ipcMain.handle("openLink", (_, url) => {
+    try {
+      const parsedUrl = new URL(url);
+      if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
+        return shell.openExternal(url)
+      } else {
+        console.error("Invalid protocol: ", parsedUrl.protocol);
+        return false;
+      }
+    } catch (error) {
+      console.error("Invalid URL: ", url, error);
+      return false;
+    }
+  }) 
+
 
   function broadcastTabUpdate() {
     if (mainWindow) {

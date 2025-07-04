@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
@@ -9,7 +10,7 @@
 @theme {
 
   /* Fonts */
-  --font-main: "Outfit", sans-serif;
+  --font-main: "Epilogue", sans-serif;
 
   /* Colors */
   --color-primary: #3E92CC;
@@ -34,6 +35,13 @@
 
   --color-background-nav: #3D3D3D;
   --color-background-nav-hover: #757575;
+
+  --color-background-table-icons: #0F0F0F;
+  --box-shadow-table-icons: 0px 1px 2px 0px #ffffff4d, 0px 1px 3px 1px #ffffff26;
+
+  --color-background-code-block: #111418;
+
+  --color-text-inline-code: #E28780;
 
   
   --color-test: #3E92CC;
@@ -80,28 +88,24 @@
   -webkit-text-size-adjust: 100%;
 }
 
-.nav-container {
-    
-    height: 40px;
-    -webkit-app-region: drag;
-    top: 0;
+.titlebar-title {
+ -webkit-app-region: drag;
 }
+
 
 nav *:not(div) {
     -webkit-app-region: no-drag;
 }
 
 .tab-bar {
-  position: fixed;
-  top: 0;
+  position: relative;
   display: flex;
   align-items: flex-end;
   z-index: 11;
   height: 40px;
   width: 60%;
   max-width: 60%;
-  overflow-x: auto;
-  overflow: hidden;
+
 }
 .tab {
   -webkit-app-region: no-drag;
@@ -145,16 +149,9 @@ nav *:not(div) {
   background-color: #4d4d4d;
 }
 
-.tab-close,
-.tab-text {
-  padding: 6px;
-}
-.tab-text {
-  width: calc(100% - 20px);
-  min-width: 0;
-}
-.tab-close {
-}
+
+
+
 
 .tab.active {
   background: linear-gradient(

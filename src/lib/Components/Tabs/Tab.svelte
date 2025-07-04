@@ -36,16 +36,16 @@
   aria-label="tab"
 >
   <div
-    class="inner sides left cursor-pointer h-[calc(32px*0.8)] basis-2 min-w-0"
+    class="inner sides left cursor-pointer h-[calc(32px*0.8)] basis-2 min-w-10"
   ></div>
   <div
-    class="inner center cursor-pointer h-[calc(32px*0.8)] flex items-center basis-44 rounded-lg min-w-0 hover:bg-background-nav-hover"
+    class="inner center cursor-pointer h-[calc(32px*0.8)] p-1.5 flex basis-44 rounded-lg min-w-0 hover:bg-background-nav-hover"
   >
-    <div class="tab-text w-[calc(100%-20px)] min-w-0 p-1.5 truncate">
+    <div class="tab-text w-[calc(100%-20px)] truncate">
       {title}
     </div>
 
-    <div class="tab-close p-1.5">
+    <div class="tab-close">
       <span>
         <svg
           class="tab-close-svg"

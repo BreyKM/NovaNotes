@@ -48,8 +48,9 @@
   let contentContainerRef = null;
 </script>
 
-<Nav />
+
 <main class="relative flex h-screen overflow-hidden">
+  <Nav />
   <MainSideBar
     bind:containerElement={mainSideBarRef}
     style="width:{resizeWidth}px; flex-shrink: 0;"
