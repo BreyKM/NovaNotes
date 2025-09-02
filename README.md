@@ -1,54 +1,56 @@
-# Vite + Svelte + Electron + Tailwind
 
-## 🚀 Description
-The "Vite + Svelte + Electron + Tailwind" repository is a powerful template designed to streamline the development process of modern applications. By leveraging the combined strengths of Vite, Svelte, Electron, and Tailwind CSS, this template provides an efficient and flexible foundation for building cross-platform desktop applications with a delightful user interface.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0de2fa9e-8f97-4a73-bbd3-07c0b56b643f" />
+</p>
 
-## 🧋 Technologies
-[Vite](https://vitejs.dev/): Vite is a lightning-fast build tool for web applications. It optimizes the development experience with near-instantaneous hot module replacement (HMR) and an efficient build process.
+<h1 align="center">Nova Notes </h1> 
+<hr>
+<h3>A minimalist markdown editor built with Electron, Svelte, and Tailwind CSS. My goal was to build a distraction-free, cross-platform desktop application that prioritizes a local-first workflow and a seamless writing experience. 
+  Throughout the development process, I faced challenges such as getting the tabs, the sidebar, and the main editor to all stay in sync, verifying directory accessibility, and building a robust auto-save feature.</h3>
+<br>
 
-[Svelte](https://svelte.dev/): Svelte is a revolutionary JavaScript framework that compiles your code to highly efficient JavaScript at build time. It offers a refreshing approach to building web applications by eliminating runtime overhead and delivering exceptional performance.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/53c71aed-af52-453b-9354-adaeed361ad2" />
+</p>
 
-[Electron](https://www.electronjs.org/): Electron enables the development of desktop applications using web technologies. It brings the power of Node.js and Chromium to build cross-platform apps with ease.
 
-[Tailwind](https://tailwindcss.com/): Tailwind CSS is a utility-first CSS framework that empowers developers to rapidly build custom user interfaces. With its extensive set of utility classes, Tailwind CSS enables you to create visually stunning and responsive designs effortlessly.
+## Features
 
-## 👨‍💻 Installation and Usage
-To get started with building your app using this template, follow these simple steps (assuming you already have [Node.js](https://nodejs.org/) installed):
+<h3 align="center">
+  Local File Storage 💾: All your markdown files are stored directly on your own computer, giving you complete control and privacy over your data.
+</h3>
 
-Get a copy of this template by running the following command: 
-```bash
-npx degit feernandobraga/vitesvelctron my-app-name
-```
-Alternatively, you can clone the repo instead:
-```bash
-git clone https://github.com/feernandobraga/vitesvelctron
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9cf05b67-da76-43f9-840c-e84f221bb6ec"
+</p>
 
-Next, cd into the project directory and install the dependencies:
-```bash
-cd my-app-name
-npm install
-```
+<h3 align="center">
+  Live Preview 👀: See your markdown rendered in real time as you type, allowing you to quickly visualize how your content will look.
+</h3>
 
-Finally, start the development server:
-```bash
-npm run dev
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bf0a0393-fa6f-403c-aa41-11a679005d1f"
+</p>
 
-When your app is ready, you can build by running the following command:
-```bash
-npm run make
-```
+<h3 align="center">
+  Tabs Support: Open multiple markdown files at once or even multiple instances of the same file, all within a single application window.
+</h3>
 
-## 🍑 Donation
-If you are feeling generous or if you found this template helpful because it saved you a lot of time and headaches, you can contribute by buying me a coffee!
+<h3 align="center">
+  Directory Management 📂: Easily manage and access multiple markdown files within a single directory, keeping your projects organized and accessible.
+</h3>
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95%EF%B8%8F-orange)](https://www.buymeacoffee.com/feernandobraga)
+<h3 align="center">
+  Cross-Platform Native Experience 💻: Built on Electron, which allows for a native-like feel across different operating systems while leveraging standard web technologies.
+</h3>
 
-Thank you for considering a donation. Your support is greatly appreciated! 🧡
+## Tech Stack
 
-## 🧙‍♂️ Contributing 
-Contributions are always welcome! If you find any bugs, have feature requests, or would like to contribute in any other way, please feel free to open an issue or submit a pull request.
+### Electron: The core framework for building the cross-platform desktop application using web technologies.
 
-## 📝 License
-This project is licensed under the MIT License.
+### Svelte: The JavaScript framework used to build a highly reactive and performant user interface.
+
+### CodeMirror: The foundation for the editor pane, providing powerful features for syntax highlighting and text manipulation.
+
+### Tailwind CSS: The utility-first CSS framework I used to rapidly design the clean and minimalist UI.
+
