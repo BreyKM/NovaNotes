@@ -49,9 +49,10 @@
 </script>
 
 
-<main class="relative flex h-screen overflow-hidden">
+<main class="relative flex flex-col h-screen overflow-hidden">
   <Nav />
-  <MainSideBar
+  <div class="content-wrapper flex w-full h-full">
+    <MainSideBar
     bind:containerElement={mainSideBarRef}
     style="width:{resizeWidth}px; flex-shrink: 0;"
   />
@@ -76,6 +77,8 @@
       <ContentCopy bind:this={contentContainerRef} />
     {/if}
   </div>
+  </div>
+  
 </main>
 
 <style>

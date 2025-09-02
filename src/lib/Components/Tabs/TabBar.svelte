@@ -11,27 +11,27 @@
     isSwitchingTabs,
     userInputCurrentNoteTitle,
     activeTabIndexStore,
-    closeTab
+    closeTab,
   } from "../../../store/Store";
   import { get } from "svelte/store";
 
   onMount(() => {
     window.tab.getTabs().then(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
-      activeTabIndexStore.set(activeIndex)
+      activeTabIndexStore.set(activeIndex);
       syncContentView(activeIndex, false);
     });
 
     window.tab.onTabsUpdated(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
-      activeTabIndexStore.set(activeIndex)
+      activeTabIndexStore.set(activeIndex);
       syncContentView(activeIndex, false);
     });
   });
 
-//   function handleTabClick(index) {
-//     syncContentView(index, true);
-//   }
+  //   function handleTabClick(index) {
+  //     syncContentView(index, true);
+  //   }
 
   async function syncContentView(index, isDirectClick) {
     isSwitchingTabs.set(true);
@@ -50,7 +50,7 @@
       window.tab.activeTabIndex(index);
     }
 
-    noteContentStore.set("")
+    noteContentStore.set("");
     if (tabToSync.noteId) {
       const noteIndexToSelect = get(notesStore).findIndex(
         (note) => note.id === tabToSync.noteId,
@@ -60,7 +60,7 @@
         selectedNoteIndexStore.set(noteIndexToSelect);
 
         const noteToRead = get(notesStore)[noteIndexToSelect];
-        console.log("noteToRead: ",noteToRead)
+        console.log("noteToRead: ", noteToRead);
         userInputCurrentNoteTitle.set(noteToRead.title);
         getNoteContent(noteToRead);
       }
@@ -72,18 +72,18 @@
     isSwitchingTabs.set(false);
   }
 
-//   export function handleCloseTab(index) {
-//     if ($tabStore.length <= 1) return;
+  //   export function handleCloseTab(index) {
+  //     if ($tabStore.length <= 1) return;
 
-//     const updatedTabs = $tabStore.filter((_, i) => i !== index);
+  //     const updatedTabs = $tabStore.filter((_, i) => i !== index);
 
-//     const newActiveIndex =
-//       activeTab >= index && activeTab > 0 ? activeTab - 1 : activeTab;
+  //     const newActiveIndex =
+  //       activeTab >= index && activeTab > 0 ? activeTab - 1 : activeTab;
 
-//     window.tab.updateTabs(updatedTabs);
+  //     window.tab.updateTabs(updatedTabs);
 
-//     window.tab.activeTabIndex(newActiveIndex);
-//   }
+  //     window.tab.activeTabIndex(newActiveIndex);
+  //   }
 
   async function createTab() {
     await window.tab.createTab();
@@ -91,7 +91,7 @@
 </script>
 
 <div
-  class="tab-bar flex items-end z-11 h-10 w-6/10 max-w-6/10 overflow-x-hidden overflow-hidden mr-10 rounded-t"
+  class="tab-bar flex items-end z-11 w-6/10 max-w-6/10 overflow-hidden mr-10 rounded-t"
 >
   {#each $tabStore as tab, i}
     <Tab

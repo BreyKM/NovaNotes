@@ -284,3 +284,5 @@ export async function renameNote() {
     console.error("Error renaming note: ", error);
   }
 }
+
+

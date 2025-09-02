@@ -100,9 +100,8 @@ nav *:not(div) {
 .tab-bar {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  height: 44px;
   z-index: 11;
-  height: 40px;
   width: 60%;
   max-width: 60%;
 
@@ -166,7 +165,7 @@ nav *:not(div) {
 }
 .tab.active,
 .tab.active > .inner {
-  height: 32px;
+  height: 36px;
   margin-top: -3px;
 }
 .tab.active > .sides {
