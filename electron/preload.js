@@ -69,7 +69,8 @@ contextBridge.exposeInMainWorld("tab", {
 
   createTab: () => ipcRenderer.send("createTab"),
 
-  createTabForNewNote: (note) => ipcRenderer.invoke('createTabForNewNote', note),
+  createTabForNewNote: (note) =>
+    ipcRenderer.invoke("createTabForNewNote", note),
 
   onTabsUpdated: (callback) => {
     const listener = (_e, v) => callback(v);

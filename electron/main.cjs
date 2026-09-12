@@ -187,7 +187,6 @@ app.whenReady().then(() => {
 
       ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
 
-
       console.log("pathTest", NewNotebookPathName);
       return {
         fullPath: NewNotebookFullPath,
@@ -219,13 +218,11 @@ app.whenReady().then(() => {
 
   ipcMain.handle("renameNote", (_, ...args) => renameNote(...args));
 
-
-
   ipcMain.handle("openLink", (_, url) => {
     try {
       const parsedUrl = new URL(url);
       if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
-        return shell.openExternal(url)
+        return shell.openExternal(url);
       } else {
         console.error("Invalid protocol: ", parsedUrl.protocol);
         return false;
@@ -234,8 +231,7 @@ app.whenReady().then(() => {
       console.error("Invalid URL: ", url, error);
       return false;
     }
-  }) 
-
+  });
 
   function broadcastTabUpdate() {
     if (mainWindow) {
@@ -271,10 +267,9 @@ app.whenReady().then(() => {
 
   ipcMain.handle("createTabForNewNote", (event, newNote) => {
     if (!newNote || !newNote.id || !newNote.title) {
-      console.error("createTabForNewNote called with invalid note object.")
+      console.error("createTabForNewNote called with invalid note object.");
       return;
     }
-
 
     const newTab = {
       tabId: Date.now() + Math.random(),
@@ -282,13 +277,15 @@ app.whenReady().then(() => {
       title: newNote.title,
     };
 
-    mainTabs.push(newTab)
-    activeTabIndex = mainTabs.length - 1
+    mainTabs.push(newTab);
+    activeTabIndex = mainTabs.length - 1;
 
-    console.log(`Main: Created new tab for note '${newNote.title}' and set it as active index ${activeTabIndex}'`);
+    console.log(
+      `Main: Created new tab for note '${newNote.title}' and set it as active index ${activeTabIndex}'`,
+    );
 
-    broadcastTabUpdate()
-  })
+    broadcastTabUpdate();
+  });
 
   ipcMain.handle("loadNoteIntoActiveTab", (event, selectedNote) => {
     if (!selectedNote || !mainTabs[activeTabIndex]) {
@@ -316,7 +313,7 @@ app.whenReady().then(() => {
     if (index >= 0 && index < mainTabs.length) {
       activeTabIndex = index;
       console.log("MAIN: activeTabIndex", activeTabIndex);
-      broadcastTabUpdate()
+      broadcastTabUpdate();
     }
   });
 
@@ -335,5 +332,3 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
-
-
