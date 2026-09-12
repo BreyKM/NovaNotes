@@ -37,11 +37,11 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.5.3",
+    "prettier-plugin-svelte": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.6.12",
     "svelte": "^5.19.5",
     "tailwindcss": "^4.0.0",
-    "vite": "^6.0.11",
-    "vite-plugin-markdown": "^2.2.0"
+    "vite": "^6.0.11"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
@@ -55,8 +55,6 @@
     "highlight.js": "^11.11.1",
     "lodash": "^4.17.21",
     "lowlight": "^3.3.0",
-    "marked": "^15.0.12",
-    "svelte-tiptap": "^2.1.0",
     "valid-filename": "^4.0.0"
   }
 }
