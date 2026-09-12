@@ -31,23 +31,23 @@
 </script>
 
 <div
-  class="note-preview-list-container overflow-y-auto ml-2 mr-0.5 pr-2 text-sm flex flex-col
-    [&::-webkit-scrollbar]:w-2
+  class="note-preview-list-container dark:[&::-webkit-scrollbar-thumb]:bg-background-nav mr-0.5 ml-2 flex flex-col overflow-y-auto pr-2
+    text-sm
     [&::-webkit-scrollbar]:m-3
-  [&::-webkit-scrollbar-track]:bg-transparent
+  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-thumb]:rounded-full
   [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-transparent
-  dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
   [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-thumb]:rounded-full"
+  [&::-webkit-scrollbar-track]:bg-transparent
+  dark:[&::-webkit-scrollbar-track]:bg-transparent"
 >
   <ul>
     {#if isLoading}
-      <p class="flex justify-center items-center w-full h-full text-2xl">
+      <p class="flex h-full w-full items-center justify-center text-2xl">
         Loading...
       </p>
     {:else if isEmpty($notesStore)}
-      <p class="flex justify-center items-center w-full h-full text-2xl">
+      <p class="flex h-full w-full items-center justify-center text-2xl">
         No notes yet!
       </p>
     {:else}

@@ -74,7 +74,7 @@
 </script>
 
 <main class="starter-container flex">
-  <div class="left-container flex w-1/3 h-screen bg-background-secondary">
+  <div class="left-container bg-background-secondary flex h-screen w-1/3">
     <div class="recent-folder-container mx-2 my-5">
       <ul class="list">
         <li>Blank</li>
@@ -84,20 +84,20 @@
     </div>
   </div>
   <!-- Vertical Divider -->
-  <div class="vertical-divider w-px bg-divider h-screen"></div>
+  <div class="vertical-divider bg-divider h-screen w-px"></div>
   <div
-    class="main-container w-full overflow-hidden relative flex flex-row mx-10"
+    class="main-container relative mx-10 flex w-full flex-row overflow-hidden"
   >
     {#if showContentA}
       <div
-        class="content-block absolute w-full h-full content-a flex flex-col justify-center"
+        class="content-block content-a absolute flex h-full w-full flex-col justify-center"
         in:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
         out:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
       >
-        <div class="flex flex-col my-2 items-center">
+        <div class="my-2 flex flex-col items-center">
           <button
             onclick={showNextContent}
-            class="btn-primary w-24 h-24 mb-6 bg-primary hover:bg-primary-hover flex items-center justify-center"
+            class="btn-primary bg-primary hover:bg-primary-hover mb-6 flex h-24 w-24 items-center justify-center"
             aria-label="Add folder icon"
             ><svg
               width="4rem"
@@ -115,15 +115,15 @@
               />
             </svg></button
           >
-          <div class="flex flex-col items-center w-64">
+          <div class="flex w-64 flex-col items-center">
             <div class="text-base">Create a new NoteBook</div>
             <div class="text-xs">Create a new folder to store notes in.</div>
           </div>
         </div>
-        <div class="horizontal-divider h-px bg-divider my-6"></div>
-        <div class="flex flex-col my-2 justify-between items-center">
+        <div class="horizontal-divider bg-divider my-6 h-px"></div>
+        <div class="my-2 flex flex-col items-center justify-between">
           <button
-            class="btn-primary w-24 h-24 mb-6 bg-background-secondary hover:bg-background-secondary-hover flex items-center justify-center"
+            class="btn-primary bg-background-secondary hover:bg-background-secondary-hover mb-6 flex h-24 w-24 items-center justify-center"
             aria-label="open folder icon"
           >
             <svg
@@ -141,7 +141,7 @@
               />
             </svg></button
           >
-          <div class="flex flex-col items-center w-64">
+          <div class="flex w-64 flex-col items-center">
             <div class="text-base">Open an existing NoteBook</div>
             <div class="text-xs">This is the initial content.</div>
           </div>
@@ -151,13 +151,13 @@
 
     {#if !showContentA}
       <div
-        class="content-block absolute w-full h-full content-b flex flex-col justify-center items"
+        class="content-block content-b items absolute flex h-full w-full flex-col justify-center"
         in:fly={{ x: "100%", duration: 300, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 300, easing: quadInOut }}
       >
         <button
           onclick={showPreviousContent}
-          class="flex items-center hover:cursor-pointer w-fit h-fit group"
+          class="group flex h-fit w-fit items-center hover:cursor-pointer"
         >
           <svg
             width="1.5rem"
@@ -178,24 +178,24 @@
         </button>
 
         <div class="my-2 text-4xl">Create new notebook</div>
-        <div class="horizontal-divider h-px bg-divider my-1"></div>
-        <div class="flex my-5 justify-between items-center">
+        <div class="horizontal-divider bg-divider my-1 h-px"></div>
+        <div class="my-5 flex items-center justify-between">
           <div class="w-64">
             <div class="text-lg">Name your notebook</div>
             <div class="text-sm">Pick a name for your new notebook.</div>
           </div>
 
           <input
-            class="w-48 bg-background-secondary rounded-sm px-2 py-2 text-sm"
+            class="bg-background-secondary w-48 rounded-sm px-2 py-2 text-sm"
             bind:value={userInputNotebookName}
             placeholder="Notebook name"
           />
         </div>
-        <div class=" flex my-5 justify-between items-center">
+        <div class=" my-5 flex items-center justify-between">
           <div class="w-64">
             <div class="text-lg">Location</div>
             {#if $rootNotebookDirPathStore != null}
-              <div class="text-sm wrap-break-word text-primary">
+              <div class="text-primary text-sm wrap-break-word">
                 {$rootNotebookDirPathStore}
               </div>
             {:else}
@@ -207,7 +207,7 @@
             onclick={() => {
               rootDirSelection();
             }}
-            class="rounded-md hover:cursor-pointer shadow-md h-8 w-24 bg-background-secondary hover:bg-background-secondary-hover"
+            class="bg-background-secondary hover:bg-background-secondary-hover h-8 w-24 rounded-md shadow-md hover:cursor-pointer"
             >Browse</button
           >
         </div>
@@ -227,14 +227,14 @@
               window.main.openMainWindow();
             }
           }}
-          class="rounded-md shadow-md h-8 w-24 hover:cursor-pointer bg-primary hover:bg-primary-hover self-center"
+          class="bg-primary hover:bg-primary-hover h-8 w-24 self-center rounded-md shadow-md hover:cursor-pointer"
           >Create</button
         >
       </div>
     {/if}
     {#if isNotebookNameValidPopupShow === true}
       <div
-        class="invalid-directory absolute top-4 right-0 p-2 text-sm rounded-lg bg-background-error shadow-lg"
+        class="invalid-directory bg-background-error absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >
@@ -243,7 +243,7 @@
     {/if}
     {#if isFilePathMissingPopupShow === true}
       <div
-        class="invalid-filePath absolute top-4 right-0 p-2 text-sm rounded-lg bg-background-error shadow-lg"
+        class="invalid-filePath bg-background-error absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >

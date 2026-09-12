@@ -20,11 +20,11 @@
 
 <div
   bind:this={containerElement}
-  class="flex flex-col left-container min-w-1/5 max-w-3/4 h-100% bg-background-secondary"
+  class="left-container h-100% bg-background-secondary flex max-w-3/4 min-w-1/5 flex-col"
   {style}
 >
   <div
-    class="titlebar-title flex h-10 text-center text-[1.75rem] px-3 bg-background-nav z-100"
+    class="titlebar-title bg-background-nav z-100 flex h-10 px-3 text-center text-[1.75rem]"
   >
     <svg
       width="40"
@@ -197,13 +197,13 @@
         />
       </g>
     </svg>
-    <div class="text-center ml-2 mt-1 h-full self-center">Nova</div>
+    <div class="mt-1 ml-2 h-full self-center text-center">Nova</div>
   </div>
-  <div class="sidebar-main flex flex-col relative overflow-hidden isolate">
+  <div class="sidebar-main relative isolate flex flex-col overflow-hidden">
     <div class="Notebook-name-container mx-2 my-2">
       {#if $ActiveNoteBookNameStore}
         <div
-          class=" text-sm hover:bg-background-secondary-hover py-px px-2 rounded-sm hover:cursor-pointer"
+          class=" hover:bg-background-secondary-hover rounded-sm px-2 py-px text-sm hover:cursor-pointer"
         >
           {$ActiveNoteBookNameStore}
         </div>
@@ -211,10 +211,10 @@
         <p>Loading...</p>
       {/if}
     </div>
-    <div class="new-icons flex self-center justify-center">
+    <div class="new-icons flex justify-center self-center">
       <button
         on:click={createEmptyNote}
-        class=" create-note flex items-center justify-center p-1 hover:bg-background-secondary-hover hover:cursor-pointer rounded-md"
+        class=" create-note hover:bg-background-secondary-hover flex items-center justify-center rounded-md p-1 hover:cursor-pointer"
         aria-label="Add folder icon"
       >
         <svg

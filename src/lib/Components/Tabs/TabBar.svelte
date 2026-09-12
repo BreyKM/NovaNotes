@@ -91,7 +91,7 @@
 </script>
 
 <div
-  class="tab-bar flex items-end z-11 w-6/10 max-w-6/10 overflow-hidden mr-10 rounded-t"
+  class="tab-bar z-11 mr-10 flex w-6/10 max-w-6/10 items-end overflow-hidden rounded-t"
 >
   {#each $tabStore as tab, i}
     <Tab
@@ -103,7 +103,7 @@
   {/each}
   <button
     aria-label="create Tab"
-    class="mb-1 ml-2 hover:bg-background-nav-hover rounded z-[999] new-tab-btn p-0.5"
+    class="hover:bg-background-nav-hover new-tab-btn z-[999] mb-1 ml-2 rounded p-0.5"
     onclick={createTab}
     ><svg
       xmlns="http://www.w3.org/2000/svg"

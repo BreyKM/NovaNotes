@@ -47,9 +47,9 @@
   let contentContainerRef = null;
 </script>
 
-<main class="relative flex flex-col h-screen overflow-hidden">
+<main class="relative flex h-screen flex-col overflow-hidden">
   <Nav />
-  <div class="content-wrapper flex w-full h-full">
+  <div class="content-wrapper flex h-full w-full">
     <MainSideBar
       bind:containerElement={mainSideBarRef}
       style="width:{resizeWidth}px; flex-shrink: 0;"
@@ -64,7 +64,7 @@
       on:drag={handleDrag}
       on:dragEnd={handleDragEnd}
     />
-    <div class="MainContent w-full overflow-x-hidden h-full flex flex-col">
+    <div class="MainContent flex h-full w-full flex-col overflow-x-hidden">
       <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
       Live Width: {Math.round(resizeWidth)}px
     </div> -->

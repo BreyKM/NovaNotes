@@ -7,12 +7,12 @@
 </script>
 
 <div
-  class="relative h-full flex flex-col justify-center items-center overflow-y-auto overflow-x-hidden mt-10"
+  class="relative mt-10 flex h-full flex-col items-center justify-center overflow-x-hidden overflow-y-auto"
 >
   <div class="mb-6">
     <div class="text-3xl">No file is open</div>
   </div>
-  <div class="mb-4 text-md">
+  <div class="text-md mb-4">
     <button
       class="text-primary hover:cursor-pointer"
       on:click={() => createEmptyNote()}
