@@ -31,7 +31,7 @@ export const activeTabIndexStore = writable(0);
 export function getNoteContent(note) {
   const cache = get(noteContentCache);
 
-  console.log('cache: ', cache[note.id], note.id)
+  console.log("cache: ", cache[note.id], note.id);
 
   if (cache[note.id] !== undefined) {
     console.log(`Cache HIT for note: ${note.title}`);
@@ -284,5 +284,3 @@ export async function renameNote() {
     console.error("Error renaming note: ", error);
   }
 }
-
-

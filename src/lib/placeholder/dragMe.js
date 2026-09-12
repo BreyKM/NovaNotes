@@ -3,37 +3,38 @@ export const onDrag = (node, params) => {
   let dragStart = null;
   let currentParams = params;
 
-
-  const attr = currentParams.orientation === 'vertical' ? 'screenX' : 'screenY';
+  const attr = currentParams.orientation === "vertical" ? "screenX" : "screenY";
 
   const mouseMoveHandler = (e) => {
     if (dragStart !== null) {
       const initialWidth = currentParams.initialWidth;
       const delta = e[attr] - dragStart;
-      node.dispatchEvent(new CustomEvent('drag', { detail: { delta, initialWidth } }));
+      node.dispatchEvent(
+        new CustomEvent("drag", { detail: { delta, initialWidth } }),
+      );
     }
   };
-  
+
   const mouseUpAction = () => {
     dragStart = null;
-    node.dispatchEvent(new CustomEvent('dragEnd'));
+    node.dispatchEvent(new CustomEvent("dragEnd"));
 
- 
-    document.removeEventListener('mousemove', mouseMoveHandler);
-    document.removeEventListener('mouseup', mouseUpAction);
+    document.removeEventListener("mousemove", mouseMoveHandler);
+    document.removeEventListener("mouseup", mouseUpAction);
   };
-  
+
   const mouseDownAction = (e) => {
     e.preventDefault();
     dragStart = e[attr];
-    node.dispatchEvent(new CustomEvent('dragStart', { detail: { x: e.screenX, y: e.screenY } }));
+    node.dispatchEvent(
+      new CustomEvent("dragStart", { detail: { x: e.screenX, y: e.screenY } }),
+    );
 
-
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpAction);
+    document.addEventListener("mousemove", mouseMoveHandler);
+    document.addEventListener("mouseup", mouseUpAction);
   };
 
-  node.addEventListener('mousedown', mouseDownAction);
+  node.addEventListener("mousedown", mouseDownAction);
 
   return {
     update(newParams) {
@@ -41,9 +42,9 @@ export const onDrag = (node, params) => {
     },
 
     destroy() {
-      node.removeEventListener('mousedown', mouseDownAction);
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      document.removeEventListener('mouseup', mouseUpAction);
-    }
+      node.removeEventListener("mousedown", mouseDownAction);
+      document.removeEventListener("mousemove", mouseMoveHandler);
+      document.removeEventListener("mouseup", mouseUpAction);
+    },
   };
 };
