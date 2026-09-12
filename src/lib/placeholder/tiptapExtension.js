@@ -1,13 +1,12 @@
-import { CodeBlock } from '@tiptap/extension-code-block'
-import { SvelteNodeViewRenderer } from 'svelte-tiptap'
+import { CodeBlock } from "@tiptap/extension-code-block";
+import { SvelteNodeViewRenderer } from "svelte-tiptap";
 
-import CodeBlockView from '../Components/Content/CodeBlockView.svelte'
+import CodeBlockView from "../Components/Content/CodeBlockView.svelte";
 
 export const CopyCodeExtension = CodeBlock.extend({
-    name: 'codeBlock',
+  name: "codeBlock",
 
-    addNodeView() {
-        return SvelteNodeViewRenderer(CodeBlockView)
-    }
-})
-
+  addNodeView() {
+    return SvelteNodeViewRenderer(CodeBlockView);
+  },
+});

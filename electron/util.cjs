@@ -124,8 +124,6 @@ module.exports.createNote = (file) => {
   console.log("createNote filename ", file.title);
   console.log("createNote content ", file.content);
 
- 
-
   console.log("createNote noteContent ", file.content);
 
   return writeFile(`${rootDir}/${file.title}.md`, file.content, {
@@ -136,7 +134,7 @@ module.exports.createNote = (file) => {
 module.exports.writeNote = (filename, content) => {
   const rootDir = getRootDir();
   console.log("writing file");
-  console.log("WriteNote: ", content)
+  console.log("WriteNote: ", content);
 
   return writeFile(`${rootDir}/${filename}.md`, content, {
     encoding: fileEncoding,
@@ -154,8 +152,8 @@ module.exports.readNote = (filename) => {
 
 module.exports.renameNote = async (oldTitle, newTitle) => {
   const rootDir = getRootDir();
-  if(!rootDir) {
-    console.error("renameNote called before rootDir is set.")
+  if (!rootDir) {
+    console.error("renameNote called before rootDir is set.");
     return false;
   }
 

@@ -1,4 +1,3 @@
-
 <p align="center">
   <img src="https://github.com/user-attachments/assets/0de2fa9e-8f97-4a73-bbd3-07c0b56b643f" />
 </p>
@@ -12,7 +11,6 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/53c71aed-af52-453b-9354-adaeed361ad2" />
 </p>
-
 
 ## Features
 
@@ -53,4 +51,3 @@
 ### CodeMirror: The foundation for the editor pane, providing powerful features for syntax highlighting and text manipulation.
 
 ### Tailwind CSS: The utility-first CSS framework I used to rapidly design the clean and minimalist UI.
-

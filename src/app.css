@@ -1,50 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @config "../tailwind.config.js";
 
-
 @theme {
-
   /* Fonts */
   --font-main: "Epilogue", sans-serif;
 
   /* Colors */
-  --color-primary: #3E92CC;
+  --color-primary: #3e92cc;
   --color-secondary: ;
 
-  --color-primary-hover: #69B5EC;
+  --color-primary-hover: #69b5ec;
 
   --color-text-primary: #f2f2f2;
   --color-text-secondary:  ;
 
-  --color-text-primary-hover: #9A9A9A;
+  --color-text-primary-hover: #9a9a9a;
 
-  --color-background-primary: #1B1B1B;
+  --color-background-primary: #1b1b1b;
   --color-background-secondary: #262626;
-  --color-background-error: #ED4337;
+  --color-background-error: #ed4337;
 
   --color-background-primary-hover: ;
-  --color-background-secondary-hover: #3D3D3D;
+  --color-background-secondary-hover: #3d3d3d;
 
-  --color-background-nav: #3D3D3D;
+  --color-background-nav: #3d3d3d;
   --color-background-nav-hover: #757575;
 
-  --color-background-nav: #3D3D3D;
+  --color-background-nav: #3d3d3d;
   --color-background-nav-hover: #757575;
 
-  --color-background-table-icons: #0F0F0F;
-  --box-shadow-table-icons: 0px 1px 2px 0px #ffffff4d, 0px 1px 3px 1px #ffffff26;
+  --color-background-table-icons: #0f0f0f;
+  --box-shadow-table-icons:
+    0px 1px 2px 0px #ffffff4d, 0px 1px 3px 1px #ffffff26;
 
   --color-background-code-block: #111418;
 
-  --color-text-inline-code: #E28780;
+  --color-text-inline-code: #e28780;
 
-  
-  --color-test: #3E92CC;
+  --color-test: #3e92cc;
   --color-divider: #808080;
 
   --rounded-tab: 8 8 8 8;
@@ -56,7 +54,6 @@
   --h5-size: 1.2rem;
 
   /*  */
-   
 }
 
 @layer components {
@@ -89,12 +86,11 @@
 }
 
 .titlebar-title {
- -webkit-app-region: drag;
+  -webkit-app-region: drag;
 }
 
-
 nav *:not(div) {
-    -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .tab-bar {
@@ -104,7 +100,6 @@ nav *:not(div) {
   z-index: 11;
   width: 60%;
   max-width: 60%;
-
 }
 .tab {
   -webkit-app-region: no-drag;
@@ -147,10 +142,6 @@ nav *:not(div) {
 .inner.center:hover {
   background-color: #4d4d4d;
 }
-
-
-
-
 
 .tab.active {
   background: linear-gradient(
