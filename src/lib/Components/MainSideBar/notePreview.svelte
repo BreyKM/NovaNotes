@@ -1,27 +1,22 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher()
+  const dispatch = createEventDispatcher();
 
-    function handleClick() {
-        dispatch("click")
-    }
+  function handleClick() {
+    dispatch("click");
+  }
 
-    export let title;
-    export let isActive = false
-
-
-
-
+  export let title;
+  export let isActive = false;
 </script>
 
 <div
-on:click={handleClick}
-role="none"
-class="cursor-pointer px-2.5 py-1 rounded-sm transition-colors duration-75 mt-0.5"
-class:bg-background-secondary-hover={isActive}
-class:hover:bg-background-secondary-hover={!isActive}
-
+  on:click={handleClick}
+  role="none"
+  class="mt-0.5 cursor-pointer rounded-sm px-2.5 py-1 transition-colors duration-75"
+  class:bg-background-secondary-hover={isActive}
+  class:hover:bg-background-secondary-hover={!isActive}
 >
-    <div class=" font-bold truncate w-full">{title}</div>
+  <div class=" w-full truncate font-bold">{title}</div>
 </div>

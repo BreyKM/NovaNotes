@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import Content from "./lib/Components/Content/Content.svelte";
   import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
   import Nav from "./lib/Components/Nav/Nav.svelte";
@@ -48,37 +47,35 @@
   let contentContainerRef = null;
 </script>
 
-
-<main class="relative flex flex-col h-screen overflow-hidden">
+<main class="relative flex h-screen flex-col overflow-hidden">
   <Nav />
-  <div class="content-wrapper flex w-full h-full">
+  <div class="content-wrapper flex h-full w-full">
     <MainSideBar
-    bind:containerElement={mainSideBarRef}
-    style="width:{resizeWidth}px; flex-shrink: 0;"
-  />
-  <hr
-    aria-orientation="vertical"
-    style=" cursor: col-resize; z-index: 999;"
-    class="separator"
-    class:dragging={isDragging}
-    use:onDrag={{ orientation: "vertical", initialWidth: width }}
-    on:dragStart={handleDragStart}
-    on:drag={handleDrag}
-    on:dragEnd={handleDragEnd}
-  />
-  <div class="MainContent w-full overflow-x-hidden h-full flex flex-col">
-    <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
+      bind:containerElement={mainSideBarRef}
+      style="width:{resizeWidth}px; flex-shrink: 0;"
+    />
+    <hr
+      aria-orientation="vertical"
+      style=" cursor: col-resize; z-index: 999;"
+      class="separator"
+      class:dragging={isDragging}
+      use:onDrag={{ orientation: "vertical", initialWidth: width }}
+      on:dragStart={handleDragStart}
+      on:drag={handleDrag}
+      on:dragEnd={handleDragEnd}
+    />
+    <div class="MainContent flex h-full w-full flex-col overflow-x-hidden">
+      <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
       Live Width: {Math.round(resizeWidth)}px
     </div> -->
-    <TabBar />
-    {#if $selectedNoteIndexStore === null}
-      <NewNoteScreen />
-    {:else}
-      <ContentCopy bind:this={contentContainerRef} />
-    {/if}
+      <TabBar />
+      {#if $selectedNoteIndexStore === null}
+        <NewNoteScreen />
+      {:else}
+        <ContentCopy bind:this={contentContainerRef} />
+      {/if}
+    </div>
   </div>
-  </div>
-  
 </main>
 
 <style>

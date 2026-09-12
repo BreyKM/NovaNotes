@@ -28,7 +28,7 @@
 </script>
 
 <button
-  class="tab flex  pt-1 mr-[-11px] z-12 min-w-0 animate-slide-in-right"
+  class="tab animate-slide-in-right z-12 mr-[-11px] flex min-w-0 pt-1"
   in:slideIn
   out:slideOut
   class:active
@@ -36,10 +36,10 @@
   aria-label="tab"
 >
   <div
-    class="inner sides left cursor-pointer h-[calc(32px*0.8)] basis-2 min-w-10"
+    class="inner sides left h-[calc(32px*0.8)] min-w-10 basis-2 cursor-pointer"
   ></div>
   <div
-    class="inner center cursor-pointer h-[calc(32px*0.8)] p-1.5 flex basis-44 rounded-lg min-w-0 hover:bg-background-nav-hover"
+    class="inner center hover:bg-background-nav-hover flex h-[calc(32px*0.8)] min-w-0 basis-44 cursor-pointer rounded-lg p-1.5"
   >
     <div class="tab-text w-[calc(100%-20px)] truncate">
       {title}
@@ -65,5 +65,5 @@
       </span>
     </div>
   </div>
-  <div class="inner cursor-pointer h-[calc(32px*0.8)] sides right"></div>
+  <div class="inner sides right h-[calc(32px*0.8)] cursor-pointer"></div>
 </button>

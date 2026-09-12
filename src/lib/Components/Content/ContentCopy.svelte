@@ -75,7 +75,7 @@
     isSwitchingTabs,
   } from "../../../store/Store";
 
- let CopyTextPopupShow
+  let CopyTextPopupShow;
 
   function showCopyTextPopup() {
     CopyTextPopupShow = true;
@@ -408,7 +408,7 @@
             copyText: "Copy",
             languages,
             onCopy: (text) => {
-              showCopyTextPopup()
+              showCopyTextPopup();
             },
             extensions: [
               basicSetup,
@@ -532,19 +532,19 @@
 </script>
 
 <div
-  class="p-8 flex flex-col w-[80%] mx-auto items-start content-container h-screen overflow-y-auto overflow-x-hidden  mt-10
-  [&::-webkit-scrollbar]:w-2
+  class="content-container dark:[&::-webkit-scrollbar-thumb]:bg-background-nav mx-auto mt-10 flex h-screen w-[80%] flex-col items-start overflow-x-hidden overflow-y-auto
+  p-8
   [&::-webkit-scrollbar]:mt-10
+  [&::-webkit-scrollbar]:w-2
+[&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+[&::-webkit-scrollbar-track]:rounded-full
   [&::-webkit-scrollbar-track]:bg-transparent
-[&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-transparent
-dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-thumb]:rounded-full"
+  dark:[&::-webkit-scrollbar-track]:bg-transparent"
 >
   <div class="note-title-container">
     <div
-      class=" note-title text-4xl outline-none font-bold"
+      class=" note-title text-4xl font-bold outline-none"
       tabindex="-1"
       onkeydown={handleTitleKeydown}
       onblur={handleTitleBlur}
@@ -554,7 +554,7 @@ dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
     ></div>
     {#if isNoteFileNameValidPopupShow === true}
       <div
-        class="invalid-directory relative p-2 w-fit text-sm mx-auto rounded-lg bg-background-error shadow-lg"
+        class="invalid-directory bg-background-error relative mx-auto w-fit rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ y: "100%", duration: 150, easing: quadInOut }}
         out:fly={{ y: "100%", duration: 150, easing: quadInOut }}
       >
@@ -563,7 +563,7 @@ dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
     {/if}
     {#if CopyTextPopupShow === true}
       <div
-        class="invalid-directory absolute top-12 right-4 p-2 text-sm rounded-lg bg-background-code-block shadow-lg"
+        class="invalid-directory bg-background-code-block absolute top-12 right-4 rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >
@@ -574,6 +574,6 @@ dark:[&::-webkit-scrollbar-thumb]:bg-background-nav
 
   <div
     bind:this={editorContainer}
-    class="  editor-container relative max-w-[700px] h-screen"
+    class="  editor-container relative h-screen max-w-[700px]"
   ></div>
 </div>
