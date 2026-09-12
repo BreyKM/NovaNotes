@@ -13,7 +13,6 @@
 
   import isValidFilename from "valid-filename";
 
-
   //variables
   let userInputNotebookName = $state("");
 
@@ -50,7 +49,7 @@
 
   function showFilePathMissingPopup() {
     isFilePathMissingPopupShow = true;
-    clearTimeout(popupTimer); 
+    clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
       isFilePathMissingPopupShow = false;
     }, 3000);
@@ -220,9 +219,9 @@
               showInvalidNotebookNamePopup();
             } else if ($rootNotebookDirPathStore == null) {
               console.log("button: file path is missing");
-              showFilePathMissingPopup(); 
+              showFilePathMissingPopup();
             } else {
-             await createNotebookDir(e);
+              await createNotebookDir(e);
               isNotebookNameValidPopupShow = false;
               clearTimeout(popupTimer);
               window.main.openMainWindow();

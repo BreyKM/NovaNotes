@@ -7,7 +7,9 @@
     <div
       class="titlebar h-full z-1 flex justify-between bg-background-nav w-full"
     >
-      <div class="titlebar-buttons h-full flex items-center colors-white absolute top-0 right-0 pointer-events-auto ">
+      <div
+        class="titlebar-buttons h-full flex items-center colors-white absolute top-0 right-0 pointer-events-auto"
+      >
         <button
           on:click={() => window.nav.minimize()}
           class="titlebar-button px-3 h-full transition ease-in-out hover:bg-background-nav-hover"

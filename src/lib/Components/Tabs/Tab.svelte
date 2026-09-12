@@ -28,7 +28,7 @@
 </script>
 
 <button
-  class="tab flex  pt-1 mr-[-11px] z-12 min-w-0 animate-slide-in-right"
+  class="tab flex pt-1 mr-[-11px] z-12 min-w-0 animate-slide-in-right"
   in:slideIn
   out:slideOut
   class:active

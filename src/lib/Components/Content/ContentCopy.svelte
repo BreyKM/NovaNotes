@@ -75,7 +75,7 @@
     isSwitchingTabs,
   } from "../../../store/Store";
 
- let CopyTextPopupShow
+  let CopyTextPopupShow;
 
   function showCopyTextPopup() {
     CopyTextPopupShow = true;
@@ -408,7 +408,7 @@
             copyText: "Copy",
             languages,
             onCopy: (text) => {
-              showCopyTextPopup()
+              showCopyTextPopup();
             },
             extensions: [
               basicSetup,
@@ -532,7 +532,7 @@
 </script>
 
 <div
-  class="p-8 flex flex-col w-[80%] mx-auto items-start content-container h-screen overflow-y-auto overflow-x-hidden  mt-10
+  class="p-8 flex flex-col w-[80%] mx-auto items-start content-container h-screen overflow-y-auto overflow-x-hidden mt-10
   [&::-webkit-scrollbar]:w-2
   [&::-webkit-scrollbar]:mt-10
   [&::-webkit-scrollbar-track]:bg-transparent
