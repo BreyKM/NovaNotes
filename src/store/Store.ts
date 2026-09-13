@@ -50,7 +50,7 @@ export function getNoteContent(note: NoteMeta): void {
   }
 }
 
-export interface selectedNote extends NoteMeta {
+export interface SelectedNote extends NoteMeta {
   content: string;
 }
 
@@ -258,8 +258,7 @@ export async function renameNote(): Promise<void> {
 
       notesStore.update((allNotes) => {
         const index = get(selectedNoteIndexStore);
-        allNotes[index] = updatedNote;
-        return allNotes;
+        return allNotes.map((note, i) => (i === index ? updatedNote : note));
       });
     } else {
       console.error("Backend failed to rename note.");
