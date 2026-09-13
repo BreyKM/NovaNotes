@@ -8,7 +8,6 @@ class ElectronStore {
   private filepath: string;
   private data: StoreData;
 
-
   constructor(filename: string = "store.json") {
     const userDataPath = app.getPath("userData");
     this.filepath = path.join(userDataPath, filename);

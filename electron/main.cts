@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "path";
 import fse from "fs-extra";
 import ElectronStore from "./electronStore.cjs";
-import type { Tab, TabsState, NoteMeta, NewNote } from "../shared/types"
+import type { Tab, TabsState, NoteMeta, NewNote } from "../shared/types";
 
 // util functions
 import {
@@ -17,7 +17,6 @@ import {
   renameNote,
   updateNewNotebookDirPathMain,
   updateActiveFolderPathInUtil,
-  
 } from "./util.cjs";
 
 if (require("electron-squirrel-startup")) app.quit();
@@ -124,7 +123,8 @@ const createStarterWindow = (): void => {
 };
 
 app.whenReady().then(() => {
-  const activeNotebookPath = electronStore.get("activeNotebookPath") as string | undefined;
+  const activeNotebookPath = electronStore.get("activeNotebookPath") as
+    string | undefined;
 
   if (activeNotebookPath != undefined) {
     fse.access(activeNotebookPath, (error) => {
@@ -133,7 +133,7 @@ app.whenReady().then(() => {
         updateActiveFolderPathInUtil(activeNotebookPath);
       } else {
         createStarterWindow();
-          electronStore.delete("activeNotebookPath");
+        electronStore.delete("activeNotebookPath");
       }
     });
   } else {
@@ -151,16 +151,16 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle(
-    "createNotebookDir", 
+    "createNotebookDir",
     async (_event, input: string, rootPath: string | undefined) => {
       try {
         newNotebookFullPath = await createNotebookDir(input, rootPath);
 
-        updateNewNotebookDirPathMain(newNotebookFullPath)
-      
-        electronStore.set("activeNotebookPath", newNotebookFullPath)
+        updateNewNotebookDirPathMain(newNotebookFullPath);
 
-        updateActiveFolderPathInUtil(newNotebookFullPath)
+        electronStore.set("activeNotebookPath", newNotebookFullPath);
+
+        updateActiveFolderPathInUtil(newNotebookFullPath);
 
         newNotebookPathName = path.basename(newNotebookFullPath);
 
@@ -171,11 +171,11 @@ app.whenReady().then(() => {
         console.error("Error creating notebook directory: ", err);
         throw err;
       }
-    }
+    },
   );
 
   ipcMain.handle("getActiveFolder", async () => {
-    return electronStore.get("activeNotebookName")
+    return electronStore.get("activeNotebookName");
   });
 
   ipcMain.handle("createWelcomeNote", (_event, welcomeNote: string) =>
@@ -185,19 +185,19 @@ app.whenReady().then(() => {
   ipcMain.handle("getNotes", () => getNotes(electronStore));
   ipcMain.handle("createNote", (_event, note: NewNote) => createNote(note));
   ipcMain.handle("readNote", (_event, filename: string) => readNote(filename));
-  ipcMain.handle("writeNote", (_event, filename: string, content: string) => 
-    writeNote(filename, content)
-);
-  ipcMain.handle("renameNote", (_event, oldTitle: string, newTitle: string) => 
+  ipcMain.handle("writeNote", (_event, filename: string, content: string) =>
+    writeNote(filename, content),
+  );
+  ipcMain.handle("renameNote", (_event, oldTitle: string, newTitle: string) =>
     renameNote(oldTitle, newTitle),
-);
+  );
 
   ipcMain.handle("openLink", (_event, url: string) => {
     try {
       const parsedUrl = new URL(url);
       if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
         return shell.openExternal(url);
-      } 
+      }
       console.error("Invalid protocol: ", parsedUrl.protocol);
       return false;
     } catch (error) {

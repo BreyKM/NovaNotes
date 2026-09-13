@@ -1,21 +1,28 @@
-import { ensureDir, writeFile, readdir, stat, readJSON, writeJSON } from "fs-extra";
+import {
+  ensureDir,
+  writeFile,
+  readdir,
+  stat,
+  readJSON,
+  writeJSON,
+} from "fs-extra";
 import * as fse from "fs-extra";
-import { fileEncoding } from  "../shared/constants.cjs"
+import { fileEncoding } from "../shared/constants.cjs";
 import { dialog } from "electron";
 import path from "path";
 import { randomUUID } from "crypto";
 import type { NoteMeta, NewNote } from "../shared/types";
-import type ElectronStore from "./electronStore.cjs"
+import type ElectronStore from "./electronStore.cjs";
 
-let activeFolderPath: string | undefined
-let newNotebookFullPath: string | undefined
+let activeFolderPath: string | undefined;
+let newNotebookFullPath: string | undefined;
 
-export const updateNewNotebookDirPathMain  = (newPath: string): void => {
-  newNotebookFullPath = newPath
+export const updateNewNotebookDirPathMain = (newPath: string): void => {
+  newNotebookFullPath = newPath;
 };
 
 export const updateActiveFolderPathInUtil = (newPath: string): void => {
-  activeFolderPath =newPath
+  activeFolderPath = newPath;
 };
 
 const getRootDir = (): string | undefined => {
@@ -24,12 +31,14 @@ const getRootDir = (): string | undefined => {
   } else {
     if (activeFolderPath.length === 0) {
       return newNotebookFullPath;
-    } 
+    }
     return activeFolderPath;
   }
 };
 
-export const selectNotebookDirectory = async (): Promise<string | undefined> => {
+export const selectNotebookDirectory = async (): Promise<
+  string | undefined
+> => {
   const result = await dialog.showOpenDialog({
     properties: ["openDirectory"],
   });
@@ -39,14 +48,14 @@ export const selectNotebookDirectory = async (): Promise<string | undefined> => 
 export const createNotebookDir = async (
   input: string,
   NoteBookDirFilePath: string | undefined,
-  ): Promise<string> => {
+): Promise<string> => {
   if (input === "" || NoteBookDirFilePath === undefined) {
-    throw new Error("Invalid input or missing directory path")
+    throw new Error("Invalid input or missing directory path");
   }
-  
+
   const dirPath = path.join(NoteBookDirFilePath, input);
-  await ensureDir(dirPath)
-  return dirPath
+  await ensureDir(dirPath);
+  return dirPath;
 };
 
 export const createWelcomeNote = async (
@@ -54,13 +63,16 @@ export const createWelcomeNote = async (
   store: ElectronStore,
 ): Promise<void> => {
   const rootDir = store.get("activeNotebookPath") as string;
-  await writeFile(`${rootDir}/welcome.md`, welcomeNote, { encoding: fileEncoding });
+  await writeFile(`${rootDir}/welcome.md`, welcomeNote, {
+    encoding: fileEncoding,
+  });
 };
 
 const INDEX_FILENAME = ".novanotes-index.json";
 type NoteIndex = Record<string, string>;
 
-const getIndexPath = (rootDir: string): string => path.join(rootDir, INDEX_FILENAME);
+const getIndexPath = (rootDir: string): string =>
+  path.join(rootDir, INDEX_FILENAME);
 
 const loadIndex = async (rootDir: string): Promise<NoteIndex> => {
   try {
@@ -74,7 +86,7 @@ const saveIndex = async (rootDir: string, index: NoteIndex): Promise<void> => {
   await writeJSON(getIndexPath(rootDir), index, { spaces: 2 });
 };
 
-const getNoteInfo = 
+const getNoteInfo =
   (rootDir: string, index: NoteIndex) =>
   async (filename: string): Promise<NoteMeta> => {
     const fileStats = await stat(`${rootDir}/${filename}`);
@@ -82,16 +94,15 @@ const getNoteInfo =
 
     if (!index[title]) {
       index[title] = randomUUID();
-  }
+    }
 
-  return {
-    title,
-    creationTime: fileStats.birthtimeMs,
-    lastEditTime: fileStats.mtimeMs,
-    id: index[title],
+    return {
+      title,
+      creationTime: fileStats.birthtimeMs,
+      lastEditTime: fileStats.mtimeMs,
+      id: index[title],
+    };
   };
-};
-
 
 export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
   const rootDir = store.get("activeNotebookPath") as string;
@@ -101,7 +112,9 @@ export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
     withFileTypes: false,
   })) as unknown as string[];
 
-  const noteFiles = notesFileNames.filter((filename) => filename.endsWith(".md"));
+  const noteFiles = notesFileNames.filter((filename) =>
+    filename.endsWith(".md"),
+  );
 
   const index = await loadIndex(rootDir);
   const IndexSizeBefore = Object.keys(index).length;
@@ -141,7 +154,10 @@ export const readNote = (filename: string): Promise<string> => {
   }) as Promise<string>;
 };
 
-export const renameNote = async (oldTitle: string, newTitle: string): Promise<boolean> => {
+export const renameNote = async (
+  oldTitle: string,
+  newTitle: string,
+): Promise<boolean> => {
   const rootDir = getRootDir();
   if (!rootDir) {
     console.error("renameNote called before rootDir is set.");
