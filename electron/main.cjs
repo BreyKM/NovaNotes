@@ -59,7 +59,7 @@ const createWindow = () => {
     frame: false,
     icon: "src/assets/icon.png",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.cjs"),
     },
   });
 
@@ -112,7 +112,7 @@ const createStarterWindow = () => {
     center: true,
     title: "Nova Starter Page",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.cjs"),
     },
     resizable: false,
   });
