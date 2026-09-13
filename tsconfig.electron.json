@@ -3,13 +3,11 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "electron",
-    "rootDir": "electron",
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["electron/**/*.cts", "shared/**/*.ts"],
+  "include": ["electron/**/*.cts"],
   "exclude": []
 }
