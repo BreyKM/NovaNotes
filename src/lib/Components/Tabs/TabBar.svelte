@@ -12,6 +12,7 @@
     userInputCurrentNoteTitle,
     activeTabIndexStore,
     closeTab,
+    handleAutoSaving,
   } from "../../../store/Store";
   import { get } from "svelte/store";
 
@@ -34,6 +35,7 @@
   //   }
 
   async function syncContentView(index, isDirectClick) {
+    handleAutoSaving.flush();
     isSwitchingTabs.set(true);
 
     const tabToSync = get(tabStore)[index];
