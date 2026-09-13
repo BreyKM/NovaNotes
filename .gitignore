@@ -25,3 +25,4 @@ dist-ssr
 
 out/
 electron/build
+electron/electronStore.cjs
