@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["electron/**/*.cts"],
+  "include": ["electron/**/*.cts", "shared/**/*.ts"],
   "exclude": []
 }
