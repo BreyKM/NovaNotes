@@ -80,6 +80,8 @@ export async function handleNoteSelect(
   index: number,
   onSelectCallback?: () => void,
 ): Promise<void> {
+  handleAutoSaving.flush();
+
   selectedNoteIndexStore.set(index);
 
   const selectedNote = get(selectedNoteStore);
@@ -129,16 +131,13 @@ export function updateNoteContent(newContent: string): void {
       return c;
     });
   }
-  handleAutoSaving(newContent);
+  handleAutoSaving(selectedNote.title, newContent);
 }
 
 export const handleAutoSaving = throttle(
-  (content) => {
-    const selectedNote = get(selectedNoteStore);
-    if (!selectedNote) return;
-
+  (title: string, content: string) => {
     void window.notes
-      .writeNote(selectedNote.title, content)
+      .writeNote(title, content)
       .catch((err) => console.error("Auto-save failed:", err));
   },
   2000,

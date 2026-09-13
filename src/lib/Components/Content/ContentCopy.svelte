@@ -424,7 +424,6 @@
             }
             const markdown = editorInstance.action(getMarkdown());
             updateNoteContent(markdown);
-            handleAutoSaving(markdown);
           });
         })
         .use(commonmark)
