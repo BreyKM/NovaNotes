@@ -1,0 +1,27 @@
+export interface NoteMeta {
+  title: string;
+  creationTime: number;
+  lastEditTime: number;
+  id: string;
+}
+
+export interface NewNote {
+  title: string;
+  content: string;
+}
+
+export interface Tab {
+  tabId: number;
+  noteId: string | null;
+  title: string;
+}
+
+export interface TabsState {
+  tabs: Tab[];
+  activeIndex: number;
+}
+
+export interface NotebookDirResult {
+  fullPath: string;
+  name: string;
+}

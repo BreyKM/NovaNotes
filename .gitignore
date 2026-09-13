@@ -25,3 +25,7 @@ dist-ssr
 
 out/
 electron/build
+electron/electronStore.cjs
+electron/util.cjs
+electron/preload.cjs
+electron/main.cjs
