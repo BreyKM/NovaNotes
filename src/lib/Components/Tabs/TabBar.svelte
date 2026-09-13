@@ -35,7 +35,7 @@
   //   }
 
   async function syncContentView(index, isDirectClick) {
-    handleAutoSaving.flush()
+    handleAutoSaving.flush();
     isSwitchingTabs.set(true);
 
     const tabToSync = get(tabStore)[index];
