@@ -29,7 +29,7 @@ const getRootDir = (): string | undefined => {
   }
 };
 
-export const NoteBookDirSelection = async (): Promise<string | undefined> => {
+export const selectNotebookDirectory = async (): Promise<string | undefined> => {
   const result = await dialog.showOpenDialog({
     properties: ["openDirectory"],
   });

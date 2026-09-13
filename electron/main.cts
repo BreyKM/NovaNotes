@@ -1,9 +1,24 @@
 // Modules to control application life and create native browser window
-const { log } = require("console");
-const { app, BrowserWindow, ipcMain, shell } = require("electron");
-const path = require("path");
-const fse = require("fs-extra");
-const ElectronStore = require("./electronStore.cjs");
+import { app, BrowserWindow, ipcMain, shell } from "electron";
+import path from "path";
+import fse from "fs-extra";
+import ElectronStore from "./electronStore.cjs";
+import type { Tab, TabsState, NoteMeta, NewNote } from "../shared/types"
+
+// util functions
+import {
+  selectNotebookDirectory,
+  createNotebookDir,
+  createWelcomeNote,
+  getNotes,
+  createNote,
+  readNote,
+  writeNote,
+  renameNote,
+  updateNewNotebookDirPathMain,
+  updateActiveFolderPathInUtil,
+  
+} from "./util.cjs";
 
 if (require("electron-squirrel-startup")) app.quit();
 
@@ -17,38 +32,21 @@ if (isDevEnvironment) {
   });
 }
 
-// util functions
-const {
-  NoteBookDirSelection,
-  createNotebookDir,
-  createWelcomeNote,
-  getNotes,
-  createNote,
-  readNote,
-  writeNote,
-  renameNote,
-} = require("./util.cjs");
-
 // window variables
-let mainWindow;
-let starterWindow;
+let mainWindow: BrowserWindow | undefined;
+let starterWindow: BrowserWindow | undefined;
 
 // Directory variables
-let NoteBookDirFilePath;
+let noteBookDirFilePath: string | undefined;
+let newNotebookFullPath: string | undefined;
+let newNotebookPathName: string | undefined;
 
-let NewNotebookFullPath;
-
-let NewNotebookPathName;
-
-let activeFolderPath;
-
-let mainTabs = [];
-
+let mainTabs: Tab[] = [];
 let activeTabIndex = 0;
 
-const ElectronStoreRef = new ElectronStore();
+const electronStore = new ElectronStore();
 
-const createWindow = () => {
+const createWindow = (): void => {
   // Create the main browser window.
   mainWindow = new BrowserWindow({
     width: 1050,
@@ -65,31 +63,28 @@ const createWindow = () => {
 
   // define how electron will load the app
   if (isDevEnvironment) {
-    // if your vite app is running on a different port, change it here
     mainWindow.loadURL("http://localhost:5173/");
-
     // Open the DevTools.
     mainWindow.webContents.on("did-frame-finish-load", () => {
-      mainWindow.webContents.openDevTools();
+      mainWindow?.webContents.openDevTools();
     });
 
-    log("Electron running in dev mode: 🧪");
+    console.log("Electron running in dev mode: 🧪");
   } else {
     // when not in dev mode, load the build file instead
     mainWindow.loadFile(path.join(__dirname, "build", "index.html"));
-
-    log("Electron running in prod mode: 🚀");
+    console.log("Electron running in prod mode: 🚀");
   }
 
   ipcMain.on("minimize", () => {
-    mainWindow.minimize();
+    mainWindow?.minimize();
   });
 
   ipcMain.on("maximize", () => {
-    if (mainWindow.isMaximized()) {
+    if (mainWindow?.isMaximized()) {
       mainWindow.unmaximize();
     } else {
-      mainWindow.maximize();
+      mainWindow?.maximize();
     }
   });
 
@@ -99,7 +94,7 @@ const createWindow = () => {
 };
 
 // Create the Directory selector window
-const createStarterWindow = () => {
+const createStarterWindow = (): void => {
   if (starterWindow) {
     starterWindow.focus();
     return;
@@ -119,130 +114,106 @@ const createStarterWindow = () => {
 
   if (isDevEnvironment) {
     starterWindow.loadURL("http://localhost:5173/starter.html");
-
     starterWindow.webContents.on("did-frame-finish-load", () => {
-      starterWindow.webContents.openDevTools();
+      starterWindow?.webContents.openDevTools();
     });
-
-    log("Electron running in dev mode: 🧪");
+    console.log("Electron running in dev mode: 🧪");
   } else {
     starterWindow.loadFile(path.join(__dirname, "build", "starter.html"));
   }
 };
 
 app.whenReady().then(() => {
-  if (ElectronStoreRef.get("activeNotebookPath") != undefined) {
-    fse.access(ElectronStoreRef.get("activeNotebookPath"), (error) => {
-      if (!error && ElectronStoreRef.get("activeNotebookPath")) {
+  const activeNotebookPath = electronStore.get("activeNotebookPath") as string | undefined;
+
+  if (activeNotebookPath != undefined) {
+    fse.access(activeNotebookPath, (error) => {
+      if (!error) {
         createWindow();
-        activeFolderPath = ElectronStoreRef.get("activeNotebookPath");
-        require("./util.cjs").updateActiveFolderPathInUtil(activeFolderPath);
-        console.log(activeFolderPath);
+        updateActiveFolderPathInUtil(activeNotebookPath);
       } else {
         createStarterWindow();
-        console.log("Folder does not exist");
-        console.log(
-          "activeNotebookPath: ",
-          ElectronStoreRef.get("activeNotebookPath"),
-        );
-        ElectronStoreRef.delete("activeNotebookPath");
-        console.log(
-          "activeNotebookPath: ",
-          ElectronStoreRef.get("activeNotebookPath"),
-        );
+          electronStore.delete("activeNotebookPath");
       }
     });
   } else {
     createStarterWindow();
   }
 
-  //
-  // createStarterWindow();
-  // createWindow();
-
   //Opens dialog and select Notebook directory location
   ipcMain.on("openRootDirSelection", (event) => {
-    //
-    NoteBookDirSelection().then((result) => {
+    selectNotebookDirectory().then((result) => {
       // assign the promise result path to the variable, then
       // send the path back to renderer through ipc
-      NoteBookDirFilePath = result;
-      console.log("main.cjs console log", NoteBookDirFilePath);
-      event.reply("NoteBookDirSelected", NoteBookDirFilePath);
+      noteBookDirFilePath = result;
+      event.reply("NoteBookDirSelected", noteBookDirFilePath);
     });
   });
 
-  ipcMain.handle("createNotebookDir", async (_, ...args) => {
-    console.log("Number of arguments:", args.length);
-    try {
-      NewNotebookFullPath = await createNotebookDir(...args);
-      console.log("path: ", NewNotebookFullPath);
-      require("./util.cjs").updateNewNotebookDirPathMain(NewNotebookFullPath);
+  ipcMain.handle(
+    "createNotebookDir", 
+    async (_event, input: string, rootPath: string | undefined) => {
+      try {
+        newNotebookFullPath = await createNotebookDir(input, rootPath);
 
-      ElectronStoreRef.set("activeNotebookPath", NewNotebookFullPath);
+        updateNewNotebookDirPathMain(newNotebookFullPath)
+      
+        electronStore.set("activeNotebookPath", newNotebookFullPath)
 
-      require("./util.cjs").updateActiveFolderPathInUtil(NewNotebookFullPath);
+        updateActiveFolderPathInUtil(newNotebookFullPath)
 
-      NewNotebookPathName = path.basename(NewNotebookFullPath);
+        newNotebookPathName = path.basename(newNotebookFullPath);
 
-      ElectronStoreRef.set("activeNotebookName", NewNotebookPathName);
+        electronStore.set("activeNotebookName", newNotebookPathName);
 
-      console.log("pathTest", NewNotebookPathName);
-      return {
-        fullPath: NewNotebookFullPath,
-        name: NewNotebookPathName,
-      };
-    } catch (err) {
-      console.error("Error creating notebook directory: ", err);
-      throw err;
+        return { fullPath: newNotebookFullPath, name: newNotebookPathName };
+      } catch (err) {
+        console.error("Error creating notebook directory: ", err);
+        throw err;
+      }
     }
-  });
-
-  ipcMain.handle("getActiveFolder", async () => {
-    const result = await ElectronStoreRef.get("activeNotebookName");
-    console.log("getActiveFolder", result);
-    return result;
-  });
-
-  ipcMain.handle("createWelcomeNote", (_, ...args) =>
-    createWelcomeNote(...args, ElectronStoreRef),
   );
 
-  ipcMain.handle("getNotes", (_, ...args) => getNotes(ElectronStoreRef));
+  ipcMain.handle("getActiveFolder", async () => {
+    return electronStore.get("activeNotebookName")
+  });
 
-  ipcMain.handle("createNote", (_, ...args) => createNote(...args));
+  ipcMain.handle("createWelcomeNote", (_event, welcomeNote: string) =>
+    createWelcomeNote(welcomeNote, electronStore),
+  );
 
-  ipcMain.handle("readNote", (_, ...args) => readNote(...args));
+  ipcMain.handle("getNotes", () => getNotes(electronStore));
+  ipcMain.handle("createNote", (_event, note: NewNote) => createNote(note));
+  ipcMain.handle("readNote", (_event, filename: string) => readNote(filename));
+  ipcMain.handle("writeNote", (_event, filename: string, content: string) => 
+    writeNote(filename, content)
+);
+  ipcMain.handle("renameNote", (_event, oldTitle: string, newTitle: string) => 
+    renameNote(oldTitle, newTitle),
+);
 
-  ipcMain.handle("writeNote", (_, ...args) => writeNote(...args));
-
-  ipcMain.handle("renameNote", (_, ...args) => renameNote(...args));
-
-  ipcMain.handle("openLink", (_, url) => {
+  ipcMain.handle("openLink", (_event, url: string) => {
     try {
       const parsedUrl = new URL(url);
       if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
         return shell.openExternal(url);
-      } else {
-        console.error("Invalid protocol: ", parsedUrl.protocol);
-        return false;
-      }
+      } 
+      console.error("Invalid protocol: ", parsedUrl.protocol);
+      return false;
     } catch (error) {
       console.error("Invalid URL: ", url, error);
       return false;
     }
   });
 
-  function broadcastTabUpdate() {
+  const broadcastTabUpdate = (): void => {
     if (mainWindow) {
-      mainWindow.webContents.send("tabsUpdated", {
-        tabs: mainTabs,
-        activeIndex: activeTabIndex,
-      });
+      const state: TabsState = { tabs: mainTabs, activeIndex: activeTabIndex };
+      mainWindow.webContents.send("tabsUpdated", state);
     }
-  }
+  };
 
-  ipcMain.handle("getTabs", () => {
+  ipcMain.handle("getTabs", (): TabsState => {
     if (mainTabs.length === 0) {
       mainTabs.push({
         tabId: Date.now(),
@@ -265,7 +236,7 @@ app.whenReady().then(() => {
     broadcastTabUpdate();
   });
 
-  ipcMain.handle("createTabForNewNote", (event, newNote) => {
+  ipcMain.handle("createTabForNewNote", (_event, newNote: NoteMeta) => {
     if (!newNote || !newNote.id || !newNote.title) {
       console.error("createTabForNewNote called with invalid note object.");
       return;
@@ -280,14 +251,10 @@ app.whenReady().then(() => {
     mainTabs.push(newTab);
     activeTabIndex = mainTabs.length - 1;
 
-    console.log(
-      `Main: Created new tab for note '${newNote.title}' and set it as active index ${activeTabIndex}'`,
-    );
-
     broadcastTabUpdate();
   });
 
-  ipcMain.handle("loadNoteIntoActiveTab", (event, selectedNote) => {
+  ipcMain.handle("loadNoteIntoActiveTab", (_event, selectedNote: NoteMeta) => {
     if (!selectedNote || !mainTabs[activeTabIndex]) {
       return;
     }
@@ -295,13 +262,10 @@ app.whenReady().then(() => {
     mainTabs[activeTabIndex].noteId = selectedNote.id;
     mainTabs[activeTabIndex].title = selectedNote.title;
 
-    console.log(
-      `Main: Loaded note '${selectedNote.title} into active tab index ${activeTabIndex}'`,
-    );
     broadcastTabUpdate();
   });
 
-  ipcMain.handle("updateTabs", (event, tabs) => {
+  ipcMain.handle("updateTabs", (_event, tabs: Tab[]) => {
     mainTabs = tabs;
     if (activeTabIndex >= mainTabs.length) {
       activeTabIndex = Math.max(0, mainTabs.length - 1);
@@ -309,10 +273,9 @@ app.whenReady().then(() => {
     broadcastTabUpdate();
   });
 
-  ipcMain.handle("activeTabIndex", (event, index) => {
+  ipcMain.handle("activeTabIndex", (_event, index: number) => {
     if (index >= 0 && index < mainTabs.length) {
       activeTabIndex = index;
-      console.log("MAIN: activeTabIndex", activeTabIndex);
       broadcastTabUpdate();
     }
   });
