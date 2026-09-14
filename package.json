@@ -15,7 +15,10 @@
     "preview": "vite preview",
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "lint-staged": {
     "**/*.{js,cjs,ts,cts,svelte,css,json,md}": "prettier --write"
@@ -47,7 +50,8 @@
     "svelte-check": "^4.7.6",
     "tailwindcss": "^4.0.0",
     "typescript": "^6.0.3",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
