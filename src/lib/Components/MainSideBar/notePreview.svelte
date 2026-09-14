@@ -1,13 +1,13 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ click: void }>();
 
-  function handleClick() {
+  function handleClick(): void {
     dispatch("click");
   }
 
-  export let title;
+  export let title: string;
   export let isActive = false;
 </script>
 
