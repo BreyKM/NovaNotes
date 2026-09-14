@@ -11,7 +11,7 @@ export const notesStore: Writable<NoteMeta[]> = writable([]);
 
 export const noteContentStore: Writable<string> = writable("");
 
-export const selectedNoteIndexStore: Writable<number | null> = writable(null);
+export const selectedNoteIdStore: Writable<string | null> = writable(null);
 
 export const rootNotebookDirPathStore: Writable<string | null> = writable(null);
 
@@ -55,34 +55,34 @@ export interface SelectedNote extends NoteMeta {
 }
 
 export const selectedNoteStore = derived(
-  [notesStore, selectedNoteIndexStore, noteContentStore],
+  [notesStore, selectedNoteIdStore, noteContentStore],
   ([
     $notesStore,
-    $selectedNoteIndexStore,
+    $selectedNoteIdStore,
     $noteContentStore,
   ]): SelectedNote | null => {
-    if (
-      $selectedNoteIndexStore != null &&
-      $notesStore[$selectedNoteIndexStore]
-    ) {
-      const selectedNote = $notesStore[$selectedNoteIndexStore];
-
-      return {
-        ...selectedNote,
-        content: $noteContentStore,
-      };
+    if ($selectedNoteIdStore != null) {
+      const selectedNote = $notesStore.find(
+        (note) => note.id === $selectedNoteIdStore,
+      );
+      if (selectedNote) {
+        return {
+          ...selectedNote,
+          content: $noteContentStore,
+        };
+      }
     }
     return null;
   },
 );
 
 export async function handleNoteSelect(
-  index: number,
+  id: string,
   onSelectCallback?: () => void,
 ): Promise<void> {
   handleAutoSaving.flush();
 
-  selectedNoteIndexStore.set(index);
+  selectedNoteIdStore.set(id);
 
   const selectedNote = get(selectedNoteStore);
 
@@ -195,7 +195,7 @@ export async function createEmptyNote(): Promise<void> {
       await window.tab.loadNoteIntoActiveTab(newlyCreatedNote);
     }
 
-    selectedNoteIndexStore.set(0);
+    selectedNoteIdStore.set(newlyCreatedNote.id);
     noteContentStore.set(newNote.content);
     userInputCurrentNoteTitle.set(newlyCreatedNote.title);
   } catch (error) {
@@ -257,8 +257,9 @@ export async function renameNote(): Promise<void> {
       const updatedNote = { ...selectedNote, title: newTitle };
 
       notesStore.update((allNotes) => {
-        const index = get(selectedNoteIndexStore);
-        return allNotes.map((note, i) => (i === index ? updatedNote : note));
+        return allNotes.map((note) =>
+          note.id === selectedNote.id ? updatedNote : note,
+        );
       });
     } else {
       console.error("Backend failed to rename note.");

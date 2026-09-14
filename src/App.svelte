@@ -6,7 +6,7 @@
 
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
 
-  import { selectedNoteIndexStore } from "./store/Store";
+  import { selectedNoteIdStore } from "./store/Store";
 
   import { onDrag } from "./lib/placeholder/dragMe";
   import ContentCopy from "./lib/Components/Content/ContentCopy.svelte";
@@ -69,7 +69,7 @@
       Live Width: {Math.round(resizeWidth)}px
     </div> -->
       <TabBar />
-      {#if $selectedNoteIndexStore === null}
+      {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
       {:else}
         <ContentCopy bind:this={contentContainerRef} />

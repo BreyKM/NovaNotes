@@ -3,7 +3,7 @@
   import {
     loadNotes,
     notesStore,
-    selectedNoteIndexStore,
+    selectedNoteIdStore,
     handleNoteSelect,
     selectedNoteStore,
     userInputCurrentNoteTitle,
@@ -19,7 +19,7 @@
 
   $effect(() => {
     console.log("NPL: ", $notesStore);
-    console.log($selectedNoteIndexStore);
+    console.log($selectedNoteIdStore);
     console.log("selectedNoteStore", $selectedNoteStore);
   });
 
@@ -51,11 +51,11 @@
         No notes yet!
       </p>
     {:else}
-      {#each $notesStore as note, index}
+      {#each $notesStore as note}
         <NotePreview
           title={note.title}
-          isActive={$selectedNoteIndexStore === index}
-          on:click={() => handleNoteSelect(index, onSelect)}
+          isActive={$selectedNoteIdStore === note.id}
+          on:click={() => handleNoteSelect(note.id, onSelect)}
         />
       {/each}
     {/if}

@@ -5,7 +5,7 @@
     getNoteContent,
     noteContentStore,
     notesStore,
-    selectedNoteIndexStore,
+    selectedNoteIdStore,
     selectedNoteStore,
     tabStore,
     isSwitchingTabs,
@@ -54,20 +54,17 @@
 
     noteContentStore.set("");
     if (tabToSync.noteId) {
-      const noteIndexToSelect = get(notesStore).findIndex(
+      const noteToSelect = get(notesStore).find(
         (note) => note.id === tabToSync.noteId,
       );
 
-      if (noteIndexToSelect !== -1) {
-        selectedNoteIndexStore.set(noteIndexToSelect);
-
-        const noteToRead = get(notesStore)[noteIndexToSelect];
-        console.log("noteToRead: ", noteToRead);
-        userInputCurrentNoteTitle.set(noteToRead.title);
-        getNoteContent(noteToRead);
+      if (noteToSelect) {
+        selectedNoteIdStore.set(noteToSelect.id);
+        userInputCurrentNoteTitle.set(noteToSelect.title);
+        getNoteContent(noteToSelect);
       }
     } else {
-      selectedNoteIndexStore.set(null);
+      selectedNoteIdStore.set(null);
       userInputCurrentNoteTitle.set("");
     }
     await tick();
