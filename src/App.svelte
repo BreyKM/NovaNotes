@@ -1,21 +1,18 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
   import Nav from "./lib/Components/Nav/Nav.svelte";
-
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
-
   import { selectedNoteIdStore } from "./store/Store";
-
   import { onDrag } from "./lib/placeholder/dragMe";
   import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
 
-  let width;
-  let resizeWidth = width;
+  let width: number | undefined;
+  let resizeWidth: number | undefined = width;
   let isDragging = false;
 
-  let mainSideBarRef;
+  let mainSideBarRef: HTMLDivElement | undefined;
   let minWidthInPixels = 0;
 
   onMount(() => {
@@ -28,23 +25,25 @@
     }
   });
 
-  function handleDrag(event) {
+  function handleDrag(
+    event: CustomEvent<{ delta: number; initialWidth: number }>,
+  ): void {
     const { delta, initialWidth } = event.detail;
     const newWidth = initialWidth + delta;
 
     resizeWidth = Math.max(minWidthInPixels, newWidth);
   }
 
-  function handleDragEnd() {
+  function handleDragEnd(): void {
     isDragging = false;
     width = resizeWidth;
   }
 
-  function handleDragStart() {
+  function handleDragStart(): void {
     isDragging = true;
   }
 
-  let contentContainerRef = null;
+  let contentContainerRef: NoteEditor | null = null;
 </script>
 
 <main class="relative flex h-screen flex-col overflow-hidden">

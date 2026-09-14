@@ -1,4 +1,4 @@
-/** @type {import('svelte/action').Action}  */
+/** @type {import('svelte/action').Action<HTMLElement, {orientation: string; initialWidth: number}>}  */
 export const onDrag = (node, params) => {
   let dragStart = null;
   let currentParams = params;
