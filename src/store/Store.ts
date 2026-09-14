@@ -86,9 +86,11 @@ export async function handleNoteSelect(
 
   const selectedNote = get(selectedNoteStore);
 
-  if (selectedNote) {
-    userInputCurrentNoteTitle.set(selectedNote.title);
+  if (!selectedNote) {
+    return;
   }
+
+  userInputCurrentNoteTitle.set(selectedNote.title);
 
   await window.tab.loadNoteIntoActiveTab(selectedNote);
 
@@ -130,8 +132,8 @@ export function updateNoteContent(newContent: string): void {
       c[selectedNote.id] = newContent;
       return c;
     });
+    handleAutoSaving(selectedNote.title, newContent);
   }
-  handleAutoSaving(selectedNote.title, newContent);
 }
 
 export const handleAutoSaving = throttle(
@@ -206,15 +208,26 @@ export async function createEmptyNote(): Promise<void> {
 export async function rootDirSelection(): Promise<void> {
   window.directory.openRootDirSelection();
   const rootNotebookDirPath = await window.directory.getRootNotebookDirPath();
-  rootNotebookDirPathStore.set(rootNotebookDirPath);
+  rootNotebookDirPathStore.set(rootNotebookDirPath ?? null);
 }
 
 export async function createNotebookDir(e: Event): Promise<void> {
   e.preventDefault();
+
+  const notebookName = get(userInputNotebookNameStore);
+  const rootPath = get(rootNotebookDirPathStore);
+
+  if (!notebookName || !rootPath) {
+    console.error(
+      "createNotebookDir called without a valid notebook name or root path.",
+    );
+    return;
+  }
+
   try {
     const newNoteBookDir = await window.directory.createNotebookDir(
-      get(userInputNotebookNameStore),
-      get(rootNotebookDirPathStore),
+      notebookName,
+      rootPath,
     );
 
     createWelcomeNote();
@@ -233,7 +246,7 @@ async function createWelcomeNote(): Promise<void> {
 
 export async function getActiveFolder(): Promise<void> {
   const ActiveNoteBook = await window.main.getActiveFolder();
-  activeNotebookNameStore.set(ActiveNoteBook);
+  activeNotebookNameStore.set(ActiveNoteBook ?? null);
 }
 
 export async function loadNotes(): Promise<void> {
@@ -243,7 +256,7 @@ export async function loadNotes(): Promise<void> {
 }
 
 export async function renameNote(): Promise<void> {
-  const newTitle = get(userInputCurrentNoteTitle).trim();
+  const newTitle = get(userInputCurrentNoteTitle)?.trim();
   const selectedNote = get(selectedNoteStore);
 
   if (!selectedNote || !newTitle || newTitle === selectedNote.title) {

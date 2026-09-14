@@ -8,8 +8,8 @@
   import { onDrag } from "./lib/placeholder/dragMe";
   import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
 
-  let width: number | undefined;
-  let resizeWidth: number | undefined = width;
+  let width = 0;
+  let resizeWidth = width;
   let isDragging = false;
 
   let mainSideBarRef: HTMLDivElement | undefined;

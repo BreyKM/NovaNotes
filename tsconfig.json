@@ -5,6 +5,7 @@
     "checkJs": false,
     "strict": false,
     "noImplicitAny": true,
+    "strictNullChecks": true,
     "target": "ES2020",
     "noEmit": true
   },

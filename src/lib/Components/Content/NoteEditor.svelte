@@ -423,9 +423,13 @@
               selected ? `✔ ${language}` : language,
           }));
           ctx.get(listenerCtx).updated((ctx, doc, prevDoc) => {
-            if (doc.content.eq(prevDoc.content)) {
+            if (!prevDoc || doc.content.eq(prevDoc.content)) {
               return;
             }
+            if (!editorInstance) {
+              return;
+            }
+
             const markdown = editorInstance.action(getMarkdown());
             updateNoteContent(markdown);
           });
@@ -513,7 +517,7 @@
     if (event.key === "Enter") {
       event.preventDefault();
 
-      if ($userInputCurrentNoteTitle === "") {
+      if ($userInputCurrentNoteTitle === "" && $selectedNoteStore) {
         userInputCurrentNoteTitle.set($selectedNoteStore.title);
       }
     }
