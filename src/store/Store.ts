@@ -27,9 +27,26 @@ export const tabStore: Writable<Tab[]> = writable([]);
 
 export const noteContentCache: Writable<Record<string, string>> = writable({});
 
+export const noteFrontmatterStore: Writable<Record<string, string>> = writable(
+  {},
+);
+
 export const isSwitchingTabs: Writable<boolean> = writable(false);
 
 export const activeTabIndexStore: Writable<number> = writable(0);
+
+const FRONTMATTER_PATTERN = /^---\r?\n[\s\S]*?\r?\n---(\r?\n|$)(\r?\n)*/;
+
+export function splitFrontmatter(raw: string): {
+  frontmatter: string;
+  body: string;
+} {
+  const match = raw.match(FRONTMATTER_PATTERN);
+  if (!match) {
+    return { frontmatter: "", body: raw };
+  }
+  return { frontmatter: match[0], body: raw.slice(match[0].length) };
+}
 
 export function getNoteContent(note: NoteMeta): void {
   const cache = get(noteContentCache);
@@ -39,13 +56,11 @@ export function getNoteContent(note: NoteMeta): void {
   } else {
     noteContentStore.set("");
 
-    window.notes.readNote(note.title).then((content) => {
-      noteContentStore.set(content);
-
-      noteContentCache.update((c) => ({
-        ...c,
-        [note.id]: content,
-      }));
+    window.notes.readNote(note.title).then((raw) => {
+      const { frontmatter, body } = splitFrontmatter(raw);
+      noteFrontmatterStore.update((m) => ({ ...m, [note.id]: frontmatter }));
+      noteContentStore.set(body);
+      noteContentCache.update((c) => ({ ...c, [note.id]: body }));
     });
   }
 }
@@ -94,8 +109,13 @@ export async function handleNoteSelect(
 
   await window.tab.loadNoteIntoActiveTab(selectedNote);
 
-  window.notes.readNote(selectedNote.title).then((content) => {
-    noteContentStore.set(content);
+  window.notes.readNote(selectedNote.title).then((raw) => {
+    const { frontmatter, body } = splitFrontmatter(raw);
+    noteFrontmatterStore.update((m) => ({
+      ...m,
+      [selectedNote.id]: frontmatter,
+    }));
+    noteContentStore.set(body);
   });
 
   if (onSelectCallback) {
@@ -124,7 +144,6 @@ export function closeTab(indexToClose: number): void {
 }
 
 export function updateNoteContent(newContent: string): void {
-  console.log("[updateNoteContent] called");
   noteContentStore.set(newContent);
 
   const selectedNote = get(selectedNoteStore);
@@ -133,7 +152,8 @@ export function updateNoteContent(newContent: string): void {
       c[selectedNote.id] = newContent;
       return c;
     });
-    handleAutoSaving(selectedNote.title, newContent);
+    const frontmatter = get(noteFrontmatterStore)[selectedNote.id] ?? "";
+    handleAutoSaving(selectedNote.title, frontmatter + newContent);
   }
 }
 
