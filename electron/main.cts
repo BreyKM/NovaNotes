@@ -226,7 +226,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.on("createTab", () => {
-    const newTab = {
+    const newTab: Tab = {
       tabId: Date.now() + Math.random(),
       noteId: null,
       title: "new tab",
