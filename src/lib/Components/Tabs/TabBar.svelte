@@ -29,7 +29,10 @@
     });
   });
 
-  async function syncContentView(index: number, isDirectClick: boolean): Promise<void> {
+  async function syncContentView(
+    index: number,
+    isDirectClick: boolean,
+  ): Promise<void> {
     handleAutoSaving.flush();
     isSwitchingTabs.set(true);
 
