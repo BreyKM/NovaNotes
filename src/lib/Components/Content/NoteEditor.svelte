@@ -364,7 +364,7 @@
           ctx.set(indentConfig.key, {
             type: "space",
             size: 4,
-          });
+          } as const);
           ctx.set(listItemBlockConfig.key, {
             renderLabel: ({ label, listType, checked, readonly }) => {
               if (checked == null) {
