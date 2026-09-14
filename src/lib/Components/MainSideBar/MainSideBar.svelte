@@ -1,21 +1,18 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import {
     getActiveFolder,
-    ActiveNoteBookNameStore,
+    activeNotebookNameStore,
     createEmptyNote,
   } from "../../../store/Store";
   import NotePreviewList from "./notePreviewList.svelte";
 
   export let style = "";
-
-  export let containerElement;
+  export let containerElement: HTMLDivElement | undefined = undefined;
 
   onMount(() => {
     getActiveFolder();
   });
-
-  console.log($ActiveNoteBookNameStore);
 </script>
 
 <div
@@ -33,7 +30,6 @@
       version="1.1"
       id="svg1"
       xmlns="http://www.w3.org/2000/svg"
-      xmlns:svg="http://www.w3.org/2000/svg"
     >
       <defs id="defs1" />
       <g id="layer1">
@@ -201,11 +197,11 @@
   </div>
   <div class="sidebar-main relative isolate flex flex-col overflow-hidden">
     <div class="Notebook-name-container mx-2 my-2">
-      {#if $ActiveNoteBookNameStore}
+      {#if $activeNotebookNameStore}
         <div
           class=" hover:bg-background-secondary-hover rounded-sm px-2 py-px text-sm hover:cursor-pointer"
         >
-          {$ActiveNoteBookNameStore}
+          {$activeNotebookNameStore}
         </div>
       {:else}
         <p>Loading...</p>

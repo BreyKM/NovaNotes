@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import {
     loadNotes,
@@ -6,14 +6,13 @@
     selectedNoteIdStore,
     handleNoteSelect,
     selectedNoteStore,
-    userInputCurrentNoteTitle,
   } from "../../../store/Store";
   import { isEmpty } from "lodash";
   import NotePreview from "./notePreview.svelte";
 
   let isLoading = $state(false);
 
-  const onSelect = () => {
+  const onSelect = (): void => {
     console.log("Selection finished from component.");
   };
 

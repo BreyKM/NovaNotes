@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount, tick } from "svelte";
   import Tab from "./Tab.svelte";
   import {
@@ -6,7 +6,6 @@
     noteContentStore,
     notesStore,
     selectedNoteIdStore,
-    selectedNoteStore,
     tabStore,
     isSwitchingTabs,
     userInputCurrentNoteTitle,
@@ -30,11 +29,10 @@
     });
   });
 
-  //   function handleTabClick(index) {
-  //     syncContentView(index, true);
-  //   }
-
-  async function syncContentView(index, isDirectClick) {
+  async function syncContentView(
+    index: number,
+    isDirectClick: boolean,
+  ): Promise<void> {
     handleAutoSaving.flush();
     isSwitchingTabs.set(true);
 
@@ -71,21 +69,8 @@
     isSwitchingTabs.set(false);
   }
 
-  //   export function handleCloseTab(index) {
-  //     if ($tabStore.length <= 1) return;
-
-  //     const updatedTabs = $tabStore.filter((_, i) => i !== index);
-
-  //     const newActiveIndex =
-  //       activeTab >= index && activeTab > 0 ? activeTab - 1 : activeTab;
-
-  //     window.tab.updateTabs(updatedTabs);
-
-  //     window.tab.activeTabIndex(newActiveIndex);
-  //   }
-
-  async function createTab() {
-    await window.tab.createTab();
+  function createTab(): void {
+    window.tab.createTab();
   }
 </script>
 

@@ -1,25 +1,24 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { quintOut, quadInOut } from "svelte/easing";
-  import { fly, slide } from "svelte/transition";
+  import type { TransitionConfig } from "svelte/transition";
 
-  export let title;
+  export let title: string;
   export let active = false;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ click: void; close: void }>();
 
-  function handleClick() {
+  function handleClick(): void {
     dispatch("click");
   }
 
-  function slideIn(node) {
+  function slideIn(node: HTMLElement): TransitionConfig {
     node.classList.add("animate-expand-in");
     return {
       duration: 400,
     };
   }
 
-  function slideOut(node) {
+  function slideOut(node: HTMLElement): TransitionConfig {
     node.classList.add("animate-shrink-out");
     return {
       duration: 300,

@@ -18,7 +18,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,cjs,ts,cts, svelte,css,json,md}": "prettier --write"
+    "**/*.{js,cjs,ts,cts,svelte,css,json,md}": "prettier --write"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.2",
