@@ -266,6 +266,8 @@
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
   let isNoteFileNameValidPopupShow = false;
   let isNoteFileNameValid = false;
+  let lastIncomingContent: string | null;
+  let lastSerializedContent: string | null;
   let editorInstance: Editor | null = null;
   let editorContainer: HTMLDivElement | undefined;
 
@@ -431,6 +433,11 @@
             }
 
             const markdown = editorInstance.action(getMarkdown());
+            if (markdown === lastSerializedContent) {
+              return;
+            }
+            lastSerializedContent = markdown;
+            lastIncomingContent = markdown;
             updateNoteContent(markdown);
           });
         })
@@ -478,12 +485,17 @@
   });
 
   afterUpdate(() => {
-    if (editorInstance && $selectedNoteStore) {
-      const currentMarkdown = editorInstance.action(getMarkdown());
-      if (currentMarkdown !== $selectedNoteStore.content) {
-        editorInstance.action(replaceAll($selectedNoteStore.content || ""));
-      }
+    if (!editorInstance || !$selectedNoteStore) {
+      return;
     }
+
+    const incoming = $selectedNoteStore.content ?? "";
+    if (incoming === lastIncomingContent) {
+      return;
+    }
+    lastIncomingContent = incoming;
+    editorInstance.action(replaceAll(incoming));
+    lastSerializedContent = editorInstance.action(getMarkdown());
   });
 
   $: if (

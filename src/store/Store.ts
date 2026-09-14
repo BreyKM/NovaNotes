@@ -124,6 +124,7 @@ export function closeTab(indexToClose: number): void {
 }
 
 export function updateNoteContent(newContent: string): void {
+  console.log("[updateNoteContent] called");
   noteContentStore.set(newContent);
 
   const selectedNote = get(selectedNoteStore);
