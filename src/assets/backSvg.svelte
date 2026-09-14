@@ -1,9 +1,17 @@
+<script lang="ts">
+  export let width = "800px";
+  export let height = "800px";
+  export let fill = "#000000";
+  let className = "icon";
+  export { className as class };
+</script>
+
 <svg
-  width="800px"
-  height="800px"
+  {width}
+  {height}
   viewBox="0 0 1024 1024"
-  fill="#000000"
-  class="icon"
+  {fill}
+  class={className}
   version="1.1"
   xmlns="http://www.w3.org/2000/svg"
   ><path

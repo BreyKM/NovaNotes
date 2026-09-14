@@ -1,13 +1,17 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
+<script lang="ts">
+  export let width = "256";
+  export let height = "256";
+</script>
+
 <svg
-  width="256"
-  height="256"
+  {width}
+  {height}
   viewBox="0 0 256.00001 256"
   version="1.1"
   id="svg1"
   xmlns="http://www.w3.org/2000/svg"
-  xmlns:svg="http://www.w3.org/2000/svg"
 >
   <defs id="defs1" />
   <g id="layer1">
