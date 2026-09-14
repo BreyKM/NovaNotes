@@ -21,7 +21,7 @@ export const userInputNotebookNameStore: Writable<string | null> =
 export const userInputCurrentNoteTitle: Writable<string | null> =
   writable(null);
 
-export const ActiveNoteBookNameStore: Writable<string | null> = writable(null);
+export const activeNotebookNameStore: Writable<string | null> = writable(null);
 
 export const tabStore: Writable<Tab[]> = writable([]);
 
@@ -233,7 +233,7 @@ async function createWelcomeNote(): Promise<void> {
 
 export async function getActiveFolder(): Promise<void> {
   const ActiveNoteBook = await window.main.getActiveFolder();
-  ActiveNoteBookNameStore.set(ActiveNoteBook);
+  activeNotebookNameStore.set(ActiveNoteBook);
 }
 
 export async function loadNotes(): Promise<void> {
