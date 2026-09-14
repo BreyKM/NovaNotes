@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Editor, rootCtx, defaultValueCtx } from "@milkdown/kit/core";
   import { history } from "@milkdown/kit/plugin/history";
   import { gfm, tableSchema } from "@milkdown/kit/preset/gfm";
@@ -62,11 +62,7 @@
     $prose as utilProse,
   } from "@milkdown/kit/utils";
 
-  // Import the original NodeView class we need to extend
-  // import { TableBlockView } from "@milkdown/kit/component/table-block";
-
   import {
-    loadNotes,
     userInputCurrentNoteTitle,
     selectedNoteStore,
     handleAutoSaving,
@@ -75,9 +71,9 @@
     isSwitchingTabs,
   } from "../../../store/Store";
 
-  let CopyTextPopupShow;
+  let CopyTextPopupShow = false;
 
-  function showCopyTextPopup() {
+  function showCopyTextPopup(): void {
     CopyTextPopupShow = true;
     clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
@@ -86,7 +82,7 @@
   }
 
   class FixedTableNodeView extends TableNodeView {
-    stopEvent(e) {
+    stopEvent(e: Event): boolean {
       if (e.type === "drop" || e.type.startsWith("drag")) return true;
       if (e.type === "mousedown" || e.type === "pointerdown") {
         if (e.target instanceof Element && e.target.closest("button"))
@@ -138,9 +134,15 @@
     };
   });
 
-  const obsidianLinkPluginKey = new PluginKey("OBSIDIAN_LINK_PLUGIN");
+  interface ObsidianLinkState {
+    unfurledLink: { from: number; to: number } | null;
+  }
 
-  const rawObsidianLinkPlugin = new Plugin({
+  const obsidianLinkPluginKey = new PluginKey<ObsidianLinkState>(
+    "OBSIDIAN_LINK_PLUGIN",
+  );
+
+  const rawObsidianLinkPlugin = new Plugin<ObsidianLinkState>({
     key: obsidianLinkPluginKey,
 
     state: {
@@ -250,20 +252,22 @@
   const obsidianLinkPlugin = utilProse(() => rawObsidianLinkPlugin);
 
   const myInputRulesPlugin = createInputRules({
-    rules: [markdownLink, ...smartQuotes, ellipsis, emDash],
+    rules: [
+      markdownLink as unknown as InputRule,
+      ...smartQuotes,
+      ellipsis,
+      emDash,
+    ],
   });
 
   import "./Content.css";
 
-  let popupTimer;
-
-  let debounceTimer;
-
+  let popupTimer: ReturnType<typeof setTimeout> | undefined;
+  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
   let isNoteFileNameValidPopupShow = false;
-  let isNoteFileNameValid;
-
-  let editorInstance = null;
-  let editorContainer;
+  let isNoteFileNameValid = false;
+  let editorInstance: Editor | null = null;
+  let editorContainer: HTMLDivElement | undefined;
 
   const invalidCharacters = ' * " \\\ / < > : | ?';
 
@@ -498,14 +502,14 @@
     }
   }
 
-  function handleTitleBlur() {
+  function handleTitleBlur(): void {
     if ($isSwitchingTabs) return;
 
     clearTimeout(debounceTimer);
     renameNote();
   }
 
-  function handleTitleKeydown(event) {
+  function handleTitleKeydown(event: KeyboardEvent): void {
     if (event.key === "Enter") {
       event.preventDefault();
 
@@ -515,7 +519,7 @@
     }
   }
 
-  function showInvalidNotebookNamePopup() {
+  function showInvalidNotebookNamePopup(): void {
     isNoteFileNameValidPopupShow = true;
     clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
