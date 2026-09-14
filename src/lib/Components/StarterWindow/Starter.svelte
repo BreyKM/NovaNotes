@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onDestroy } from "svelte";
   import { slide, fade } from "svelte/transition";
   import { quintOut, quadInOut } from "svelte/easing";
@@ -16,13 +16,13 @@
   //variables
   let userInputNotebookName = $state("");
 
-  let isNotebookNameValid = $state(null);
+  let isNotebookNameValid = $state<boolean | null>(null);
 
   let isNotebookNameValidPopupShow = $state(false);
 
   let isFilePathMissingPopupShow = $state(false);
 
-  let popupTimer;
+  let popupTimer: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
     if (

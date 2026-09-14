@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import TabBar from "../Tabs/TabBar.svelte";
 </script>
 
