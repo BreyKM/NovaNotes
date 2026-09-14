@@ -9,7 +9,7 @@
   import { selectedNoteIdStore } from "./store/Store";
 
   import { onDrag } from "./lib/placeholder/dragMe";
-  import ContentCopy from "./lib/Components/Content/ContentCopy.svelte";
+  import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
 
   let width;
   let resizeWidth = width;
@@ -72,7 +72,7 @@
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
       {:else}
-        <ContentCopy bind:this={contentContainerRef} />
+        <NoteEditor bind:this={contentContainerRef} />
       {/if}
     </div>
   </div>
