@@ -58,14 +58,21 @@ export const createNotebookDir = async (
   return dirPath;
 };
 
+const writeFileAtomic = async (
+  filePath: string,
+  content: string,
+): Promise<void> => {
+  const tempPath = `${filePath}.tmp`;
+  await writeFile(tempPath, content, { encoding: fileEncoding });
+  await fse.rename(tempPath, filePath);
+};
+
 export const createWelcomeNote = async (
   welcomeNote: string,
   store: ElectronStore,
 ): Promise<void> => {
   const rootDir = store.get("activeNotebookPath") as string;
-  await writeFile(`${rootDir}/welcome.md`, welcomeNote, {
-    encoding: fileEncoding,
-  });
+  await writeFileAtomic(`${rootDir}/welcome.md`, welcomeNote);
 };
 
 const getNoteInfo =
@@ -98,17 +105,12 @@ export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
 
 export const createNote = async (file: NewNote): Promise<void> => {
   const rootDir = getRootDir() as string;
-
-  await writeFile(`${rootDir}/${file.title}.md`, file.content, {
-    encoding: fileEncoding,
-  });
+  await writeFileAtomic(`${rootDir}/${file.title}.md`, file.content);
 };
 
 export const writeNote = (filename: string, content: string): Promise<void> => {
   const rootDir = getRootDir() as string;
-  return writeFile(`${rootDir}/${filename}.md`, content, {
-    encoding: fileEncoding,
-  });
+  return writeFileAtomic(`${rootDir}/${filename}.md`, content);
 };
 
 export const readNote = (filename: string): Promise<string> => {
