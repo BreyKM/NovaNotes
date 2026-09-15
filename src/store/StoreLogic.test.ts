@@ -11,6 +11,7 @@ import {
   updateNoteContent,
   handleAutoSaving,
   renameNote,
+  tabStore,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -18,18 +19,19 @@ const noteFixture = (title: string): NoteMeta => ({
   title,
   creationTime: 0,
   lastEditTime: 0,
-  id: `id-${title}`,
+  id: `${title}.md`,
 });
 
 const readNote = vi.fn();
 const writeNote = vi.fn().mockResolvedValue(undefined);
 const loadNoteIntoActiveTab = vi.fn().mockResolvedValue(undefined);
 const renameNoteIpc = vi.fn();
+const updateTabs = vi.fn().mockResolvedValue(undefined);
 
 beforeEach(() => {
   vi.stubGlobal("window", {
     notes: { readNote, writeNote, renameNote: renameNoteIpc },
-    tab: { loadNoteIntoActiveTab },
+    tab: { loadNoteIntoActiveTab, updateTabs },
   });
 
   handleAutoSaving.cancel();
@@ -39,6 +41,7 @@ beforeEach(() => {
   noteContentCache.set({});
   selectedNoteIdStore.set(null);
   userInputCurrentNoteTitle.set(null);
+  tabStore.set([]);
 
   vi.clearAllMocks();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -218,5 +221,75 @@ describe("renameNote", () => {
     await renameNote();
 
     expect(get(notesStore)[0].title).toBe("Old");
+  });
+
+  it("changes the note id along with the title", async () => {
+    const target = noteFixture("Old");
+    selectNote(target, "New");
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+    expect(get(notesStore)[0].id).toBe("New.md");
+  });
+
+  it("points the selection at the new id", async () => {
+    const target = noteFixture("Old");
+    selectNote(target, "New");
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+
+    expect(get(selectedNoteIdStore)).toBe("New.md");
+  });
+
+  it("re-keys cached content and frontmatter to the new id", async () => {
+    const target = noteFixture("Old");
+    selectNote(target, "New");
+    noteContentCache.set({ [target.id]: "cached body" });
+    noteFrontmatterStore.set({ [target.id]: "---\na: 1\n---\n\n" });
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+
+    expect(get(noteContentCache)).toEqual({ "New.md": "cached body" });
+    expect(get(noteFrontmatterStore)).toEqual({
+      "New.md": "---\na: 1\n---\n\n",
+    });
+  });
+
+  it("updates every tab holding the renamed note", async () => {
+    const target = noteFixture("Old");
+    const other = noteFixture("Other");
+    notesStore.set([target, other]);
+    selectedNoteIdStore.set(target.id);
+    userInputCurrentNoteTitle.set("New");
+    tabStore.set([
+      { tabId: 1, noteId: target.id, title: "Old" },
+      { tabId: 2, noteId: other.id, title: "Other" },
+      { tabId: 3, noteId: target.id, title: "Old" },
+    ]);
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+
+    expect(updateTabs).toHaveBeenCalledWith([
+      { tabId: 1, noteId: "New.md", title: "New" },
+      { tabId: 2, noteId: "Other.md", title: "Other" },
+      { tabId: 3, noteId: "New.md", title: "New" },
+    ]);
+  });
+
+  it("leaves ids and caches untouched when the rename fails", async () => {
+    const target = noteFixture("Old");
+    selectNote(target, "Taken");
+    noteContentCache.set({ [target.id]: "cached body" });
+    renameNoteIpc.mockResolvedValue(false);
+
+    await renameNote();
+
+    expect(get(notesStore)[0].id).toBe("Old.md");
+    expect(get(selectedNoteIdStore)).toBe("Old.md");
+    expect(get(noteContentCache)).toEqual({ "Old.md": "cached body" });
+    expect(updateTabs).not.toHaveBeenCalled();
   });
 });
