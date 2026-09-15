@@ -68,39 +68,16 @@ export const createWelcomeNote = async (
   });
 };
 
-const INDEX_FILENAME = ".novanotes-index.json";
-type NoteIndex = Record<string, string>;
-
-const getIndexPath = (rootDir: string): string =>
-  path.join(rootDir, INDEX_FILENAME);
-
-const loadIndex = async (rootDir: string): Promise<NoteIndex> => {
-  try {
-    return await readJSON(getIndexPath(rootDir));
-  } catch (err) {
-    return {};
-  }
-};
-
-const saveIndex = async (rootDir: string, index: NoteIndex): Promise<void> => {
-  await writeJSON(getIndexPath(rootDir), index, { spaces: 2 });
-};
-
 const getNoteInfo =
-  (rootDir: string, index: NoteIndex) =>
+  (rootDir: string) =>
   async (filename: string): Promise<NoteMeta> => {
     const fileStats = await stat(`${rootDir}/${filename}`);
-    const title = filename.replace(/\.md$/, "");
-
-    if (!index[title]) {
-      index[title] = randomUUID();
-    }
 
     return {
-      title,
+      title: filename.replace(/\.md$/, ""),
       creationTime: fileStats.birthtimeMs,
       lastEditTime: fileStats.mtimeMs,
-      id: index[title],
+      id: filename,
     };
   };
 
@@ -116,24 +93,11 @@ export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
     filename.endsWith(".md"),
   );
 
-  const index = await loadIndex(rootDir);
-  const IndexSizeBefore = Object.keys(index).length;
-
-  const notes = await Promise.all(noteFiles.map(getNoteInfo(rootDir, index)));
-
-  if (Object.keys(index).length !== IndexSizeBefore) {
-    await saveIndex(rootDir, index);
-  }
-
-  return notes;
+  return Promise.all(noteFiles.map(getNoteInfo(rootDir)));
 };
 
 export const createNote = async (file: NewNote): Promise<void> => {
   const rootDir = getRootDir() as string;
-
-  const index = await loadIndex(rootDir);
-  index[file.title] = randomUUID();
-  await saveIndex(rootDir, index);
 
   await writeFile(`${rootDir}/${file.title}.md`, file.content, {
     encoding: fileEncoding,
@@ -176,13 +140,6 @@ export const renameNote = async (
   } catch (error) {
     try {
       await fse.rename(oldPath, newPath);
-
-      const index = await loadIndex(rootDir);
-      if (index[oldTitle]) {
-        index[newTitle] = index[oldTitle];
-        delete index[oldTitle];
-        await saveIndex(rootDir, index);
-      }
 
       return true;
     } catch (renameError) {
