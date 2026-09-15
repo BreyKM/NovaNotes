@@ -10,6 +10,7 @@ import {
   handleNoteSelect,
   updateNoteContent,
   handleAutoSaving,
+  renameNote,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -23,10 +24,11 @@ const noteFixture = (title: string): NoteMeta => ({
 const readNote = vi.fn();
 const writeNote = vi.fn().mockResolvedValue(undefined);
 const loadNoteIntoActiveTab = vi.fn().mockResolvedValue(undefined);
+const renameNoteIpc = vi.fn();
 
 beforeEach(() => {
   vi.stubGlobal("window", {
-    notes: { readNote, writeNote },
+    notes: { readNote, writeNote, renameNote: renameNoteIpc },
     tab: { loadNoteIntoActiveTab },
   });
 
@@ -39,6 +41,7 @@ beforeEach(() => {
   userInputCurrentNoteTitle.set(null);
 
   vi.clearAllMocks();
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -127,5 +130,82 @@ describe("updateNoteContent", () => {
     handleAutoSaving.flush();
 
     expect(writeNote).not.toHaveBeenCalled();
+  });
+});
+
+describe("renameNote", () => {
+  const selectedNote = (note: NoteMeta, typedTitle: string) => {
+    notesStore.set([note]);
+    selectedNoteIdStore.set(note.id);
+    userInputCurrentNoteTitle.set(typedTitle);
+  };
+
+  it("does nothing when no note is selected", async () => {
+    userInputCurrentNoteTitle.set("New title");
+
+    await renameNote();
+
+    expect(renameNoteIpc).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when the title is unchanged", async () => {
+    selectedNote(noteFixture("Test"), "Test");
+
+    await renameNote();
+
+    expect(renameNoteIpc).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when the title is only whitespace", async () => {
+    selectedNote(noteFixture("Test"), "   ");
+
+    await renameNote();
+
+    expect(renameNoteIpc).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when the title is null", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+    userInputCurrentNoteTitle.set(null);
+
+    await renameNote();
+
+    expect(renameNoteIpc).not.toHaveBeenCalled();
+  });
+
+  it("only updates the renamed note", async () => {
+    const target = noteFixture("Old");
+    const other = noteFixture("Other");
+    notesStore.set([target, other]);
+    selectedNoteIdStore.set(target.id);
+    userInputCurrentNoteTitle.set("New");
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+
+    expect(get(notesStore).map((n) => n.title)).toEqual(["New", "Other"]);
+  });
+
+  it("restores the previous title when the rename fails", async () => {
+    const target = noteFixture("Old");
+    selectedNote(target, "Taken");
+    renameNoteIpc.mockResolvedValue(false);
+
+    await renameNote();
+
+    expect(get(userInputCurrentNoteTitle)).toBe("Old");
+    expect(get(notesStore)[0].title).toBe("Old");
+  });
+
+  it("leaves the store unchanged when the rename throws", async () => {
+    const target = noteFixture("Old");
+    selectedNote(target, "New");
+    renameNoteIpc.mockRejectedValue(new Error("disk on fire"));
+
+    await renameNote();
+
+    expect(get(notesStore)[0].title).toBe("Old");
   });
 });
