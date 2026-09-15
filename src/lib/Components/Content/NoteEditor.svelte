@@ -75,8 +75,8 @@
 
   function showCopyTextPopup(): void {
     CopyTextPopupShow = true;
-    clearTimeout(popupTimer);
-    popupTimer = setTimeout(() => {
+    clearTimeout(copyPopupTimer);
+    copyPopupTimer = setTimeout(() => {
       CopyTextPopupShow = false;
     }, 3000);
   }
@@ -262,10 +262,8 @@
 
   import "./Content.css";
 
-  let popupTimer: ReturnType<typeof setTimeout> | undefined;
-  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-  let isNoteFileNameValidPopupShow = false;
-  let isNoteFileNameValid = false;
+  let copyPopupTimer: ReturnType<typeof setTimeout> | undefined;
+  let isNoteFileNameValid = true;
   let lastIncomingContent: string | null;
   let lastSerializedContent: string | null;
   let editorInstance: Editor | null = null;
@@ -498,49 +496,53 @@
     lastSerializedContent = editorInstance.action(getMarkdown());
   });
 
-  $: if (
-    $userInputCurrentNoteTitle &&
-    $selectedNoteStore &&
-    !$isSwitchingTabs
-  ) {
-    if ($userInputCurrentNoteTitle !== $selectedNoteStore.title) {
-      if (isValidFilename($userInputCurrentNoteTitle)) {
-        isNoteFileNameValid = true;
-        clearTimeout(debounceTimer);
-
-        debounceTimer = setTimeout(() => {
-          renameNote();
-        }, 1500);
-      } else {
-        isNoteFileNameValid = false;
-        showInvalidNotebookNamePopup();
-      }
-    }
+  $: if ($selectedNoteStore && !$isSwitchingTabs) {
+    const typed = $userInputCurrentNoteTitle ?? "";
+    isNoteFileNameValid =
+      typed === "" ||
+      typed === $selectedNoteStore.title ||
+      isValidFilename(typed);
   }
 
-  function handleTitleBlur(): void {
+  function commitTitle(): void {
     if ($isSwitchingTabs) return;
 
-    clearTimeout(debounceTimer);
+    const current = $selectedNoteStore?.title;
+    if (!current) return;
+
+    const typed = $userInputCurrentNoteTitle?.trim() ?? "";
+
+    if (typed === "" || !isValidFilename(typed)) {
+      userInputCurrentNoteTitle.set(current);
+      return;
+    }
+
     renameNote();
   }
 
-  function handleTitleKeydown(event: KeyboardEvent): void {
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      if ($userInputCurrentNoteTitle === "" && $selectedNoteStore) {
-        userInputCurrentNoteTitle.set($selectedNoteStore.title);
-      }
-    }
+  function handleTitleBlur(): void {
+    commitTitle();
   }
 
-  function showInvalidNotebookNamePopup(): void {
-    isNoteFileNameValidPopupShow = true;
-    clearTimeout(popupTimer);
-    popupTimer = setTimeout(() => {
-      isNoteFileNameValidPopupShow = false;
-    }, 500);
+  function handleTitleKeydown(event: KeyboardEvent): void {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      if ($selectedNoteStore) {
+        userInputCurrentNoteTitle.set($selectedNoteStore.title);
+      }
+      (event.currentTarget as HTMLElement).blur();
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (!isNoteFileNameValid) return;
+      (event.currentTarget as HTMLElement).blur();
+      return;
+    }
+
+    if (event.key === "Tab" && !isNoteFileNameValid) {
+      event.preventDefault();
+    }
   }
 
   onDestroy(() => {
@@ -571,7 +573,7 @@
       role="none"
       bind:textContent={$userInputCurrentNoteTitle}
     ></div>
-    {#if isNoteFileNameValidPopupShow === true}
+    {#if !isNoteFileNameValid}
       <div
         class="invalid-directory bg-background-error relative mx-auto w-fit rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ y: "100%", duration: 150, easing: quadInOut }}
