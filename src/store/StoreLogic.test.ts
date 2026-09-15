@@ -134,7 +134,7 @@ describe("updateNoteContent", () => {
 });
 
 describe("renameNote", () => {
-  const selectedNote = (note: NoteMeta, typedTitle: string) => {
+  const selectNote = (note: NoteMeta, typedTitle: string) => {
     notesStore.set([note]);
     selectedNoteIdStore.set(note.id);
     userInputCurrentNoteTitle.set(typedTitle);
@@ -149,7 +149,7 @@ describe("renameNote", () => {
   });
 
   it("does nothing when the title is unchanged", async () => {
-    selectedNote(noteFixture("Test"), "Test");
+    selectNote(noteFixture("Test"), "Test");
 
     await renameNote();
 
@@ -157,7 +157,7 @@ describe("renameNote", () => {
   });
 
   it("does nothing when the title is only whitespace", async () => {
-    selectedNote(noteFixture("Test"), "   ");
+    selectNote(noteFixture("Test"), "   ");
 
     await renameNote();
 
@@ -175,6 +175,17 @@ describe("renameNote", () => {
     expect(renameNoteIpc).not.toHaveBeenCalled();
   });
 
+  it("updates the note in the store when the rename succeeds", async () => {
+    const target = noteFixture("Old");
+    selectNote(target, "New");
+    renameNoteIpc.mockResolvedValue(true);
+
+    await renameNote();
+
+    expect(renameNoteIpc).toHaveBeenCalledWith("Old", "New");
+    expect(get(notesStore)[0].title).toBe("New");
+  });
+
   it("only updates the renamed note", async () => {
     const target = noteFixture("Old");
     const other = noteFixture("Other");
@@ -190,7 +201,7 @@ describe("renameNote", () => {
 
   it("restores the previous title when the rename fails", async () => {
     const target = noteFixture("Old");
-    selectedNote(target, "Taken");
+    selectNote(target, "Taken");
     renameNoteIpc.mockResolvedValue(false);
 
     await renameNote();
@@ -201,7 +212,7 @@ describe("renameNote", () => {
 
   it("leaves the store unchanged when the rename throws", async () => {
     const target = noteFixture("Old");
-    selectedNote(target, "New");
+    selectNote(target, "New");
     renameNoteIpc.mockRejectedValue(new Error("disk on fire"));
 
     await renameNote();
