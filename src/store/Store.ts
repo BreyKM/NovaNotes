@@ -276,6 +276,18 @@ export async function loadNotes(): Promise<void> {
   notesStore.set(sortedNotes);
 }
 
+function rekey<T>(
+  map: Record<string, T>,
+  oldKey: string,
+  newKey: string,
+): Record<string, T> {
+  if (!(oldKey in map)) {
+    return map;
+  }
+  const { [oldKey]: value, ...rest } = map;
+  return { ...rest, [newKey]: value };
+}
+
 export async function renameNote(): Promise<void> {
   const newTitle = get(userInputCurrentNoteTitle)?.trim();
   const selectedNote = get(selectedNoteStore);
@@ -288,13 +300,24 @@ export async function renameNote(): Promise<void> {
     const success = await window.notes.renameNote(selectedNote.title, newTitle);
 
     if (success) {
-      const updatedNote = { ...selectedNote, title: newTitle };
+      const oldId = selectedNote.id;
+      const newId = `${newTitle}.md`;
 
-      notesStore.update((allNotes) => {
-        return allNotes.map((note) =>
-          note.id === selectedNote.id ? updatedNote : note,
-        );
-      });
+      notesStore.update((allNotes) =>
+        allNotes.map((note) =>
+          note.id === oldId ? { ...note, title: newTitle, id: newId } : note,
+        ),
+      );
+
+      noteContentCache.update((cache) => rekey(cache, oldId, newId));
+      noteFrontmatterStore.update((map) => rekey(map, oldId, newId));
+
+      const tabs = get(tabStore).map((tab) =>
+        tab.noteId === oldId ? { ...tab, noteId: newId, title: newTitle } : tab,
+      );
+      void window.tab.updateTabs(tabs);
+
+      selectedNoteIdStore.set(newId);
     } else {
       console.error("Backend failed to rename note.");
       userInputCurrentNoteTitle.set(selectedNote.title);
