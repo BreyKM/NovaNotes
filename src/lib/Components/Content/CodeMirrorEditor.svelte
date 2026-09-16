@@ -7,6 +7,7 @@
   import { noteContentStore, updateNoteContent } from "../../../store/Store";
   import { livePreview } from "./livePreview";
   import { openLinkOnClick } from "./linkClick";
+  import { autoPair } from "./autoPairs";
 
   const externalSync = Annotation.define<boolean>();
   let editorContainer: HTMLDivElement | undefined;
@@ -27,6 +28,7 @@
           markdown(),
           livePreview,
           openLinkOnClick,
+          autoPair,
           EditorView.lineWrapping,
           EditorView.updateListener.of((update) => {
             if (!update.docChanged) {
