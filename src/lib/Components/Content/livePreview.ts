@@ -1,10 +1,9 @@
 import { syntaxTree } from "@codemirror/language";
 import { StateField, type EditorState, type Range } from "@codemirror/state";
 import { Decoration, EditorView, type DecorationSet } from "@codemirror/view";
+import { emphasisDecorations } from "./emphasis";
 
 const hiddenMark = Decoration.replace({});
-const strongText = Decoration.mark({ class: "cm-strong" });
-const emphasisText = Decoration.mark({ class: "cm-emphasis" });
 const linkText = Decoration.mark({ class: "cm-link" });
 
 const headingText = [1, 2, 3, 4, 5, 6].map((level) =>
@@ -56,30 +55,6 @@ function buildDecorations(state: EditorState): DecorationSet {
         return;
       }
 
-      if (name === "StrongEmphasis") {
-        decorations.push(strongText.range(node.from, node.to));
-        return;
-      }
-
-      if (name === "Emphasis") {
-        decorations.push(emphasisText.range(node.from, node.to));
-        return;
-      }
-
-      if (name === "EmphasisMark") {
-        const parent = node.node.parent;
-        if (
-          !parent ||
-          (parent.name !== "StrongEmphasis" && parent.name !== "Emphasis")
-        ) {
-          return;
-        }
-        if (shouldShowSource(state, parent.from, parent.to)) {
-          return;
-        }
-        decorations.push(hiddenMark.range(node.from, node.to));
-      }
-
       if (name === "Link") {
         decorations.push(linkText.range(node.from, node.to));
         return;
@@ -98,6 +73,12 @@ function buildDecorations(state: EditorState): DecorationSet {
       }
     },
   });
+
+  decorations.push(
+    ...emphasisDecorations(state, (from, to) =>
+      shouldShowSource(state, from, to),
+    ),
+  );
 
   return Decoration.set(decorations, true);
 }
