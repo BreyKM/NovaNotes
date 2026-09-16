@@ -6,6 +6,7 @@
   import { markdown } from "@codemirror/lang-markdown";
   import { noteContentStore, updateNoteContent } from "../../../store/Store";
   import { livePreview } from "./livePreview";
+  import { openLinkOnClick } from "./linkClick";
 
   const externalSync = Annotation.define<boolean>();
   let editorContainer: HTMLDivElement | undefined;
@@ -25,6 +26,7 @@
           keymap.of([...defaultKeymap, ...historyKeymap]),
           markdown(),
           livePreview,
+          openLinkOnClick,
           EditorView.lineWrapping,
           EditorView.updateListener.of((update) => {
             if (!update.docChanged) {
@@ -84,11 +86,6 @@
     caret-color: var(--color-text-primary);
   }
 
-  .cm-host :global(.cm-markup-hidden) {
-    font-size: 0.01em;
-    opacity: 0;
-  }
-
   .cm-host :global(.cm-heading) {
     font-weight: 700;
     line-height: 1.3;
@@ -118,5 +115,11 @@
   }
   .cm-host :global(.cm-emphasis) {
     font-style: italic;
+  }
+
+  .cm-host :global(.cm-link) {
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
   }
 </style>

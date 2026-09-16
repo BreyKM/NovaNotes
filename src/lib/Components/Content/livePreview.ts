@@ -2,15 +2,16 @@ import { syntaxTree } from "@codemirror/language";
 import { StateField, type EditorState, type Range } from "@codemirror/state";
 import { Decoration, EditorView, type DecorationSet } from "@codemirror/view";
 
-const hiddenMark = Decoration.mark({ class: "cm-markup-hidden" });
+const hiddenMark = Decoration.replace({});
 const strongText = Decoration.mark({ class: "cm-strong" });
 const emphasisText = Decoration.mark({ class: "cm-emphasis" });
+const linkText = Decoration.mark({ class: "cm-link" });
 
 const headingText = [1, 2, 3, 4, 5, 6].map((level) =>
   Decoration.mark({ class: `cm-heading cm-heading-${level}` }),
 );
 
-function shouldShowSource(
+export function shouldShowSource(
   state: EditorState,
   from: number,
   to: number,
@@ -77,6 +78,23 @@ function buildDecorations(state: EditorState): DecorationSet {
           return;
         }
         decorations.push(hiddenMark.range(node.from, node.to));
+      }
+
+      if (name === "Link") {
+        decorations.push(linkText.range(node.from, node.to));
+        return;
+      }
+
+      if (name === "LinkMark" || name === "URL") {
+        const parent = node.node.parent;
+        if (!parent || parent.name !== "Link") {
+          return;
+        }
+        if (shouldShowSource(state, parent.from, parent.to)) {
+          return;
+        }
+        decorations.push(hiddenMark.range(node.from, node.to));
+        return;
       }
     },
   });
