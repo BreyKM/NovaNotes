@@ -171,6 +171,8 @@
   .cm-host :global(.cm-codeblock-header) {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
     padding: 2px 10px;
     background-color: var(--color-background-secondary);
     border-top-left-radius: 6px;
@@ -200,5 +202,21 @@
   .cm-host :global(.cm-codeblock-language option) {
     background-color: var(--color-background-secondary);
     color: var(--color-text-primary);
+  }
+
+  .cm-host :global(.cm-codeblock-copy) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.75em;
+  }
+  .cm-host :global(.cm-codeblock-copy:hover) {
+    opacity: 1;
   }
 </style>
