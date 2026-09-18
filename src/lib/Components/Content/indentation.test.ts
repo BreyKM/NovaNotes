@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { columns, indentDecorations } from "./indentation";
+import { markdown } from "@codemirror/lang-markdown";
 
 describe("columns", () => {
   it.each([
@@ -74,4 +75,90 @@ describe("indentDecorations", () => {
       expect(line.value.spec.attributes.style).not.toContain("padding-left");
     },
   );
+});
+
+describe("guides across blank lines", () => {
+  function styleOnLine(doc: string, lineNumber: number): string | null {
+    const state = EditorState.create({ doc });
+    const from = state.doc.line(lineNumber).from;
+    const deco = indentDecorations(state).find(
+      (r) => r.from === from && r.to === from,
+    );
+    return deco ? deco.value.spec.attributes.style : null;
+  }
+
+  it("continue through a blank line inside a block", () => {
+    expect(styleOnLine("def f():\n    a\n\n    b", 3)).toContain(
+      "background-size: 4ch",
+    );
+  });
+
+  it("take the shallower neighbour when depths differ", () => {
+    expect(styleOnLine("        a\n\n    b", 2)).toContain(
+      "background-size: 4ch",
+    );
+  });
+
+  it("stop at the end of a block", () => {
+    expect(styleOnLine("    a\n\nb", 2)).toBeNull();
+  });
+
+  it("do not start before a block begins", () => {
+    expect(styleOnLine("a\n\n    b", 2)).toBeNull();
+  });
+
+  it("span several blank lines in a row", () => {
+    const doc = "    a\n\n\n    b";
+    expect(styleOnLine(doc, 2)).toContain("background-size: 4ch");
+    expect(styleOnLine(doc, 3)).toContain("background-size: 4ch");
+  });
+});
+
+describe("guide spacing inside fenced code", () => {
+  function guidesOnLine(doc: string, lineNumber: number): string[] {
+    const state = EditorState.create({ doc, extensions: [markdown()] });
+    const from = state.doc.line(lineNumber).from;
+    const deco = indentDecorations(state).find(
+      (r) => r.from === from && r.to === from,
+    );
+    const style: string = deco ? deco.value.spec.attributes.style : "";
+    return (style.match(/#[0-9a-f]{8} [\d.]+ch/g) ?? []).map(
+      (s) => s.split(" ")[1],
+    );
+  }
+
+  const twoSpace = [
+    "```ts",
+    "function  f() {",
+    "  const count = 1;",
+    "  for (;;) {",
+    "    if (x) {",
+    "      y();",
+    "    }",
+    "  }",
+    "}",
+    "```",
+  ].join("\n");
+
+  it.each([
+    [3, "function body", ["0ch"]],
+    [5, "for body", ["0ch", "2ch"]],
+    [6, "if body", ["0ch", "2ch", "4ch"]],
+  ])("2-space code, line %i (%s)", (line, _label, expected) => {
+    expect(guidesOnLine(twoSpace, line)).toEqual(expected);
+  });
+
+  it("puts 4-space code guides at the start of each step", () => {
+    const doc = "```py\ndef f():\n    if x:\n        y()\n```";
+    expect(guidesOnLine(doc, 4)).toEqual(["0ch", "4ch"]);
+  });
+
+  it("keeps prose guides centred in each step", () => {
+    expect(guidesOnLine("a\n        b", 2)).toEqual(["2ch", "6ch"]);
+  });
+
+  it("does not let a code block change prose after it", () => {
+    const doc = "```\n  a\n```\n        b";
+    expect(guidesOnLine(doc, 4)).toEqual(["2ch", "6ch"]);
+  });
 });
