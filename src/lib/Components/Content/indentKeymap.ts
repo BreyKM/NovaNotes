@@ -8,7 +8,7 @@ const MARKER_ONLY = /^[ \t]*(?:[-*+]|\d+[.)]) ?$/;
 const LIST_OR_QUOTE = /^[ \t]*(?:[-*+](?:\s|$)|\d+[.)](?:\s|$)|>)/;
 const ORDERED = /^([ \t]*)(\d+)([.)])/;
 
-function stepBack(before: string): number {
+export function stepBack(before: string): number {
   if (before.endsWith("\t")) {
     return 1;
   }
@@ -18,7 +18,7 @@ function stepBack(before: string): number {
   return Math.min(cols - stop, trailing);
 }
 
-function previousNumber(
+export function previousNumber(
   state: EditorState,
   lineNumber: number,
   cols: number,
@@ -41,7 +41,7 @@ function previousNumber(
   return 0;
 }
 
-function shiftOrdered(view: EditorView, dir: 1 | -1): boolean {
+export function shiftOrdered(view: EditorView, dir: 1 | -1): boolean {
   const { state } = view;
   const range = state.selection.main;
   if (!range.empty) {
