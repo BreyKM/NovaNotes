@@ -62,6 +62,12 @@ export function emphasisDecorations(
         break;
       }
 
+      const next = line.text[open.to - line.from];
+      if (next === " " || next === "\t") {
+        i++;
+        continue;
+      }
+
       const level = Math.min(open.len, MAX);
 
       let j = i + 1;

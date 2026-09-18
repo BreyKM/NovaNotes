@@ -2,6 +2,8 @@ import { syntaxTree } from "@codemirror/language";
 import { StateField, type EditorState, type Range } from "@codemirror/state";
 import { Decoration, EditorView, type DecorationSet } from "@codemirror/view";
 import { emphasisDecorations } from "./emphasis";
+import { listMarkDecorations } from "./lists";
+import { indentDecorations } from "./indentation";
 
 const hiddenMark = Decoration.replace({});
 const linkText = Decoration.mark({ class: "cm-link" });
@@ -71,6 +73,16 @@ function buildDecorations(state: EditorState): DecorationSet {
         decorations.push(hiddenMark.range(node.from, node.to));
         return;
       }
+
+      if (name === "ListMark") {
+        decorations.push(
+          ...listMarkDecorations(state, node.node, (from, to) =>
+            shouldShowSource(state, from, to),
+          ),
+        );
+
+        return;
+      }
     },
   });
 
@@ -79,6 +91,8 @@ function buildDecorations(state: EditorState): DecorationSet {
       shouldShowSource(state, from, to),
     ),
   );
+
+  decorations.push(...indentDecorations(state));
 
   return Decoration.set(decorations, true);
 }

@@ -2,12 +2,19 @@
   import { onMount, onDestroy } from "svelte";
   import { EditorView, keymap } from "@codemirror/view";
   import { EditorState, Annotation, Transaction } from "@codemirror/state";
-  import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+  import {
+    defaultKeymap,
+    history,
+    historyKeymap,
+    indentWithTab,
+  } from "@codemirror/commands";
+  import { indentUnit } from "@codemirror/language";
   import { markdown } from "@codemirror/lang-markdown";
   import { noteContentStore, updateNoteContent } from "../../../store/Store";
   import { livePreview } from "./livePreview";
   import { openLinkOnClick } from "./linkClick";
   import { autoPair } from "./autoPairs";
+  import { indentKeymap } from "./indentKeymap";
 
   const externalSync = Annotation.define<boolean>();
   let editorContainer: HTMLDivElement | undefined;
@@ -24,11 +31,13 @@
         doc: $noteContentStore,
         extensions: [
           history(),
-          keymap.of([...defaultKeymap, ...historyKeymap]),
+          keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
+          indentUnit.of("    "),
           markdown(),
           livePreview,
           openLinkOnClick,
           autoPair,
+          indentKeymap,
           EditorView.lineWrapping,
           EditorView.updateListener.of((update) => {
             if (!update.docChanged) {
@@ -123,5 +132,11 @@
     color: var(--color-primary);
     text-decoration: underline;
     cursor: pointer;
+  }
+
+  .cm-host :global(.cm-indent),
+  .cm-host :global(.cm-list-marker) {
+    display: inline-block;
+    text-indent: 0;
   }
 </style>
