@@ -17,6 +17,7 @@
   import { indentUnit, syntaxHighlighting } from "@codemirror/language";
   import { languages } from "@codemirror/language-data";
   import { codeHighlight } from "./codeBlocks";
+  import { resolveLanguage } from "./codeLanguages";
 
   const externalSync = Annotation.define<boolean>();
   let editorContainer: HTMLDivElement | undefined;
@@ -35,7 +36,7 @@
           history(),
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           indentUnit.of("    "),
-          markdown({ codeLanguages: languages }),
+          markdown({ codeLanguages: resolveLanguage }),
           syntaxHighlighting(codeHighlight),
           livePreview,
           openLinkOnClick,
@@ -185,6 +186,19 @@
   .cm-host :global(.cm-codeblock-language) {
     font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
     font-size: 0.75em;
+    color: inherit;
     opacity: 0.6;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+  .cm-host :global(.cm-codeblock-language:hover),
+  .cm-host :global(.cm-codeblock-language:focus-visible) {
+    opacity: 1;
+  }
+  .cm-host :global(.cm-codeblock-language option) {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-primary);
   }
 </style>

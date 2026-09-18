@@ -1,8 +1,9 @@
 import { HighlightStyle, syntaxTree } from "@codemirror/language";
 import type { EditorState, Range } from "@codemirror/state";
-import { Decoration, WidgetType } from "@codemirror/view";
+import { Decoration, WidgetType, EditorView } from "@codemirror/view";
 import type { SyntaxNode } from "@lezer/common";
 import { tags as t } from "@lezer/highlight";
+import { fenceLanguageChange, languageOptions } from "./codeLanguages";
 
 const CODE_NODES = new Set(["FencedCode", "CodeBlock", "InlineCode"]);
 
@@ -57,17 +58,33 @@ class CodeHeaderWidget extends WidgetType {
     return other.language === this.language && other.alone === this.alone;
   }
 
-  toDOM(): HTMLElement {
+  toDOM(view: EditorView): HTMLElement {
     const header = document.createElement("div");
     header.className = this.alone
       ? "cm-codeblock-header cm-codeblock-header-alone"
       : "cm-codeblock-header";
 
-    const label = document.createElement("span");
-    label.className = "cm-codeblock-language";
-    label.textContent = this.language || "text";
-    header.append(label);
+    const select = document.createElement("select");
+    select.className = "cm-codeblock-language";
+    select.title = "Code language";
+    for (const option of languageOptions(this.language)) {
+      const element = document.createElement("option");
+      element.value = option.value;
+      element.textContent = option.label;
+      element.selected = option.selected;
+      select.append(element);
+    }
 
+    select.addEventListener("change", () => {
+      const line = view.state.doc.lineAt(view.posAtDOM(header));
+      const change = fenceLanguageChange(line.text, line.from, select.value);
+      if (change) {
+        view.dispatch({ changes: change });
+      }
+      view.focus();
+    });
+
+    header.append(select);
     return header;
   }
 
