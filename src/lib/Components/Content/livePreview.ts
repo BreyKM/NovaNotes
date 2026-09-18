@@ -4,7 +4,7 @@ import { Decoration, EditorView, type DecorationSet } from "@codemirror/view";
 import { emphasisDecorations } from "./emphasis";
 import { listMarkDecorations } from "./lists";
 import { indentDecorations } from "./indentation";
-import { codeBlockLines } from "./codeBlocks";
+import { codeBlockLines, fencedCodeDecorations } from "./codeBlocks";
 
 const hiddenMark = Decoration.replace({});
 const linkText = Decoration.mark({ class: "cm-link" });
@@ -86,7 +86,16 @@ function buildDecorations(state: EditorState): DecorationSet {
         return;
       }
 
-      if (name === "FencedCode" || name === "CodeBlock") {
+      if (name === "FencedCode") {
+        decorations.push(
+          ...fencedCodeDecorations(state, node.node, (from, to) =>
+            shouldShowSource(state, from, to),
+          ),
+        );
+        return;
+      }
+
+      if (name === "CodeBlock") {
         decorations.push(...codeBlockLines(state, node.node));
         return;
       }

@@ -166,4 +166,25 @@
     border-radius: 4px;
     padding: 0.1em 0.3em;
   }
+
+  .cm-host :global(.cm-codeblock-header) {
+    display: flex;
+    justify-content: flex-end;
+    padding: 2px 10px;
+    background-color: var(--color-background-secondary);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    user-select: none;
+  }
+
+  .cm-host :global(.cm-codeblock-header-alone) {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  .cm-host :global(.cm-codeblock-language) {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.75em;
+    opacity: 0.6;
+  }
 </style>
