@@ -29,10 +29,35 @@ class IndentWidget extends WidgetType {
   }
 }
 
-const GUIDES =
-  `background-image: repeating-linear-gradient(to right, transparent 0 2ch, ` +
-  `var(--color-background-nav) 2ch calc(2ch + 1px), transparent calc(2ch + 1px) ${INDENT}ch);` +
-  ` background-position: 6px 0; background-repeat: no-repeat;`;
+const GUIDE_COLORS = [
+  "#e06c7566",
+  "#e5c07b66",
+  "#98c37966",
+  "#61afef66",
+  "#c678dd66",
+];
+
+function guideStyle(cols: number): string {
+  const stops: string[] = [];
+  for (let at = 2; at < cols; at += INDENT) {
+    const color = GUIDE_COLORS[((at - 2) / INDENT) % GUIDE_COLORS.length];
+    stops.push(
+      `transparent ${at}ch`,
+      `${color} ${at}ch`,
+      `${color} calc(${at}ch + 1px)`,
+      `transparent calc(${at}ch + 1px)`,
+    );
+  }
+  if (stops.length === 0) {
+    return "";
+  }
+  return (
+    `background-image: linear-gradient(to right, transparent 0, ${stops.join(", ")});` +
+    ` background-size: ${cols}ch 100%; background-position: 6px 0; background-repeat: no-repeat;`
+  );
+}
+
+const LIST_ITEM = /^[ \t]*(?:[-*+]|\d+[.)])(?:[ \t]|$)/;
 
 export function indentDecorations(state: EditorState): Range<Decoration>[] {
   const out: Range<Decoration>[] = [];
@@ -46,11 +71,13 @@ export function indentDecorations(state: EditorState): Range<Decoration>[] {
 
     const cols = columns(match[0]);
 
-    out.push(
-      Decoration.line({
-        attributes: { style: `${GUIDES} background-size: ${cols}ch 100%;` },
-      }).range(line.from),
-    );
+    const hang = LIST_ITEM.test(line.text)
+      ? ""
+      : ` padding-left: calc(${cols}ch + 6px); text-indent: -${cols}ch;`;
+    const style = guideStyle(cols) + hang;
+    if (style) {
+      out.push(Decoration.line({ attributes: { style } }).range(line.from));
+    }
 
     out.push(
       Decoration.replace({ widget: new IndentWidget(cols) }).range(

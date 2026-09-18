@@ -39,4 +39,39 @@ describe("indentDecorations", () => {
       "background-size: 4ch",
     );
   });
+
+  it("colors each guide by its depth", () => {
+    const state = EditorState.create({ doc: "            a" });
+    const [line] = indentDecorations(state).filter((r) => r.to === r.from);
+
+    expect(
+      line.value.spec.attributes.style.match(/#[0-9a-f]{8} \d+ch/g),
+    ).toEqual(["#e06c7566 2ch", "#e5c07b66 6ch", "#98c37966 10ch"]);
+  });
+
+  it("draws no guide for indents too shallow to reach one", () => {
+    const state = EditorState.create({ doc: "  a" });
+    const [line] = indentDecorations(state).filter((r) => r.to === r.from);
+
+    expect(line.value.spec.attributes.style).not.toContain("background-image");
+  });
+
+  it("hangs wrapped rows of indented text under the text", () => {
+    const state = EditorState.create({ doc: "    a" });
+    const [line] = indentDecorations(state).filter((r) => r.to === r.from);
+
+    expect(line.value.spec.attributes.style).toContain(
+      "padding-left: calc(4ch + 6px); text-indent: -4ch;",
+    );
+  });
+
+  it.each(["    - item", "    1. item"])(
+    "leaves the hanging indent of %j to the list code",
+    (doc) => {
+      const state = EditorState.create({ doc });
+      const [line] = indentDecorations(state).filter((r) => r.to === r.from);
+
+      expect(line.value.spec.attributes.style).not.toContain("padding-left");
+    },
+  );
 });
