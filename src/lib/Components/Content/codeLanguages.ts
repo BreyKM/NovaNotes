@@ -1,4 +1,4 @@
-import { language, LanguageDescription } from "@codemirror/language";
+import { LanguageDescription } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
 import type { ChangeSpec } from "@codemirror/state";
 
@@ -17,8 +17,8 @@ export function resolveLanguage(info: string): LanguageDescription | null {
 }
 
 export function languageId(language: LanguageDescription): string {
-  const lower = language.name.toLocaleLowerCase();
-  if (!language.alias.includes(lower) && !WHITESPACE.test(lower)) {
+  const lower = language.name.toLowerCase();
+  if (language.alias.includes(lower) && !WHITESPACE.test(lower)) {
     return lower;
   }
   return (

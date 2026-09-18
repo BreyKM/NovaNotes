@@ -6,6 +6,7 @@ import {
   languageOptions,
   resolveLanguage,
 } from "./codeLanguages";
+import { language } from "@codemirror/language";
 
 describe("resolveLanguage", () => {
   it.each([
@@ -75,5 +76,20 @@ describe("fenceLanguageChange", () => {
 
   it("ignores a line that is not a fence", () => {
     expect(fenceLanguageChange("plain text", 0, "py")).toBeNull();
+  });
+});
+
+describe("languageId", () => {
+  it.each([
+    ["JavaScript", "javascript"],
+    ["TypeScript", "typescript"],
+    ["JSON", "json"],
+    ["HTML", "html"],
+    ["YAML", "yaml"],
+    ["Python", "python"],
+    ["C++", "c++"],
+  ])("writes %s as %j", (name, id) => {
+    const language = PICKABLE_LANGUAGES.find((l) => l.name === name);
+    expect(language && languageId(language)).toBe(id);
   });
 });
