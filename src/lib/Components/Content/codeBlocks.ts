@@ -3,7 +3,6 @@ import type { EditorState, Range } from "@codemirror/state";
 import { Decoration, WidgetType } from "@codemirror/view";
 import type { SyntaxNode } from "@lezer/common";
 import { tags as t } from "@lezer/highlight";
-import { vi } from "vitest";
 
 const CODE_NODES = new Set(["FencedCode", "CodeBlock", "InlineCode"]);
 
