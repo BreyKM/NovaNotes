@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { emphasisDecorations } from "./emphasis";
+import { markdown } from "@codemirror/lang-markdown";
 
 function render(doc: string, showSource = false) {
   const ranges = emphasisDecorations(
@@ -50,5 +51,25 @@ describe("emphasisDecorations", () => {
       styled: [["x", "cm-strong"]],
       hidden: [],
     });
+  });
+});
+
+describe("emphasisisDecorations inside code", () => {
+  function renderParsed(doc: string) {
+    const state = EditorState.create({ doc, extensions: [markdown()] });
+    return emphasisDecorations(state, () => false).map((r) =>
+      doc.slice(r.from, r.to),
+    );
+  }
+
+  it.each(["`*x*`", "```\ndef __init__(self, *args):\n```", "    __init__"])(
+    "ignores delimiters in %j",
+    (doc) => {
+      expect(renderParsed(doc)).toEqual([]);
+    },
+  );
+
+  it("still styles emphasis next to inline code", () => {
+    expect(renderParsed("*a* `b`")).toEqual(["a", "*", "*"]);
   });
 });

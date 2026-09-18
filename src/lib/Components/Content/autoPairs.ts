@@ -1,5 +1,6 @@
 import { Prec } from "@codemirror/state";
 import { EditorView, keymap, type KeyBinding } from "@codemirror/view";
+import { isInCode } from "./codeBlocks";
 
 const PAIRS: Record<string, string | undefined> = {
   _: "_",
@@ -14,6 +15,9 @@ const NEXT_ALLOWS_PAIR = /^$|^[\s)\]}>.,;:!?]/;
 
 const pairOnType = EditorView.inputHandler.of((view, from, to, text) => {
   const { state } = view;
+  if ((text === "_" || text === "*") && isInCode(state, from)) {
+    return false;
+  }
 
   if (
     from === to &&

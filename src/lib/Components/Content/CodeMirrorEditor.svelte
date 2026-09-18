@@ -8,13 +8,15 @@
     historyKeymap,
     indentWithTab,
   } from "@codemirror/commands";
-  import { indentUnit } from "@codemirror/language";
   import { markdown } from "@codemirror/lang-markdown";
   import { noteContentStore, updateNoteContent } from "../../../store/Store";
   import { livePreview } from "./livePreview";
   import { openLinkOnClick } from "./linkClick";
   import { autoPair } from "./autoPairs";
   import { indentKeymap } from "./indentKeymap";
+  import { indentUnit, syntaxHighlighting } from "@codemirror/language";
+  import { languages } from "@codemirror/language-data";
+  import { codeHighlight } from "./codeBlocks";
 
   const externalSync = Annotation.define<boolean>();
   let editorContainer: HTMLDivElement | undefined;
@@ -33,7 +35,8 @@
           history(),
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           indentUnit.of("    "),
-          markdown(),
+          markdown({ codeLanguages: languages }),
+          syntaxHighlighting(codeHighlight),
           livePreview,
           openLinkOnClick,
           autoPair,
@@ -138,5 +141,29 @@
   .cm-host :global(.cm-list-marker) {
     display: inline-block;
     text-indent: 0;
+  }
+
+  .cm-host :global(.cm-codeblock) {
+    background-color: var(--color-background-secondary);
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.9em;
+  }
+
+  .cm-host :global(.cm-codeblock-first) {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+
+  .cm-host :global(.cm-codeblock-last) {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  .cm-host :global(.cm-inline-code) {
+    background-color: var(--color-background-secondary);
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.9em;
+    border-radius: 4px;
+    padding: 0.1em 0.3em;
   }
 </style>

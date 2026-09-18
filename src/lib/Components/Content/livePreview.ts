@@ -4,9 +4,11 @@ import { Decoration, EditorView, type DecorationSet } from "@codemirror/view";
 import { emphasisDecorations } from "./emphasis";
 import { listMarkDecorations } from "./lists";
 import { indentDecorations } from "./indentation";
+import { codeBlockLines } from "./codeBlocks";
 
 const hiddenMark = Decoration.replace({});
 const linkText = Decoration.mark({ class: "cm-link" });
+const inlineCode = Decoration.mark({ class: "cm-inline-code" });
 
 const headingText = [1, 2, 3, 4, 5, 6].map((level) =>
   Decoration.mark({ class: `cm-heading cm-heading-${level}` }),
@@ -81,6 +83,28 @@ function buildDecorations(state: EditorState): DecorationSet {
           ),
         );
 
+        return;
+      }
+
+      if (name === "FencedCode" || name === "CodeBlock") {
+        decorations.push(...codeBlockLines(state, node.node));
+        return;
+      }
+
+      if (name === "InlineCode") {
+        decorations.push(inlineCode.range(node.from, node.to));
+        return;
+      }
+
+      if (name === "CodeMark") {
+        const parent = node.node.parent;
+        if (!parent || parent.name !== "InlineCode") {
+          return;
+        }
+        if (shouldShowSource(state, parent.from, parent.to)) {
+          return;
+        }
+        decorations.push(hiddenMark.range(node.from, node.to));
         return;
       }
     },

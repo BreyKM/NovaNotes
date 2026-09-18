@@ -1,5 +1,7 @@
 import type { EditorState, Range } from "@codemirror/state";
 import { Decoration } from "@codemirror/view";
+import { isInCode } from "./codeBlocks";
+import { run } from "svelte/legacy";
 
 const MAX = 3;
 const WORD = /\w/;
@@ -53,7 +55,9 @@ export function emphasisDecorations(
 
   for (let n = 1; n <= state.doc.lines; n++) {
     const line = state.doc.line(n);
-    const runs = runsIn(line.text, line.from);
+    const runs = runsIn(line.text, line.from).filter(
+      (run) => !isInCode(state, run.from),
+    );
 
     let i = 0;
     while (i < runs.length) {
