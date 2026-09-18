@@ -85,7 +85,7 @@ class CodeHeaderWidget extends WidgetType {
     });
 
     const copy = document.createElement("button");
-    copy.type == "button";
+    copy.type = "button";
     copy.className = "cm-codeblock-copy";
     copy.title = "Copy code";
     copy.innerHTML = COPY_ICON;
@@ -107,7 +107,7 @@ class CodeHeaderWidget extends WidgetType {
         .catch((error) => console.error("Copy failed", error));
     });
 
-    header.append(select);
+    header.append(select, copy);
     return header;
   }
 
