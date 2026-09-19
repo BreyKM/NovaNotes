@@ -11,6 +11,7 @@ import {
   updateNoteContent,
   handleAutoSaving,
   renameNote,
+  saveNow,
   tabStore,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
@@ -111,7 +112,7 @@ describe("updateNoteContent", () => {
     );
 
     updateNoteContent("Edited body.");
-    handleAutoSaving.flush();
+    await saveNow();
 
     expect(writeNote).toHaveBeenCalledWith(
       "Test",
@@ -128,7 +129,7 @@ describe("updateNoteContent", () => {
     await vi.waitFor(() => expect(get(noteContentStore)).toBe("Just a body."));
 
     updateNoteContent("Edited.");
-    handleAutoSaving.flush();
+    await saveNow();
 
     expect(writeNote).toHaveBeenCalledWith("Plain", "Edited.");
   });
@@ -147,16 +148,46 @@ describe("updateNoteContent", () => {
     await vi.waitFor(() => expect(get(noteContentStore)).toBe("Second body."));
 
     updateNoteContent("Edited second.");
-    handleAutoSaving.flush();
+    await saveNow();
 
     expect(writeNote).toHaveBeenCalledWith("Without", "Edited second.");
   });
 
-  it("does not write when no note is selected", () => {
+  it("does not write when no note is selected", async () => {
     updateNoteContent("orphan content");
-    handleAutoSaving.flush();
+    await saveNow();
 
     expect(writeNote).not.toHaveBeenCalled();
+  });
+});
+
+describe("saveNow", () => {
+  it("does not start a write until the previous one finishes", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+
+    let finishFirstWrite: () => void = () => {};
+    writeNote.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finishFirstWrite = resolve;
+        }),
+    );
+
+    updateNoteContent("first");
+    handleAutoSaving.flush();
+    updateNoteContent("second");
+    handleAutoSaving.flush();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(writeNote).toHaveBeenCalledTimes(1);
+
+    finishFirstWrite();
+    await saveNow();
+
+    expect(writeNote).toHaveBeenCalledTimes(2);
+    expect(writeNote).toHaveBeenCalledWith("Test", "second");
   });
 });
 
@@ -301,6 +332,31 @@ describe("renameNote", () => {
       { tabId: 2, noteId: "Other.md", title: "Other" },
       { tabId: 3, noteId: "New.md", title: "New" },
     ]);
+  });
+
+  it("finishes pending saves before renaming the file", async () => {
+    selectNote(noteFixture("Old"), "New");
+    renameNoteIpc.mockResolvedValue(true);
+
+    let finishWrite: () => void = () => {};
+    writeNote.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finishWrite = resolve;
+        }),
+    );
+
+    updateNoteContent("typed just before renaming");
+    const renaming = renameNote();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(writeNote).toHaveBeenCalledWith("Old", "typed just before renaming");
+    expect(renameNoteIpc).not.toHaveBeenCalled();
+
+    finishWrite();
+    await renaming;
+
+    expect(renameNoteIpc).toHaveBeenCalledWith("Old", "New");
   });
 
   it("leaves ids and caches untouched when the rename fails", async () => {

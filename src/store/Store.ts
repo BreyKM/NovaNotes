@@ -158,11 +158,18 @@ export function updateNoteContent(newContent: string): void {
   }
 }
 
+let pendingWrite: Promise<void> = Promise.resolve();
+
+function writeInOrder(title: string, content: string): Promise<void> {
+  pendingWrite = pendingWrite
+    .then(() => window.notes.writeNote(title, content))
+    .catch((err) => console.error("Auto-save failed:", err));
+  return pendingWrite;
+}
+
 export const handleAutoSaving = throttle(
   (title: string, content: string) => {
-    void window.notes
-      .writeNote(title, content)
-      .catch((err) => console.error("Auto-save failed:", err));
+    void writeInOrder(title, content);
   },
   2000,
   {
@@ -170,6 +177,11 @@ export const handleAutoSaving = throttle(
     trailing: true,
   },
 );
+
+export async function saveNow(): Promise<void> {
+  handleAutoSaving.flush();
+  await pendingWrite;
+}
 
 export function findNextAvailableTitle(allNotes: NoteMeta[]): string {
   const untitledRegex = /^Untitled(?: (\d+))?$/;
@@ -298,6 +310,7 @@ export async function renameNote(): Promise<void> {
   }
 
   try {
+    await saveNow();
     const success = await window.notes.renameNote(selectedNote.title, newTitle);
 
     if (success) {
