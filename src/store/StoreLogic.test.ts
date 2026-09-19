@@ -63,6 +63,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  finishHeldWrite();
   handleAutoSaving.cancel();
   vi.unstubAllGlobals();
 });
@@ -181,13 +182,7 @@ describe("saveNow", () => {
     notesStore.set([target]);
     selectedNoteIdStore.set(target.id);
 
-    let finishFirstWrite: () => void = () => {};
-    writeNote.mockImplementationOnce(
-      () =>
-        new Promise<void>((resolve) => {
-          finishFirstWrite = resolve;
-        }),
-    );
+    holdNextWrite();
 
     updateNoteContent("first");
     handleAutoSaving.flush();
@@ -197,7 +192,7 @@ describe("saveNow", () => {
 
     expect(writeNote).toHaveBeenCalledTimes(1);
 
-    finishFirstWrite();
+    finishHeldWrite();
     await saveNow();
 
     expect(writeNote).toHaveBeenCalledTimes(2);
@@ -373,13 +368,7 @@ describe("renameNote", () => {
     selectNote(noteFixture("Old"), "New");
     renameNoteIpc.mockResolvedValue(true);
 
-    let finishWrite: () => void = () => {};
-    writeNote.mockImplementationOnce(
-      () =>
-        new Promise<void>((resolve) => {
-          finishWrite = resolve;
-        }),
-    );
+    holdNextWrite();
 
     updateNoteContent("typed just before renaming");
     const renaming = renameNote();
@@ -388,7 +377,7 @@ describe("renameNote", () => {
     expect(writeNote).toHaveBeenCalledWith("Old", "typed just before renaming");
     expect(renameNoteIpc).not.toHaveBeenCalled();
 
-    finishWrite();
+    finishHeldWrite();
     await renaming;
 
     expect(renameNoteIpc).toHaveBeenCalledWith("Old", "New");
