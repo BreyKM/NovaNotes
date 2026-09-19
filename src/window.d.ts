@@ -23,6 +23,7 @@ declare global {
     directory: {
       openRootDirSelection: () => void;
       getRootNotebookDirPath: () => Promise<string | undefined>;
+      openExistingNotebook: () => Promise<boolean>;
       createNotebookDir: (
         name: string,
         parentDir: string,

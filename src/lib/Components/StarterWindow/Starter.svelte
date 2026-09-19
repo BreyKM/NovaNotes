@@ -11,6 +11,7 @@
     rootNotebookDirPathStore,
     userInputNotebookNameStore,
     createNotebookDir,
+    openExistingNotebook,
   } from "../../../store/Store";
 
   import isValidFilename from "valid-filename";
@@ -95,21 +96,23 @@
             <AddFolderIcon width="4rem" height="4rem" stroke="#f2f2f2" />
           </button>
           <div class="flex w-64 flex-col items-center">
-            <div class="text-base">Create a new NoteBook</div>
+            <div class="text-center text-base">Create a new NoteBook</div>
             <div class="text-xs">Create a new folder to store notes in.</div>
           </div>
         </div>
         <div class="horizontal-divider bg-divider my-6 h-px"></div>
-        <div class="my-2 flex flex-col items-center justify-between">
+        <div class="my-2 flex flex-col items-center">
           <button
+            onclick={openExistingNotebook}
             class="btn-primary bg-background-secondary hover:bg-background-secondary-hover mb-6 flex h-24 w-24 items-center justify-center"
-            aria-label="open folder icon"
+            aria-label="open an existing notebook"
           >
             <OpenFolderIcon width="4rem" height="4rem" fill="#f2f2f2" />
           </button>
           <div class="flex w-64 flex-col items-center">
-            <div class="text-base">Open an existing NoteBook</div>
-            <div class="text-xs">This is the initial content.</div>
+            <div class="text-center text-base">
+              Open a folder of markdown notes
+            </div>
           </div>
         </div>
       </div>

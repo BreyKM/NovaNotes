@@ -17,6 +17,7 @@ import {
   createNotebookDir,
   userInputNotebookNameStore,
   rootNotebookDirPathStore,
+  openExistingNotebook,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -35,6 +36,8 @@ const updateTabs = vi.fn().mockResolvedValue(undefined);
 const readyToClose = vi.fn();
 const createNotebookDirIpc = vi.fn();
 const createWelcomeNote = vi.fn().mockResolvedValue(undefined);
+const openExistingNotebookIpc = vi.fn();
+const openMainWindow = vi.fn();
 
 let finishHeldWrite: () => void = () => {};
 
@@ -57,7 +60,11 @@ beforeEach(() => {
     },
     tab: { loadNoteIntoActiveTab, updateTabs },
     nav: { readyToClose },
-    directory: { createNotebookDir: createNotebookDirIpc },
+    directory: {
+      createNotebookDir: createNotebookDirIpc,
+      openExistingNotebook: openExistingNotebookIpc,
+    },
+    main: { openMainWindow },
   });
 
   handleAutoSaving.cancel();
@@ -465,5 +472,23 @@ describe("createNotebookDir", () => {
 
     expect(await createNotebookDir()).toBe("invalid-name");
     expect(createNotebookDirIpc).not.toHaveBeenCalled();
+  });
+});
+
+describe("openExistingNotebook", () => {
+  it("opens the main window when a folder is chosen", async () => {
+    openExistingNotebookIpc.mockResolvedValue(true);
+
+    await openExistingNotebook();
+
+    expect(openMainWindow).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays on the starter window when the picker is cancelled", async () => {
+    openExistingNotebookIpc.mockResolvedValue(false);
+
+    await openExistingNotebook();
+
+    expect(openMainWindow).not.toHaveBeenCalled();
   });
 });

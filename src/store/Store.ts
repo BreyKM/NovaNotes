@@ -250,6 +250,13 @@ export async function rootDirSelection(): Promise<void> {
   rootNotebookDirPathStore.set(rootNotebookDirPath ?? null);
 }
 
+export async function openExistingNotebook(): Promise<void> {
+  const opened = await window.directory.openExistingNotebook();
+  if (opened) {
+    window.main.openMainWindow();
+  }
+}
+
 export type CreateNotebookOutcome =
   "created" | "exists" | "invalid-name" | "failed";
 

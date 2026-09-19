@@ -44,6 +44,9 @@ contextBridge.exposeInMainWorld("directory", {
     });
   },
 
+  openExistingNotebook: (): Promise<boolean> =>
+    ipcRenderer.invoke("openExistingNotebook"),
+
   createNotebookDir: (
     name: string,
     parentDir: string,

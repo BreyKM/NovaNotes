@@ -179,6 +179,15 @@ app.whenReady().then(() => {
     },
   );
 
+  ipcMain.handle("openExistingNotebook", async () => {
+    const dir = await selectNotebookDirectory();
+    if (!dir) {
+      return false;
+    }
+    useNotebook(dir);
+    return true;
+  });
+
   ipcMain.handle("getActiveFolder", async () => {
     return path.basename(getNotebookPath());
   });
