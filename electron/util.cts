@@ -1,16 +1,8 @@
-import {
-  ensureDir,
-  writeFile,
-  readdir,
-  stat,
-  readJSON,
-  writeJSON,
-} from "fs-extra";
+import { ensureDir, writeFile, readdir, stat } from "fs-extra";
 import * as fse from "fs-extra";
 import { fileEncoding } from "../shared/constants.cjs";
 import { dialog } from "electron";
 import path from "path";
-import { randomUUID } from "crypto";
 import type { NoteMeta, NewNote } from "../shared/types";
 import type ElectronStore from "./electronStore.cjs";
 

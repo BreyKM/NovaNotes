@@ -6,7 +6,6 @@ import {
   languageOptions,
   resolveLanguage,
 } from "./codeLanguages";
-import { language } from "@codemirror/language";
 
 describe("resolveLanguage", () => {
   it.each([
