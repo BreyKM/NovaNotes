@@ -72,6 +72,30 @@ describe("handleNoteSelect", () => {
     expect(loadNoteIntoActiveTab).not.toHaveBeenCalled();
     expect(readNote).not.toHaveBeenCalled();
   });
+
+  it("ignores a slow read for a note that is no longer selected", async () => {
+    const slow = noteFixture("Slow");
+    const fast = noteFixture("Fast");
+    notesStore.set([slow, fast]);
+
+    let finishSlowRead: (raw: string) => void = () => {};
+    readNote.mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          finishSlowRead = resolve;
+        }),
+    );
+    readNote.mockResolvedValueOnce("Fast body.");
+
+    await handleNoteSelect(slow.id);
+    await handleNoteSelect(fast.id);
+    await vi.waitFor(() => expect(get(noteContentStore)).toBe("Fast body."));
+
+    finishSlowRead("Slow body.");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(get(noteContentStore)).toBe("Fast body.");
+  });
 });
 
 describe("updateNoteContent", () => {

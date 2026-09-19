@@ -48,21 +48,29 @@ export function splitFrontmatter(raw: string): {
   return { frontmatter: match[0], body: raw.slice(match[0].length) };
 }
 
+let latestLoad = 0;
+
 export function getNoteContent(note: NoteMeta): void {
+  const load = ++latestLoad;
   const cache = get(noteContentCache);
 
   if (cache[note.id] !== undefined) {
     noteContentStore.set(cache[note.id]);
-  } else {
-    noteContentStore.set("");
-
-    window.notes.readNote(note.title).then((raw) => {
-      const { frontmatter, body } = splitFrontmatter(raw);
-      noteFrontmatterStore.update((m) => ({ ...m, [note.id]: frontmatter }));
-      noteContentStore.set(body);
-      noteContentCache.update((c) => ({ ...c, [note.id]: body }));
-    });
+    return;
   }
+
+  noteContentStore.set("");
+
+  window.notes.readNote(note.title).then((raw) => {
+    if (load !== latestLoad) {
+      return;
+    }
+
+    const { frontmatter, body } = splitFrontmatter(raw);
+    noteFrontmatterStore.update((m) => ({ ...m, [note.id]: frontmatter }));
+    noteContentStore.set(body);
+    noteContentCache.update((c) => ({ ...c, [note.id]: body }));
+  });
 }
 
 export interface SelectedNote extends NoteMeta {
@@ -109,14 +117,7 @@ export async function handleNoteSelect(
 
   await window.tab.loadNoteIntoActiveTab(selectedNote);
 
-  window.notes.readNote(selectedNote.title).then((raw) => {
-    const { frontmatter, body } = splitFrontmatter(raw);
-    noteFrontmatterStore.update((m) => ({
-      ...m,
-      [selectedNote.id]: frontmatter,
-    }));
-    noteContentStore.set(body);
-  });
+  getNoteContent(selectedNote);
 
   if (onSelectCallback) {
     onSelectCallback();
