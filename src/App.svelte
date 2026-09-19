@@ -6,10 +6,7 @@
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
   import { selectedNoteIdStore } from "./store/Store";
   import { onDrag } from "./lib/placeholder/dragMe";
-  import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
-
-  const USE_CODEMIRROR = true;
 
   let width = 0;
   let resizeWidth = width;
@@ -45,8 +42,6 @@
   function handleDragStart(): void {
     isDragging = true;
   }
-
-  let contentContainerRef: NoteEditor | null = null;
 </script>
 
 <main class="relative flex h-screen flex-col overflow-hidden">
@@ -73,10 +68,8 @@
       <TabBar />
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
-      {:else if USE_CODEMIRROR}
-        <NotePane />
       {:else}
-        <NoteEditor bind:this={contentContainerRef} />
+        <NotePane />
       {/if}
     </div>
   </div>
