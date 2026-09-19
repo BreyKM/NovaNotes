@@ -11,6 +11,7 @@
     rootNotebookDirPathStore,
     userInputNotebookNameStore,
     createNotebookDir,
+    openExistingNotebook,
   } from "../../../store/Store";
 
   import isValidFilename from "valid-filename";
@@ -20,9 +21,7 @@
 
   let isNotebookNameValid = $state<boolean | null>(null);
 
-  let isNotebookNameValidPopupShow = $state(false);
-
-  let isFilePathMissingPopupShow = $state(false);
+  let popupMessage = $state<string | null>(null);
 
   let popupTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -41,19 +40,11 @@
     }
   });
 
-  function showInvalidNotebookNamePopup() {
-    isNotebookNameValidPopupShow = true;
+  function showPopup(message: string) {
+    popupMessage = message;
     clearTimeout(popupTimer);
     popupTimer = setTimeout(() => {
-      isNotebookNameValidPopupShow = false;
-    }, 3000);
-  }
-
-  function showFilePathMissingPopup() {
-    isFilePathMissingPopupShow = true;
-    clearTimeout(popupTimer);
-    popupTimer = setTimeout(() => {
-      isFilePathMissingPopupShow = false;
+      popupMessage = null;
     }, 3000);
   }
 
@@ -105,21 +96,23 @@
             <AddFolderIcon width="4rem" height="4rem" stroke="#f2f2f2" />
           </button>
           <div class="flex w-64 flex-col items-center">
-            <div class="text-base">Create a new NoteBook</div>
+            <div class="text-center text-base">Create a new NoteBook</div>
             <div class="text-xs">Create a new folder to store notes in.</div>
           </div>
         </div>
         <div class="horizontal-divider bg-divider my-6 h-px"></div>
-        <div class="my-2 flex flex-col items-center justify-between">
+        <div class="my-2 flex flex-col items-center">
           <button
+            onclick={openExistingNotebook}
             class="btn-primary bg-background-secondary hover:bg-background-secondary-hover mb-6 flex h-24 w-24 items-center justify-center"
-            aria-label="open folder icon"
+            aria-label="open an existing notebook"
           >
             <OpenFolderIcon width="4rem" height="4rem" fill="#f2f2f2" />
           </button>
           <div class="flex w-64 flex-col items-center">
-            <div class="text-base">Open an existing NoteBook</div>
-            <div class="text-xs">This is the initial content.</div>
+            <div class="text-center text-base">
+              Open a folder of markdown notes
+            </div>
           </div>
         </div>
       </div>
@@ -182,18 +175,33 @@
         </div>
 
         <button
-          onclick={async (e) => {
+          onclick={async () => {
             if (isNotebookNameValid === false) {
-              console.log("button: invalid directory name");
-              showInvalidNotebookNamePopup();
+              showPopup("Choose a valid notebook name");
             } else if ($rootNotebookDirPathStore == null) {
-              console.log("button: file path is missing");
-              showFilePathMissingPopup();
+              showPopup("Choose a location for the notebook");
             } else {
-              await createNotebookDir(e);
-              isNotebookNameValidPopupShow = false;
-              clearTimeout(popupTimer);
-              window.main.openMainWindow();
+              const outcome = await createNotebookDir();
+              switch (outcome) {
+                case "created":
+                  window.main.openMainWindow();
+                  break;
+                case "exists":
+                  showPopup("A notebook with that name already exists");
+                  break;
+                case "invalid-name":
+                  showPopup("That name can't be used for a folder");
+                  break;
+                case "failed":
+                  showPopup(
+                    "Couldn't create the notebook. Try another location",
+                  );
+                  break;
+                default: {
+                  const unhandled: never = outcome;
+                  throw new Error(`Unhandled outcome: ${unhandled}`);
+                }
+              }
             }
           }}
           class="bg-primary hover:bg-primary-hover h-8 w-24 self-center rounded-md shadow-md hover:cursor-pointer"
@@ -201,22 +209,13 @@
         >
       </div>
     {/if}
-    {#if isNotebookNameValidPopupShow === true}
+    {#if popupMessage}
       <div
         class="invalid-directory bg-background-error absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >
-        Invalid NoteBook Folder name
-      </div>
-    {/if}
-    {#if isFilePathMissingPopupShow === true}
-      <div
-        class="invalid-filePath bg-background-error absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
-        in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
-        out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
-      >
-        Please choose a location for Notebook
+        {popupMessage}
       </div>
     {/if}
   </div>

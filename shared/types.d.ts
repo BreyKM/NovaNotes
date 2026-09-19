@@ -21,7 +21,6 @@ export interface TabsState {
   activeIndex: number;
 }
 
-export interface NotebookDirResult {
-  fullPath: string;
-  name: string;
-}
+export type CreateNotebookResult =
+  | { ok: true; fullPath: string; name: string }
+  | { ok: false; reason: "exists" | "invalid-name" };

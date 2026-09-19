@@ -3,7 +3,7 @@ import type {
   NewNote,
   Tab,
   TabsState,
-  NotebookDirResult,
+  CreateNotebookResult,
 } from "../shared/types";
 
 declare global {
@@ -23,10 +23,11 @@ declare global {
     directory: {
       openRootDirSelection: () => void;
       getRootNotebookDirPath: () => Promise<string | undefined>;
+      openExistingNotebook: () => Promise<boolean>;
       createNotebookDir: (
-        input: string,
-        rootPath: string | null,
-      ) => Promise<NotebookDirResult>;
+        name: string,
+        parentDir: string,
+      ) => Promise<CreateNotebookResult>;
     };
     main: {
       openMainWindow: () => void;

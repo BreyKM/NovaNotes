@@ -14,6 +14,10 @@ import {
   saveNow,
   saveBeforeClose,
   tabStore,
+  createNotebookDir,
+  userInputNotebookNameStore,
+  rootNotebookDirPathStore,
+  openExistingNotebook,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -30,6 +34,10 @@ const loadNoteIntoActiveTab = vi.fn().mockResolvedValue(undefined);
 const renameNoteIpc = vi.fn();
 const updateTabs = vi.fn().mockResolvedValue(undefined);
 const readyToClose = vi.fn();
+const createNotebookDirIpc = vi.fn();
+const createWelcomeNote = vi.fn().mockResolvedValue(undefined);
+const openExistingNotebookIpc = vi.fn();
+const openMainWindow = vi.fn();
 
 let finishHeldWrite: () => void = () => {};
 
@@ -44,9 +52,19 @@ function holdNextWrite(): void {
 
 beforeEach(() => {
   vi.stubGlobal("window", {
-    notes: { readNote, writeNote, renameNote: renameNoteIpc },
+    notes: {
+      readNote,
+      writeNote,
+      renameNote: renameNoteIpc,
+      createWelcomeNote,
+    },
     tab: { loadNoteIntoActiveTab, updateTabs },
     nav: { readyToClose },
+    directory: {
+      createNotebookDir: createNotebookDirIpc,
+      openExistingNotebook: openExistingNotebookIpc,
+    },
+    main: { openMainWindow },
   });
 
   handleAutoSaving.cancel();
@@ -57,6 +75,8 @@ beforeEach(() => {
   selectedNoteIdStore.set(null);
   userInputCurrentNoteTitle.set(null);
   tabStore.set([]);
+  userInputNotebookNameStore.set(null);
+  rootNotebookDirPathStore.set(null);
 
   vi.clearAllMocks();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -395,5 +415,80 @@ describe("renameNote", () => {
     expect(get(selectedNoteIdStore)).toBe("Old.md");
     expect(get(noteContentCache)).toEqual({ "Old.md": "cached body" });
     expect(updateTabs).not.toHaveBeenCalled();
+  });
+});
+
+describe("createNotebookDir", () => {
+  beforeEach(() => {
+    userInputNotebookNameStore.set("Work");
+    rootNotebookDirPathStore.set("C:/Notes");
+  });
+
+  it("writes the welcome note before reporting success", async () => {
+    createNotebookDirIpc.mockResolvedValue({
+      ok: true,
+      fullPath: "C:/Notes/Work",
+      name: "Work",
+    });
+    let finishWelcomeNote: () => void = () => {};
+    createWelcomeNote.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finishWelcomeNote = resolve;
+        }),
+    );
+
+    let outcome: string | undefined;
+    const creating = createNotebookDir().then((result) => {
+      outcome = result;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(createNotebookDirIpc).toHaveBeenCalledWith("Work", "C:/Notes");
+    expect(outcome).toBeUndefined();
+
+    finishWelcomeNote();
+    await creating;
+
+    expect(outcome).toBe("created");
+  });
+
+  it("reports an existing folder without writing a welcome note", async () => {
+    createNotebookDirIpc.mockResolvedValue({ ok: false, reason: "exists" });
+
+    expect(await createNotebookDir()).toBe("exists");
+    expect(createWelcomeNote).not.toHaveBeenCalled();
+  });
+
+  it("reports a failure when the main process throws", async () => {
+    createNotebookDirIpc.mockRejectedValue(new Error("disk full"));
+
+    expect(await createNotebookDir()).toBe("failed");
+    expect(createWelcomeNote).not.toHaveBeenCalled();
+  });
+
+  it("does not ask the main process when no location is chosen", async () => {
+    rootNotebookDirPathStore.set(null);
+
+    expect(await createNotebookDir()).toBe("invalid-name");
+    expect(createNotebookDirIpc).not.toHaveBeenCalled();
+  });
+});
+
+describe("openExistingNotebook", () => {
+  it("opens the main window when a folder is chosen", async () => {
+    openExistingNotebookIpc.mockResolvedValue(true);
+
+    await openExistingNotebook();
+
+    expect(openMainWindow).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays on the starter window when the picker is cancelled", async () => {
+    openExistingNotebookIpc.mockResolvedValue(false);
+
+    await openExistingNotebook();
+
+    expect(openMainWindow).not.toHaveBeenCalled();
   });
 });
