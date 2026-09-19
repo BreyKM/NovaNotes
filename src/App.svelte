@@ -7,7 +7,7 @@
   import { selectedNoteIdStore } from "./store/Store";
   import { onDrag } from "./lib/placeholder/dragMe";
   import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
-  import CodeMirrorEditor from "./lib/Components/Content/CodeMirrorEditor.svelte";
+  import NotePane from "./lib/Components/Content/NotePane.svelte";
 
   const USE_CODEMIRROR = true;
 
@@ -71,11 +71,10 @@
       Live Width: {Math.round(resizeWidth)}px
     </div> -->
       <TabBar />
-      <!-- {#if $selectedNoteIdStore === null}
+      {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
-      {:else} -->
-      {#if USE_CODEMIRROR}
-        <CodeMirrorEditor />
+      {:else if USE_CODEMIRROR}
+        <NotePane />
       {:else}
         <NoteEditor bind:this={contentContainerRef} />
       {/if}

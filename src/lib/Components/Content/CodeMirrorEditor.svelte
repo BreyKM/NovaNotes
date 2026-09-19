@@ -76,12 +76,10 @@
   });
 </script>
 
-<div class="cm-wrapper mx-auto flex min-h-0 w-[80%] flex-1 flex-col px-8 pt-10">
-  <div
-    bind:this={editorContainer}
-    class="cm-host min-h-0 w-full max-w-[700px] flex-1"
-  ></div>
-</div>
+<div
+  bind:this={editorContainer}
+  class="cm-host min-h-0 w-full max-w-[700px] flex-1"
+></div>
 
 <style>
   .cm-host :global(.cm-editor) {
@@ -170,7 +168,7 @@
 
   .cm-host :global(.cm-codeblock-header) {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 8px;
     padding: 2px 10px;
