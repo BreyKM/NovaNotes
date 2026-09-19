@@ -183,6 +183,11 @@ export async function saveNow(): Promise<void> {
   await pendingWrite;
 }
 
+export async function saveBeforeClose(): Promise<void> {
+  await saveNow();
+  window.nav.readyToClose();
+}
+
 export function findNextAvailableTitle(allNotes: NoteMeta[]): string {
   const untitledRegex = /^Untitled(?: (\d+))?$/;
   const usedNumbers = new Set();

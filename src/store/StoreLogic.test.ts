@@ -12,6 +12,7 @@ import {
   handleAutoSaving,
   renameNote,
   saveNow,
+  saveBeforeClose,
   tabStore,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
@@ -28,11 +29,24 @@ const writeNote = vi.fn().mockResolvedValue(undefined);
 const loadNoteIntoActiveTab = vi.fn().mockResolvedValue(undefined);
 const renameNoteIpc = vi.fn();
 const updateTabs = vi.fn().mockResolvedValue(undefined);
+const readyToClose = vi.fn();
+
+let finishHeldWrite: () => void = () => {};
+
+function holdNextWrite(): void {
+  writeNote.mockImplementationOnce(
+    () =>
+      new Promise<void>((resolve) => {
+        finishHeldWrite = resolve;
+      }),
+  );
+}
 
 beforeEach(() => {
   vi.stubGlobal("window", {
     notes: { readNote, writeNote, renameNote: renameNoteIpc },
     tab: { loadNoteIntoActiveTab, updateTabs },
+    nav: { readyToClose },
   });
 
   handleAutoSaving.cancel();
@@ -188,6 +202,27 @@ describe("saveNow", () => {
 
     expect(writeNote).toHaveBeenCalledTimes(2);
     expect(writeNote).toHaveBeenCalledWith("Test", "second");
+  });
+});
+
+describe("saveBeforeClose", () => {
+  it("lets the window close only after pending saves finish", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+    holdNextWrite();
+
+    updateNoteContent("last words");
+    const closing = saveBeforeClose();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(writeNote).toHaveBeenCalledWith("Test", "last words");
+    expect(readyToClose).not.toHaveBeenCalled();
+
+    finishHeldWrite();
+    await closing;
+
+    expect(readyToClose).toHaveBeenCalledTimes(1);
   });
 });
 
