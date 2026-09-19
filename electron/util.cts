@@ -1,10 +1,10 @@
-import { ensureDir, writeFile, readdir, stat } from "fs-extra";
+import { writeFile, readdir, stat } from "fs-extra";
 import * as fse from "fs-extra";
 import { fileEncoding } from "../shared/constants.cjs";
 import { dialog } from "electron";
 import path from "path";
-import type { NoteMeta, NewNote } from "../shared/types";
-import { notePath } from "./notePath.cjs";
+import type { NoteMeta, NewNote, CreateNotebookResult } from "../shared/types";
+import { isSafeName, notePath } from "./notePath.cjs";
 
 let notebookPath: string | undefined;
 
@@ -29,16 +29,25 @@ export const selectNotebookDirectory = async (): Promise<
 };
 
 export const createNotebookDir = async (
-  input: string,
-  NoteBookDirFilePath: string | undefined,
-): Promise<string> => {
-  if (input === "" || NoteBookDirFilePath === undefined) {
-    throw new Error("Invalid input or missing directory path");
+  name: string,
+  parentDir: string,
+): Promise<CreateNotebookResult> => {
+  if (!isSafeName(name)) {
+    return { ok: false, reason: "invalid-name" };
   }
 
-  const dirPath = path.join(NoteBookDirFilePath, input);
-  await ensureDir(dirPath);
-  return dirPath;
+  const dirPath = path.join(parentDir, name);
+
+  try {
+    await fse.mkdir(dirPath);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+      return { ok: false, reason: "exists" };
+    }
+    throw error;
+  }
+
+  return { ok: true, fullPath: dirPath, name };
 };
 
 const writeFileAtomic = async (
@@ -106,8 +115,8 @@ export const renameNote = async (
 ): Promise<boolean> => {
   const rootDir = getNotebookPath();
 
-  const oldPath = path.join(notePath(rootDir, oldTitle));
-  const newPath = path.join(notePath(rootDir, newTitle));
+  const oldPath = notePath(rootDir, oldTitle);
+  const newPath = notePath(rootDir, newTitle);
 
   try {
     await fse.access(newPath, fse.constants.F_OK);

@@ -170,10 +170,12 @@ app.whenReady().then(() => {
 
   ipcMain.handle(
     "createNotebookDir",
-    async (_event, input: string, rootPath: string | undefined) => {
-      const dir = await createNotebookDir(input, rootPath);
-      useNotebook(dir);
-      return { fullPath: dir, name: path.basename(dir) };
+    async (_event, name: string, parentDir: string) => {
+      const result = await createNotebookDir(name, parentDir);
+      if (result.ok) {
+        useNotebook(result.fullPath);
+      }
+      return result;
     },
   );
 

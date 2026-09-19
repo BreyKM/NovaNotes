@@ -4,7 +4,7 @@ import type {
   NewNote,
   Tab,
   TabsState,
-  NotebookDirResult,
+  CreateNotebookResult,
 } from "../shared/types";
 
 const api = {
@@ -45,10 +45,10 @@ contextBridge.exposeInMainWorld("directory", {
   },
 
   createNotebookDir: (
-    input: string,
-    rootPath: string | undefined,
-  ): Promise<NotebookDirResult> =>
-    ipcRenderer.invoke("createNotebookDir", input, rootPath),
+    name: string,
+    parentDir: string,
+  ): Promise<CreateNotebookResult> =>
+    ipcRenderer.invoke("createNotebookDir", name, parentDir),
 });
 
 contextBridge.exposeInMainWorld("main", {

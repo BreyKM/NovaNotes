@@ -250,25 +250,31 @@ export async function rootDirSelection(): Promise<void> {
   rootNotebookDirPathStore.set(rootNotebookDirPath ?? null);
 }
 
-export async function createNotebookDir(e: Event): Promise<void> {
-  e.preventDefault();
+export type CreateNotebookOutcome =
+  "created" | "exists" | "invalid-name" | "failed";
 
+export async function createNotebookDir(): Promise<CreateNotebookOutcome> {
   const notebookName = get(userInputNotebookNameStore);
-  const rootPath = get(rootNotebookDirPathStore);
+  const parentDir = get(rootNotebookDirPathStore);
 
-  if (!notebookName || !rootPath) {
-    console.error(
-      "createNotebookDir called without a valid notebook name or root path.",
-    );
-    return;
+  if (!notebookName || !parentDir) {
+    return "invalid-name";
   }
 
   try {
-    await window.directory.createNotebookDir(notebookName, rootPath);
+    const result = await window.directory.createNotebookDir(
+      notebookName,
+      parentDir,
+    );
+    if (!result.ok) {
+      return result.reason;
+    }
 
-    createWelcomeNote();
+    await createWelcomeNote();
+    return "created";
   } catch (error) {
     console.error("Failed to create notebook directory:", error);
+    return "failed";
   }
 }
 
