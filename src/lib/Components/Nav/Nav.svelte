@@ -1,7 +1,3 @@
-<script lang="ts">
-  import TabBar from "../Tabs/TabBar.svelte";
-</script>
-
 <div class="nav-container fixed top-0 right-0 left-0 flex h-10">
   <nav class="w-full">
     <div

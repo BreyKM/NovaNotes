@@ -264,10 +264,7 @@ export async function createNotebookDir(e: Event): Promise<void> {
   }
 
   try {
-    const newNoteBookDir = await window.directory.createNotebookDir(
-      notebookName,
-      rootPath,
-    );
+    await window.directory.createNotebookDir(notebookName, rootPath);
 
     createWelcomeNote();
   } catch (error) {

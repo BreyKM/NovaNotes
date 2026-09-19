@@ -54,7 +54,7 @@ const createWindow = (): void => {
     center: true,
     title: "Nova Notes",
     frame: false,
-    icon: "src/assets/icon.png",
+    icon: path.join(__dirname, "..", "src", "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
     },

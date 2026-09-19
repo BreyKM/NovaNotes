@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import { slide, fade } from "svelte/transition";
-  import { quintOut, quadInOut } from "svelte/easing";
+  import { quadInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
   import AddFolderIcon from "../../../assets/addFolder.svelte";
   import OpenFolderIcon from "../../../assets/openFolder.svelte";

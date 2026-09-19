@@ -1,7 +1,6 @@
 import type { EditorState, Range } from "@codemirror/state";
 import { Decoration } from "@codemirror/view";
 import { isInCode } from "./codeBlocks";
-import { run } from "svelte/legacy";
 
 const MAX = 3;
 const WORD = /\w/;
