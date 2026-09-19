@@ -15,5 +15,8 @@ export default defineConfig({
       },
     },
   },
+  esbuild: {
+    include: /\.[cm]?tsx?$/,
+  },
   plugins: [svelte(), tailwindcss()],
 });

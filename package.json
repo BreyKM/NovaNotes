@@ -19,7 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:electron": "tsc -p tsconfig.electron.json --noEmit"
+    "check:electron": "tsc -p tsconfig.electron.json --noEmit && tsc -p tsconfig.electron-tests.json"
   },
   "lint-staged": {
     "**/*.{js,cjs,ts,cts,svelte,css,json,md}": "prettier --write"
