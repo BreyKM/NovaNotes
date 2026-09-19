@@ -4,6 +4,7 @@ import { fileEncoding } from "../shared/constants.cjs";
 import { dialog } from "electron";
 import path from "path";
 import type { NoteMeta, NewNote } from "../shared/types";
+import { notePath } from "./notePath.cjs";
 
 let notebookPath: string | undefined;
 
@@ -51,7 +52,7 @@ const writeFileAtomic = async (
 
 export const createWelcomeNote = async (welcomeNote: string): Promise<void> => {
   const rootDir = getNotebookPath();
-  await writeFileAtomic(`${rootDir}/welcome.md`, welcomeNote);
+  await writeFileAtomic(notePath(rootDir, "welcome"), welcomeNote);
 };
 
 const getNoteInfo =
@@ -84,17 +85,17 @@ export const getNotes = async (): Promise<NoteMeta[]> => {
 
 export const createNote = async (file: NewNote): Promise<void> => {
   const rootDir = getNotebookPath();
-  await writeFileAtomic(`${rootDir}/${file.title}.md`, file.content);
+  await writeFileAtomic(notePath(rootDir, file.title), file.content);
 };
 
 export const writeNote = (filename: string, content: string): Promise<void> => {
   const rootDir = getNotebookPath();
-  return writeFileAtomic(`${rootDir}/${filename}.md`, content);
+  return writeFileAtomic(notePath(rootDir, filename), content);
 };
 
 export const readNote = (filename: string): Promise<string> => {
   const rootDir = getNotebookPath();
-  return fse.readFile(`${rootDir}/${filename}.md`, {
+  return fse.readFile(notePath(rootDir, filename), {
     encoding: fileEncoding,
   }) as Promise<string>;
 };
@@ -105,8 +106,8 @@ export const renameNote = async (
 ): Promise<boolean> => {
   const rootDir = getNotebookPath();
 
-  const oldPath = path.join(rootDir, `${oldTitle}.md`);
-  const newPath = path.join(rootDir, `${newTitle}.md`);
+  const oldPath = path.join(notePath(rootDir, oldTitle));
+  const newPath = path.join(notePath(rootDir, newTitle));
 
   try {
     await fse.access(newPath, fse.constants.F_OK);
