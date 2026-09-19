@@ -1,25 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { EditorView, keymap } from "@codemirror/view";
-  import { EditorState, Annotation, Transaction } from "@codemirror/state";
-  import {
-    defaultKeymap,
-    history,
-    historyKeymap,
-    indentWithTab,
-  } from "@codemirror/commands";
-  import { markdown } from "@codemirror/lang-markdown";
+  import { EditorView } from "@codemirror/view";
+  import { EditorState } from "@codemirror/state";
   import { noteContentStore, updateNoteContent } from "../../../../store/Store";
-  import { livePreview } from "./livePreview";
-  import { openLinkOnClick } from "./linkClick";
-  import { autoPair } from "./autoPairs";
-  import { indentKeymap } from "./indentKeymap";
-  import { indentUnit, syntaxHighlighting } from "@codemirror/language";
-  import { languages } from "@codemirror/language-data";
-  import { codeHighlight } from "./codeBlocks";
-  import { resolveLanguage } from "./codeLanguages";
+  import { loadNote, noteExtensions } from "./noteEditor";
 
-  const externalSync = Annotation.define<boolean>();
+  const extensions = noteExtensions(updateNoteContent);
   let editorContainer: HTMLDivElement | undefined;
   let view: EditorView | null = null;
 
@@ -30,45 +16,12 @@
 
     view = new EditorView({
       parent: editorContainer,
-      state: EditorState.create({
-        doc: $noteContentStore,
-        extensions: [
-          history(),
-          keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
-          indentUnit.of("    "),
-          markdown({ codeLanguages: resolveLanguage }),
-          syntaxHighlighting(codeHighlight),
-          livePreview,
-          openLinkOnClick,
-          autoPair,
-          indentKeymap,
-          EditorView.lineWrapping,
-          EditorView.updateListener.of((update) => {
-            if (!update.docChanged) {
-              return;
-            }
-
-            if (update.transactions.some((tr) => tr.annotation(externalSync))) {
-              return;
-            }
-
-            updateNoteContent(update.state.doc.toString());
-          }),
-        ],
-      }),
+      state: EditorState.create({ doc: $noteContentStore, extensions }),
     });
   });
 
   $: if (view != null && $noteContentStore !== view.state.doc.toString()) {
-    view.dispatch({
-      changes: {
-        from: 0,
-        to: view.state.doc.length,
-        insert: $noteContentStore,
-      },
-      annotations: [externalSync.of(true), Transaction.addToHistory.of(false)],
-      selection: { anchor: 0 },
-    });
+    loadNote(view, $noteContentStore, extensions);
   }
 
   onDestroy(() => {

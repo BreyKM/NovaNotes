@@ -88,7 +88,22 @@ const createWindow = (): void => {
   });
 
   ipcMain.on("close", () => {
-    app.quit();
+    mainWindow?.close();
+  });
+
+  mainWindow.on("close", (event) => {
+    event.preventDefault();
+    mainWindow?.webContents.send("saveBeforeClose");
+
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.destroy();
+      }
+    }, 5000);
+  });
+
+  ipcMain.on("readyToClose", () => {
+    mainWindow?.destroy();
   });
 };
 

@@ -48,21 +48,29 @@ export function splitFrontmatter(raw: string): {
   return { frontmatter: match[0], body: raw.slice(match[0].length) };
 }
 
+let latestLoad = 0;
+
 export function getNoteContent(note: NoteMeta): void {
+  const load = ++latestLoad;
   const cache = get(noteContentCache);
 
   if (cache[note.id] !== undefined) {
     noteContentStore.set(cache[note.id]);
-  } else {
-    noteContentStore.set("");
-
-    window.notes.readNote(note.title).then((raw) => {
-      const { frontmatter, body } = splitFrontmatter(raw);
-      noteFrontmatterStore.update((m) => ({ ...m, [note.id]: frontmatter }));
-      noteContentStore.set(body);
-      noteContentCache.update((c) => ({ ...c, [note.id]: body }));
-    });
+    return;
   }
+
+  noteContentStore.set("");
+
+  window.notes.readNote(note.title).then((raw) => {
+    if (load !== latestLoad) {
+      return;
+    }
+
+    const { frontmatter, body } = splitFrontmatter(raw);
+    noteFrontmatterStore.update((m) => ({ ...m, [note.id]: frontmatter }));
+    noteContentStore.set(body);
+    noteContentCache.update((c) => ({ ...c, [note.id]: body }));
+  });
 }
 
 export interface SelectedNote extends NoteMeta {
@@ -109,14 +117,7 @@ export async function handleNoteSelect(
 
   await window.tab.loadNoteIntoActiveTab(selectedNote);
 
-  window.notes.readNote(selectedNote.title).then((raw) => {
-    const { frontmatter, body } = splitFrontmatter(raw);
-    noteFrontmatterStore.update((m) => ({
-      ...m,
-      [selectedNote.id]: frontmatter,
-    }));
-    noteContentStore.set(body);
-  });
+  getNoteContent(selectedNote);
 
   if (onSelectCallback) {
     onSelectCallback();
@@ -157,11 +158,18 @@ export function updateNoteContent(newContent: string): void {
   }
 }
 
+let pendingWrite: Promise<void> = Promise.resolve();
+
+function writeInOrder(title: string, content: string): Promise<void> {
+  pendingWrite = pendingWrite
+    .then(() => window.notes.writeNote(title, content))
+    .catch((err) => console.error("Auto-save failed:", err));
+  return pendingWrite;
+}
+
 export const handleAutoSaving = throttle(
   (title: string, content: string) => {
-    void window.notes
-      .writeNote(title, content)
-      .catch((err) => console.error("Auto-save failed:", err));
+    void writeInOrder(title, content);
   },
   2000,
   {
@@ -169,6 +177,16 @@ export const handleAutoSaving = throttle(
     trailing: true,
   },
 );
+
+export async function saveNow(): Promise<void> {
+  handleAutoSaving.flush();
+  await pendingWrite;
+}
+
+export async function saveBeforeClose(): Promise<void> {
+  await saveNow();
+  window.nav.readyToClose();
+}
 
 export function findNextAvailableTitle(allNotes: NoteMeta[]): string {
   const untitledRegex = /^Untitled(?: (\d+))?$/;
@@ -297,6 +315,7 @@ export async function renameNote(): Promise<void> {
   }
 
   try {
+    await saveNow();
     const success = await window.notes.renameNote(selectedNote.title, newTitle);
 
     if (success) {

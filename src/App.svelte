@@ -4,7 +4,7 @@
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
   import Nav from "./lib/Components/Nav/Nav.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
-  import { selectedNoteIdStore } from "./store/Store";
+  import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
   import { onDrag } from "./lib/placeholder/dragMe";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
 
@@ -16,6 +16,8 @@
   let minWidthInPixels = 0;
 
   onMount(() => {
+    window.nav.onSaveBeforeClose(saveBeforeClose);
+
     if (mainSideBarRef) {
       const rect = mainSideBarRef.getBoundingClientRect();
       minWidthInPixels = rect.width;

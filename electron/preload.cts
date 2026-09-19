@@ -21,6 +21,12 @@ contextBridge.exposeInMainWorld("nav", {
   maximize: (): void => ipcRenderer.send("maximize"),
 
   close: (): void => ipcRenderer.send("close"),
+
+  onSaveBeforeClose: (callback: () => void): void => {
+    ipcRenderer.on("saveBeforeClose", () => callback());
+  },
+
+  readyToClose: (): void => ipcRenderer.send("readyToClose"),
 });
 
 //directory ipc connections

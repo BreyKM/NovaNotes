@@ -17,6 +17,8 @@ declare global {
       minimize: () => void;
       maximize: () => void;
       close: () => void;
+      onSaveBeforeClose: (callback: () => void) => void;
+      readyToClose: () => void;
     };
     directory: {
       openRootDirSelection: () => void;
