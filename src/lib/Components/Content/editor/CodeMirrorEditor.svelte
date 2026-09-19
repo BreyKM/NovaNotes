@@ -9,7 +9,7 @@
     indentWithTab,
   } from "@codemirror/commands";
   import { markdown } from "@codemirror/lang-markdown";
-  import { noteContentStore, updateNoteContent } from "../../../store/Store";
+  import { noteContentStore, updateNoteContent } from "../../../../store/Store";
   import { livePreview } from "./livePreview";
   import { openLinkOnClick } from "./linkClick";
   import { autoPair } from "./autoPairs";

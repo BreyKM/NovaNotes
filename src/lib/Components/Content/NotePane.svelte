@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CodeMirrorEditor from "./CodeMirrorEditor.svelte";
+  import CodeMirrorEditor from "./editor/CodeMirrorEditor.svelte";
   import NoteTitle from "./NoteTitle.svelte";
 </script>
 
