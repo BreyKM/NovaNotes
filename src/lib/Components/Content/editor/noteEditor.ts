@@ -14,7 +14,6 @@ import { autoPair } from "./autoPairs";
 import { indentKeymap } from "./indentKeymap";
 import { codeHighlight } from "./codeBlocks";
 import { resolveLanguage } from "./codeLanguages";
-import { update } from "lodash";
 
 export function noteExtensions(onEdit: (text: string) => void): Extension[] {
   return [
