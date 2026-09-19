@@ -7,6 +7,9 @@
   import { selectedNoteIdStore } from "./store/Store";
   import { onDrag } from "./lib/placeholder/dragMe";
   import NoteEditor from "./lib/Components/Content/NoteEditor.svelte";
+  import NotePane from "./lib/Components/Content/NotePane.svelte";
+
+  const USE_CODEMIRROR = true;
 
   let width = 0;
   let resizeWidth = width;
@@ -70,6 +73,8 @@
       <TabBar />
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
+      {:else if USE_CODEMIRROR}
+        <NotePane />
       {:else}
         <NoteEditor bind:this={contentContainerRef} />
       {/if}
