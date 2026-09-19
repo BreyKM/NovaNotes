@@ -4,28 +4,18 @@ import { fileEncoding } from "../shared/constants.cjs";
 import { dialog } from "electron";
 import path from "path";
 import type { NoteMeta, NewNote } from "../shared/types";
-import type ElectronStore from "./electronStore.cjs";
 
-let activeFolderPath: string | undefined;
-let newNotebookFullPath: string | undefined;
+let notebookPath: string | undefined;
 
-export const updateNewNotebookDirPathMain = (newPath: string): void => {
-  newNotebookFullPath = newPath;
+export const setNotebookPath = (dir: string): void => {
+  notebookPath = dir;
 };
 
-export const updateActiveFolderPathInUtil = (newPath: string): void => {
-  activeFolderPath = newPath;
-};
-
-const getRootDir = (): string | undefined => {
-  if (!activeFolderPath) {
-    return undefined;
-  } else {
-    if (activeFolderPath.length === 0) {
-      return newNotebookFullPath;
-    }
-    return activeFolderPath;
+export const getNotebookPath = (): string => {
+  if (!notebookPath) {
+    throw new Error("No notebook is open.");
   }
+  return notebookPath;
 };
 
 export const selectNotebookDirectory = async (): Promise<
@@ -59,11 +49,8 @@ const writeFileAtomic = async (
   await fse.rename(tempPath, filePath);
 };
 
-export const createWelcomeNote = async (
-  welcomeNote: string,
-  store: ElectronStore,
-): Promise<void> => {
-  const rootDir = store.get("activeNotebookPath") as string;
+export const createWelcomeNote = async (welcomeNote: string): Promise<void> => {
+  const rootDir = getNotebookPath();
   await writeFileAtomic(`${rootDir}/welcome.md`, welcomeNote);
 };
 
@@ -80,8 +67,8 @@ const getNoteInfo =
     };
   };
 
-export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
-  const rootDir = store.get("activeNotebookPath") as string;
+export const getNotes = async (): Promise<NoteMeta[]> => {
+  const rootDir = getNotebookPath();
 
   const notesFileNames = (await readdir(rootDir, {
     encoding: fileEncoding,
@@ -96,17 +83,17 @@ export const getNotes = async (store: ElectronStore): Promise<NoteMeta[]> => {
 };
 
 export const createNote = async (file: NewNote): Promise<void> => {
-  const rootDir = getRootDir() as string;
+  const rootDir = getNotebookPath();
   await writeFileAtomic(`${rootDir}/${file.title}.md`, file.content);
 };
 
 export const writeNote = (filename: string, content: string): Promise<void> => {
-  const rootDir = getRootDir() as string;
+  const rootDir = getNotebookPath();
   return writeFileAtomic(`${rootDir}/${filename}.md`, content);
 };
 
 export const readNote = (filename: string): Promise<string> => {
-  const rootDir = getRootDir() as string;
+  const rootDir = getNotebookPath();
   return fse.readFile(`${rootDir}/${filename}.md`, {
     encoding: fileEncoding,
   }) as Promise<string>;
@@ -116,11 +103,7 @@ export const renameNote = async (
   oldTitle: string,
   newTitle: string,
 ): Promise<boolean> => {
-  const rootDir = getRootDir();
-  if (!rootDir) {
-    console.error("renameNote called before rootDir is set.");
-    return false;
-  }
+  const rootDir = getNotebookPath();
 
   const oldPath = path.join(rootDir, `${oldTitle}.md`);
   const newPath = path.join(rootDir, `${newTitle}.md`);

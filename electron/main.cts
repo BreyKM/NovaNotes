@@ -15,8 +15,8 @@ import {
   readNote,
   writeNote,
   renameNote,
-  updateNewNotebookDirPathMain,
-  updateActiveFolderPathInUtil,
+  setNotebookPath,
+  getNotebookPath,
 } from "./util.cjs";
 
 if (require("electron-squirrel-startup")) app.quit();
@@ -37,13 +37,16 @@ let starterWindow: BrowserWindow | undefined;
 
 // Directory variables
 let noteBookDirFilePath: string | undefined;
-let newNotebookFullPath: string | undefined;
-let newNotebookPathName: string | undefined;
 
 let mainTabs: Tab[] = [];
 let activeTabIndex = 0;
 
 const electronStore = new ElectronStore();
+
+const useNotebook = (dir: string): void => {
+  setNotebookPath(dir);
+  electronStore.set("activeNotebookPath", dir);
+};
 
 const createWindow = (): void => {
   // Create the main browser window.
@@ -144,8 +147,8 @@ app.whenReady().then(() => {
   if (activeNotebookPath != undefined) {
     fse.access(activeNotebookPath, (error) => {
       if (!error) {
+        useNotebook(activeNotebookPath);
         createWindow();
-        updateActiveFolderPathInUtil(activeNotebookPath);
       } else {
         createStarterWindow();
         electronStore.delete("activeNotebookPath");
@@ -168,36 +171,21 @@ app.whenReady().then(() => {
   ipcMain.handle(
     "createNotebookDir",
     async (_event, input: string, rootPath: string | undefined) => {
-      try {
-        newNotebookFullPath = await createNotebookDir(input, rootPath);
-
-        updateNewNotebookDirPathMain(newNotebookFullPath);
-
-        electronStore.set("activeNotebookPath", newNotebookFullPath);
-
-        updateActiveFolderPathInUtil(newNotebookFullPath);
-
-        newNotebookPathName = path.basename(newNotebookFullPath);
-
-        electronStore.set("activeNotebookName", newNotebookPathName);
-
-        return { fullPath: newNotebookFullPath, name: newNotebookPathName };
-      } catch (err) {
-        console.error("Error creating notebook directory: ", err);
-        throw err;
-      }
+      const dir = await createNotebookDir(input, rootPath);
+      useNotebook(dir);
+      return { fullPath: dir, name: path.basename(dir) };
     },
   );
 
   ipcMain.handle("getActiveFolder", async () => {
-    return electronStore.get("activeNotebookName");
+    return path.basename(getNotebookPath());
   });
 
   ipcMain.handle("createWelcomeNote", (_event, welcomeNote: string) =>
-    createWelcomeNote(welcomeNote, electronStore),
+    createWelcomeNote(welcomeNote),
   );
 
-  ipcMain.handle("getNotes", () => getNotes(electronStore));
+  ipcMain.handle("getNotes", () => getNotes());
   ipcMain.handle("createNote", (_event, note: NewNote) => createNote(note));
   ipcMain.handle("readNote", (_event, filename: string) => readNote(filename));
   ipcMain.handle("writeNote", (_event, filename: string, content: string) =>
