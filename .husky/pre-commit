@@ -1,1 +1,6 @@
+if [ "$(git branch --show-current)" = "main" ]; then
+    echo "Commit on a branch, not main."
+    exit 1
+fi
+
 npx lint-staged
