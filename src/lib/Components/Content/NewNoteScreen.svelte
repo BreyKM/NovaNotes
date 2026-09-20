@@ -14,7 +14,7 @@
   </div>
   <div class="text-md mb-4">
     <button
-      class="text-primary hover:cursor-pointer"
+      class="text-accent hover:cursor-pointer"
       on:click={() => createEmptyNote()}
     >
       Create new note (Crtl + N)
@@ -22,7 +22,7 @@
   </div>
   <div class="close">
     <button
-      class="text-primary hover:cursor-pointer"
+      class="text-accent hover:cursor-pointer"
       on:click={() => closeTab($activeTabIndexStore)}
     >
       Close

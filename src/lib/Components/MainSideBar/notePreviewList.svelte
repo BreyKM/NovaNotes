@@ -5,22 +5,11 @@
     notesStore,
     selectedNoteIdStore,
     handleNoteSelect,
-    selectedNoteStore,
   } from "../../../store/Store";
   import { isEmpty } from "lodash";
   import NotePreview from "./notePreview.svelte";
 
   let isLoading = $state(false);
-
-  const onSelect = (): void => {
-    console.log("Selection finished from component.");
-  };
-
-  $effect(() => {
-    console.log("NPL: ", $notesStore);
-    console.log($selectedNoteIdStore);
-    console.log("selectedNoteStore", $selectedNoteStore);
-  });
 
   onMount(async () => {
     isLoading = true;
@@ -30,7 +19,7 @@
 </script>
 
 <div
-  class="note-preview-list-container dark:[&::-webkit-scrollbar-thumb]:bg-background-nav mr-0.5 ml-2 flex flex-col overflow-y-auto pr-2
+  class="note-preview-list-container dark:[&::-webkit-scrollbar-thumb]:bg-surface-chrome mr-0.5 ml-2 flex flex-col overflow-y-auto pr-2
     text-sm
     [&::-webkit-scrollbar]:m-3
   [&::-webkit-scrollbar]:w-2
@@ -54,7 +43,7 @@
         <NotePreview
           title={note.title}
           isActive={$selectedNoteIdStore === note.id}
-          on:click={() => handleNoteSelect(note.id, onSelect)}
+          on:click={() => handleNoteSelect(note.id)}
         />
       {/each}
     {/if}

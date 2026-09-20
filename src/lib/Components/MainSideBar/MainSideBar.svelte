@@ -19,11 +19,11 @@
 
 <div
   bind:this={containerElement}
-  class="left-container h-100% bg-background-secondary flex max-w-3/4 min-w-1/5 flex-col"
+  class="left-container h-100% bg-surface-panel flex max-w-3/4 min-w-1/5 flex-col"
   {style}
 >
   <div
-    class="titlebar-title bg-background-nav z-100 flex h-10 px-3 text-center text-[1.75rem]"
+    class="titlebar-title bg-surface-chrome z-100 flex h-10 px-3 text-center text-[1.75rem]"
   >
     <NovaNotesIcon width="40" height="40" />
     <div class="mt-1 ml-2 h-full self-center text-center">Nova</div>
@@ -32,7 +32,7 @@
     <div class="Notebook-name-container mx-2 my-2">
       {#if $activeNotebookNameStore}
         <div
-          class=" hover:bg-background-secondary-hover rounded-sm px-2 py-px text-sm hover:cursor-pointer"
+          class=" hover:bg-surface-raised rounded-sm px-2 py-px text-sm hover:cursor-pointer"
         >
           {$activeNotebookNameStore}
         </div>
@@ -43,7 +43,7 @@
     <div class="new-icons flex justify-center self-center">
       <button
         on:click={createEmptyNote}
-        class=" create-note hover:bg-background-secondary-hover flex items-center justify-center rounded-md p-1 hover:cursor-pointer"
+        class=" create-note hover:bg-surface-raised flex items-center justify-center rounded-md p-1 hover:cursor-pointer"
         aria-label="Add folder icon"
       >
         <NoteEditIcon width="1.5rem" height="1.5rem" stroke="#f2f2f2" />

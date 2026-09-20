@@ -82,7 +82,7 @@
     height: 100%;
     position: relative;
     background-color: transparent;
-    border-color: var(--color-background-nav);
+    border-color: var(--color-surface-chrome);
     width: 3px;
     border-width: 0px;
     border-left-width: 1px;
@@ -98,8 +98,8 @@
   .separator:hover,
   .separator.dragging {
     width: 3px;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent);
     margin-top: 0px;
-    border-color: var(--color-primary);
+    border-color: var(--color-accent);
   }
 </style>

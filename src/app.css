@@ -1,59 +1,59 @@
-@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
-@config "../tailwind.config.js";
+@import "tailwindcss";
 
 @theme {
   /* Fonts */
   --font-main: "Epilogue", sans-serif;
 
-  /* Colors */
-  --color-primary: #3e92cc;
-  --color-secondary: ;
+  /* Accent */
+  --color-accent: #3e92cc;
+  --color-accent-hover: #69b5ec;
 
-  --color-primary-hover: #69b5ec;
-
+  /* Text */
   --color-text-primary: #f2f2f2;
-  --color-text-secondary:  ;
+  --color-text-muted: #9a9a9a;
 
-  --color-text-primary-hover: #9a9a9a;
+  /* Surfaces */
+  --color-surface-base: #1b1b1b;
+  --color-surface-panel: #262626;
+  --color-surface-raised: #3d3d3d;
+  --color-surface-chrome: #3d3d3d;
+  --color-surface-chrome-hover: #757575;
 
-  --color-background-primary: #1b1b1b;
-  --color-background-secondary: #262626;
-  --color-background-error: #ed4337;
+  /* Lines and status */
+  --color-border: #808080;
+  --color-danger: #ed4337;
 
-  --color-background-primary-hover: ;
-  --color-background-secondary-hover: #3d3d3d;
+  /* Tab open and close */
+  --animate-expand-in: expand-in 0.15s ease-out forwards;
+  --animate-shrink-out: shrink-out 0.15s ease-in forwards;
 
-  --color-background-nav: #3d3d3d;
-  --color-background-nav-hover: #757575;
+  @keyframes expand-in {
+    0% {
+      max-width: 0;
+      opacity: 0;
+      margin-right: 0;
+    }
+    100% {
+      max-width: 12rem;
+      opacity: 1;
+      margin-right: -11px;
+    }
+  }
 
-  --color-background-nav: #3d3d3d;
-  --color-background-nav-hover: #757575;
-
-  --color-background-table-icons: #0f0f0f;
-  --box-shadow-table-icons:
-    0px 1px 2px 0px #ffffff4d, 0px 1px 3px 1px #ffffff26;
-
-  --color-background-code-block: #111418;
-
-  --color-text-inline-code: #e28780;
-
-  --color-test: #3e92cc;
-  --color-divider: #808080;
-
-  --rounded-tab: 8 8 8 8;
-
-  --h1-size: 2rem;
-  --h2-size: 1.8rem;
-  --h3-size: 1.6rem;
-  --h4-size: 1.4rem;
-  --h5-size: 1.2rem;
-
-  /*  */
+  @keyframes shrink-out {
+    0% {
+      max-width: 12rem;
+      opacity: 1;
+      margin-right: -11px;
+    }
+    100% {
+      max-width: 0;
+      opacity: 0;
+      margin-right: 0;
+    }
+  }
 }
 
 @layer components {
@@ -76,7 +76,7 @@
 
   color-scheme: light dark;
   color: var(--color-text-primary);
-  background-color: var(--color-background-primary);
+  background-color: var(--color-surface-base);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -117,7 +117,7 @@ nav *:not(div) {
 .tab:not(.active):not(:first-child)::before {
   padding-left: 1rem;
   content: "|";
-  color: var(--color-background-primary);
+  color: var(--color-surface-base);
 }
 
 .inner,
@@ -146,8 +146,8 @@ nav *:not(div) {
 .tab.active {
   background: linear-gradient(
     to bottom,
-    var(--color-background-nav) 50%,
-    var(--color-background-primary) 50%
+    var(--color-surface-chrome) 50%,
+    var(--color-surface-base) 50%
   );
   z-index: 99;
 }
@@ -160,7 +160,7 @@ nav *:not(div) {
   margin-top: -3px;
 }
 .tab.active > .sides {
-  background-color: var(--color-background-nav);
+  background-color: var(--color-surface-chrome);
 }
 .tab.active > .left {
   border-radius: 0 0 4px 0;
@@ -170,7 +170,7 @@ nav *:not(div) {
   border-radius: 0 0 0 4px;
 }
 .tab.active > .center {
-  background-color: var(--color-background-primary);
+  background-color: var(--color-surface-base);
   border-radius: 12px 12px 0 0;
 }
 .tab-close-svg {
@@ -191,8 +191,4 @@ nav *:not(div) {
 
 .new-tab-btn {
   -webkit-app-region: no-drag;
-}
-
-.content-container {
-  scrollbar-gutter: stable both-edges;
 }
