@@ -1,14 +1,14 @@
 <div class="nav-container fixed top-0 right-0 left-0 flex h-10">
   <nav class="w-full">
     <div
-      class="titlebar bg-background-nav z-1 flex h-full w-full justify-between"
+      class="titlebar bg-surface-chrome z-1 flex h-full w-full justify-between"
     >
       <div
         class="titlebar-buttons colors-white pointer-events-auto absolute top-0 right-0 flex h-full items-center"
       >
         <button
           on:click={() => window.nav.minimize()}
-          class="titlebar-button hover:bg-background-nav-hover h-full px-3 transition ease-in-out"
+          class="titlebar-button hover:bg-surface-chrome-hover h-full px-3 transition ease-in-out"
           aria-label="minimize"
         >
           <svg
@@ -27,7 +27,7 @@
         </button>
         <button
           on:click={() => window.nav.maximize()}
-          class="titlebar-button hover:bg-background-nav-hover h-full px-3 transition ease-in-out"
+          class="titlebar-button hover:bg-surface-chrome-hover h-full px-3 transition ease-in-out"
           aria-label="maximize"
         >
           <svg
@@ -44,7 +44,7 @@
         </button>
         <button
           on:click={() => window.nav.close()}
-          class="titlebar-button hover:bg-background-error h-full px-3 transition ease-in-out"
+          class="titlebar-button hover:bg-danger h-full px-3 transition ease-in-out"
           aria-label="close window"
         >
           <svg

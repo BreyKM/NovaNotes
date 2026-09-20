@@ -1,28 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
 
+@import "tailwindcss";
+
 @theme {
   /* Fonts */
   --font-main: "Epilogue", sans-serif;
 
-  /* Colors */
-  --color-primary: #3e92cc;
+  /* Accent */
+  --color-accent: #3e92cc;
+  --color-accent-hover: #69b5ec;
 
-  --color-primary-hover: #69b5ec;
-
+  /* Text */
   --color-text-primary: #f2f2f2;
+  --color-text-muted: #9a9a9a;
 
-  --color-text-primary-hover: #9a9a9a;
+  /* Surfaces */
+  --color-surface-base: #1b1b1b;
+  --color-surface-panel: #262626;
+  --color-surface-raised: #3d3d3d;
+  --color-surface-chrome: #3d3d3d;
+  --color-surface-chrome-hover: #757575;
 
-  --color-background-primary: #1b1b1b;
-  --color-background-secondary: #262626;
-  --color-background-error: #ed4337;
-
-  --color-background-secondary-hover: #3d3d3d;
-
-  --color-background-nav: #3d3d3d;
-  --color-background-nav-hover: #757575;
-
-  --color-divider: #808080;
+  /* Lines and status */
+  --color-border: #808080;
+  --color-danger: #ed4337;
 
   /* Tab open and close */
   --animate-expand-in: expand-in 0.15s ease-out forwards;
@@ -32,7 +33,7 @@
     0% {
       max-width: 0;
       opacity: 0;
-      ,margin-right: 0;
+      margin-right: 0;
     }
     100% {
       max-width: 12rem;
@@ -53,8 +54,6 @@
       margin-right: 0;
     }
   }
-
-  /*  */
 }
 
 @layer components {
@@ -77,7 +76,7 @@
 
   color-scheme: light dark;
   color: var(--color-text-primary);
-  background-color: var(--color-background-primary);
+  background-color: var(--color-surface-base);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -118,7 +117,7 @@ nav *:not(div) {
 .tab:not(.active):not(:first-child)::before {
   padding-left: 1rem;
   content: "|";
-  color: var(--color-background-primary);
+  color: var(--color-surface-base);
 }
 
 .inner,
@@ -147,8 +146,8 @@ nav *:not(div) {
 .tab.active {
   background: linear-gradient(
     to bottom,
-    var(--color-background-nav) 50%,
-    var(--color-background-primary) 50%
+    var(--color-surface-chrome) 50%,
+    var(--color-surface-base) 50%
   );
   z-index: 99;
 }
@@ -161,7 +160,7 @@ nav *:not(div) {
   margin-top: -3px;
 }
 .tab.active > .sides {
-  background-color: var(--color-background-nav);
+  background-color: var(--color-surface-chrome);
 }
 .tab.active > .left {
   border-radius: 0 0 4px 0;
@@ -171,7 +170,7 @@ nav *:not(div) {
   border-radius: 0 0 0 4px;
 }
 .tab.active > .center {
-  background-color: var(--color-background-primary);
+  background-color: var(--color-surface-base);
   border-radius: 12px 12px 0 0;
 }
 .tab-close-svg {

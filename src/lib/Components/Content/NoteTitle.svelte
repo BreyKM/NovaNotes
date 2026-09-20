@@ -71,7 +71,7 @@
   ></div>
   {#if !isNoteFileNameValid}
     <div
-      class="invalid-directory bg-background-error absolute inset-x-0 top-full z-10 mx-auto w-fit rounded-lg p-2 text-sm shadow-lg"
+      class="invalid-directory bg-danger absolute inset-x-0 top-full z-10 mx-auto w-fit rounded-lg p-2 text-sm shadow-lg"
       in:fly={{ y: "100%", duration: 150, easing: quadInOut }}
       out:fly={{ y: "100%", duration: 150, easing: quadInOut }}
     >

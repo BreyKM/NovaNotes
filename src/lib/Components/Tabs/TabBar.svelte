@@ -87,7 +87,7 @@
   {/each}
   <button
     aria-label="create Tab"
-    class="hover:bg-background-nav-hover new-tab-btn z-[999] mb-1 ml-2 rounded p-0.5"
+    class="hover:bg-surface-chrome-hover new-tab-btn z-[999] mb-1 ml-2 rounded p-0.5"
     onclick={createTab}
     ><svg
       xmlns="http://www.w3.org/2000/svg"

@@ -84,7 +84,7 @@
   }
 
   .cm-host :global(.cm-link) {
-    color: var(--color-primary);
+    color: var(--color-accent);
     text-decoration: underline;
     cursor: pointer;
   }
@@ -96,7 +96,7 @@
   }
 
   .cm-host :global(.cm-codeblock) {
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-surface-panel);
     font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
     font-size: 0.9em;
   }
@@ -112,7 +112,7 @@
   }
 
   .cm-host :global(.cm-inline-code) {
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-surface-panel);
     font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
     font-size: 0.9em;
     border-radius: 4px;
@@ -125,7 +125,7 @@
     align-items: center;
     gap: 8px;
     padding: 2px 10px;
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-surface-panel);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     user-select: none;
@@ -151,7 +151,7 @@
     opacity: 1;
   }
   .cm-host :global(.cm-codeblock-language option) {
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-surface-panel);
     color: var(--color-text-primary);
   }
 

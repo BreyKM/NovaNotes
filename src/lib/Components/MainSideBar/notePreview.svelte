@@ -15,8 +15,8 @@
   on:click={handleClick}
   role="none"
   class="mt-0.5 cursor-pointer rounded-sm px-2.5 py-1 transition-colors duration-75"
-  class:bg-background-secondary-hover={isActive}
-  class:hover:bg-background-secondary-hover={!isActive}
+  class:bg-surface-raised={isActive}
+  class:hover:bg-surface-raised={!isActive}
 >
   <div class=" w-full truncate font-bold">{title}</div>
 </div>

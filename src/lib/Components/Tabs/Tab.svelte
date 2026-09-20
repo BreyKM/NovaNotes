@@ -38,7 +38,7 @@
     class="inner sides left h-[calc(32px*0.8)] min-w-10 basis-2 cursor-pointer"
   ></div>
   <div
-    class="inner center hover:bg-background-nav-hover flex h-[calc(32px*0.8)] min-w-0 basis-44 cursor-pointer rounded-lg p-1.5"
+    class="inner center hover:bg-surface-chrome-hover flex h-[calc(32px*0.8)] min-w-0 basis-44 cursor-pointer rounded-lg p-1.5"
   >
     <div class="tab-text w-[calc(100%-20px)] truncate">
       {title}

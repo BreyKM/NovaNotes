@@ -67,7 +67,7 @@
 </script>
 
 <main class="starter-container flex">
-  <div class="left-container bg-background-secondary flex h-screen w-1/3">
+  <div class="left-container bg-surface-panel flex h-screen w-1/3">
     <div class="recent-folder-container mx-2 my-5">
       <ul class="list">
         <li>Blank</li>
@@ -77,7 +77,7 @@
     </div>
   </div>
   <!-- Vertical Divider -->
-  <div class="vertical-divider bg-divider h-screen w-px"></div>
+  <div class="vertical-divider bg-border h-screen w-px"></div>
   <div
     class="main-container relative mx-10 flex w-full flex-row overflow-hidden"
   >
@@ -90,7 +90,7 @@
         <div class="my-2 flex flex-col items-center">
           <button
             onclick={showNextContent}
-            class="btn-primary bg-primary hover:bg-primary-hover mb-6 flex h-24 w-24 items-center justify-center"
+            class="btn-primary bg-accent hover:bg-accent-hover mb-6 flex h-24 w-24 items-center justify-center"
             aria-label="Add folder icon"
           >
             <AddFolderIcon width="4rem" height="4rem" stroke="#f2f2f2" />
@@ -100,11 +100,11 @@
             <div class="text-xs">Create a new folder to store notes in.</div>
           </div>
         </div>
-        <div class="horizontal-divider bg-divider my-6 h-px"></div>
+        <div class="horizontal-divider bg-border my-6 h-px"></div>
         <div class="my-2 flex flex-col items-center">
           <button
             onclick={openExistingNotebook}
-            class="btn-primary bg-background-secondary hover:bg-background-secondary-hover mb-6 flex h-24 w-24 items-center justify-center"
+            class="btn-primary bg-surface-panel hover:bg-surface-raised mb-6 flex h-24 w-24 items-center justify-center"
             aria-label="open an existing notebook"
           >
             <OpenFolderIcon width="4rem" height="4rem" fill="#f2f2f2" />
@@ -134,13 +134,11 @@
             fill="#9A9A9A"
             class="icon group-hover:fill-text-primary"
           />
-          <div class="text-text-primary-hover group-hover:text-text-primary">
-            back
-          </div>
+          <div class="text-text-muted group-hover:text-text-primary">back</div>
         </button>
 
         <div class="my-2 text-4xl">Create new notebook</div>
-        <div class="horizontal-divider bg-divider my-1 h-px"></div>
+        <div class="horizontal-divider bg-border my-1 h-px"></div>
         <div class="my-5 flex items-center justify-between">
           <div class="w-64">
             <div class="text-lg">Name your notebook</div>
@@ -148,7 +146,7 @@
           </div>
 
           <input
-            class="bg-background-secondary w-48 rounded-sm px-2 py-2 text-sm"
+            class="bg-surface-panel w-48 rounded-sm px-2 py-2 text-sm"
             bind:value={userInputNotebookName}
             placeholder="Notebook name"
           />
@@ -157,7 +155,7 @@
           <div class="w-64">
             <div class="text-lg">Location</div>
             {#if $rootNotebookDirPathStore != null}
-              <div class="text-primary text-sm wrap-break-word">
+              <div class="text-accent text-sm wrap-break-word">
                 {$rootNotebookDirPathStore}
               </div>
             {:else}
@@ -169,7 +167,7 @@
             onclick={() => {
               rootDirSelection();
             }}
-            class="bg-background-secondary hover:bg-background-secondary-hover h-8 w-24 rounded-md shadow-md hover:cursor-pointer"
+            class="bg-surface-panel hover:bg-surface-raised h-8 w-24 rounded-md shadow-md hover:cursor-pointer"
             >Browse</button
           >
         </div>
@@ -204,14 +202,14 @@
               }
             }
           }}
-          class="bg-primary hover:bg-primary-hover h-8 w-24 self-center rounded-md shadow-md hover:cursor-pointer"
+          class="bg-accent hover:bg-accent-hover h-8 w-24 self-center rounded-md shadow-md hover:cursor-pointer"
           >Create</button
         >
       </div>
     {/if}
     {#if popupMessage}
       <div
-        class="invalid-directory bg-background-error absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
+        class="invalid-directory bg-danger absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >

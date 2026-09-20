@@ -30,7 +30,7 @@
 </script>
 
 <div
-  class="note-preview-list-container dark:[&::-webkit-scrollbar-thumb]:bg-background-nav mr-0.5 ml-2 flex flex-col overflow-y-auto pr-2
+  class="note-preview-list-container dark:[&::-webkit-scrollbar-thumb]:bg-surface-chrome mr-0.5 ml-2 flex flex-col overflow-y-auto pr-2
     text-sm
     [&::-webkit-scrollbar]:m-3
   [&::-webkit-scrollbar]:w-2
