@@ -33,7 +33,6 @@
     "@electron-forge/maker-squirrel": "^7.6.1",
     "@electron-forge/maker-zip": "^7.6.1",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.0",
     "@tsconfig/svelte": "^5.0.8",
     "@types/lodash": "^4.17.25",

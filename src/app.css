@@ -1,8 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
 @config "../tailwind.config.js";
 
@@ -12,12 +8,10 @@
 
   /* Colors */
   --color-primary: #3e92cc;
-  --color-secondary: ;
 
   --color-primary-hover: #69b5ec;
 
   --color-text-primary: #f2f2f2;
-  --color-text-secondary:  ;
 
   --color-text-primary-hover: #9a9a9a;
 
@@ -25,33 +19,12 @@
   --color-background-secondary: #262626;
   --color-background-error: #ed4337;
 
-  --color-background-primary-hover: ;
   --color-background-secondary-hover: #3d3d3d;
 
   --color-background-nav: #3d3d3d;
   --color-background-nav-hover: #757575;
 
-  --color-background-nav: #3d3d3d;
-  --color-background-nav-hover: #757575;
-
-  --color-background-table-icons: #0f0f0f;
-  --box-shadow-table-icons:
-    0px 1px 2px 0px #ffffff4d, 0px 1px 3px 1px #ffffff26;
-
-  --color-background-code-block: #111418;
-
-  --color-text-inline-code: #e28780;
-
-  --color-test: #3e92cc;
   --color-divider: #808080;
-
-  --rounded-tab: 8 8 8 8;
-
-  --h1-size: 2rem;
-  --h2-size: 1.8rem;
-  --h3-size: 1.6rem;
-  --h4-size: 1.4rem;
-  --h5-size: 1.2rem;
 
   /*  */
 }
@@ -191,8 +164,4 @@ nav *:not(div) {
 
 .new-tab-btn {
   -webkit-app-region: no-drag;
-}
-
-.content-container {
-  scrollbar-gutter: stable both-edges;
 }
