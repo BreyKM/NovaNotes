@@ -32,11 +32,9 @@
     ) {
       isNotebookNameValid = true;
       userInputNotebookNameStore.set(userInputNotebookName);
-      console.log("name is valid");
     } else {
       isNotebookNameValid = false;
       userInputNotebookNameStore.set("");
-      console.log("invalid directory name");
     }
   });
 
