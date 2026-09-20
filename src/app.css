@@ -1,7 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
 
-@config "../tailwind.config.js";
-
 @theme {
   /* Fonts */
   --font-main: "Epilogue", sans-serif;
@@ -25,6 +23,36 @@
   --color-background-nav-hover: #757575;
 
   --color-divider: #808080;
+
+  /* Tab open and close */
+  --animate-expand-in: expand-in 0.15s ease-out forwards;
+  --animate-shrink-out: shrink-out 0.15s ease-in forwards;
+
+  @keyframes expand-in {
+    0% {
+      max-width: 0;
+      opacity: 0;
+      ,margin-right: 0;
+    }
+    100% {
+      max-width: 12rem;
+      opacity: 1;
+      margin-right: -11px;
+    }
+  }
+
+  @keyframes shrink-out {
+    0% {
+      max-width: 12rem;
+      opacity: 1;
+      margin-right: -11px;
+    }
+    100% {
+      max-width: 0;
+      opacity: 0;
+      margin-right: 0;
+    }
+  }
 
   /*  */
 }
