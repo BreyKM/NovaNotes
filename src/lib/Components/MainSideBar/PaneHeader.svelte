@@ -58,7 +58,7 @@
     {#if menuOpen}
       <div
         role="menu"
-        class="bg-surface-base border-surface-raised absolute top-full left-1.5 z-30 min-w-[168px]
+        class="bg-surface-base border-surface-raised absolute top-full left-0 z-30 min-w-[168px]
 rounded-md border py-1 text-xs shadow-lg"
       >
         {#each SORT_OPTIONS as option (option.value)}

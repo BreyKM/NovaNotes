@@ -15,7 +15,7 @@ describe("formatEdited", () => {
     [ago(3 * HOUR), "3 h ago"],
     [ago(DAY + HOUR), "1 day ago"],
     [ago(4 * DAY), "4 days ago"],
-  ])("describes %j ad %j", (editedAt, expected) => {
+  ])("describes %j as %j", (editedAt, expected) => {
     expect(formatEdited(editedAt, now)).toBe(expected);
   });
 

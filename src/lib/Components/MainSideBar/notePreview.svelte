@@ -22,7 +22,7 @@
   {onpointerenter}
   {onpointerleave}
   class={[
-    "rounded-sim flex h-[26px] w-full flex-none items-center px-2 text-left text-xs",
+    "flex h-[26px] w-full flex-none items-center rounded-sm px-2 text-left text-xs",
     isActive
       ? "bg-surface-raised text-text-primary"
       : "text-text-primary/80 hover:bg-surface-raised",
