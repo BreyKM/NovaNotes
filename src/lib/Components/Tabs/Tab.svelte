@@ -26,7 +26,7 @@
 
 <div
   bind:this={element}
-  class="group flex h-[26px] w-[180px] min-w-[48px] shrink items-center gap-1 overflow-hidden rounded-t-md pr-1 pl-2 text-xs"
+  class="group flex h-[26px] w-[180px] min-w-[48px] shrink items-center overflow-hidden rounded-t-md pr-1 text-xs"
   class:bg-surface-panel={active}
   class:text-text-primary={active}
   class:text-text-muted={!active}
@@ -35,13 +35,13 @@
   out:slideOut
 >
   <button
-    class="min-w-0 flex-1 cursor-pointer truncate text-left"
+    class="min-w-0 flex-1 cursor-pointer self-stretch truncate pr-1 pl-2 text-left"
     on:click={() => dispatch("click")}
   >
     {title}
   </button>
   <button
-    class="hover:bg-surface-raised flex-none rounded-sm p-0.5 opacity-0 transition group-hover:opacity-100"
+    class="hover:bg-text-primary/10 hover:text-text-primary active:bg-text-primary/20 flex-none rounded-sm p-0.5 opacity-0 transition group-hover:opacity-100"
     class:opacity-100={active}
     aria-label="close tab"
     on:click|stopPropagation={() => dispatch("close")}
