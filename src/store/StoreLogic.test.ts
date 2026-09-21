@@ -228,6 +228,31 @@ describe("saveNow", () => {
     expect(writeNote).toHaveBeenCalledTimes(2);
     expect(writeNote).toHaveBeenCalledWith("Test", "second");
   });
+
+  it("updates the note's edited time once the write lands", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target, noteFixture("Other")]);
+    selectedNoteIdStore.set(target.id);
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    const [saved, other] = get(notesStore);
+    expect(saved.lastEditTime).toBeGreaterThan(0);
+    expect(other.lastEditTime).toBe(0);
+  });
+
+  it("keeps the old edited time when the write fails", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    expect(get(notesStore)[0].lastEditTime).toBe(0);
+  });
 });
 
 describe("saveBeforeClose", () => {

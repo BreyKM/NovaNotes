@@ -187,9 +187,18 @@ export function updateNoteContent(newContent: string): void {
 
 let pendingWrite: Promise<void> = Promise.resolve();
 
+function markEdited(id: string, time: number): void {
+  notesStore.update((notes) =>
+    notes.map((note) =>
+      note.id === id ? { ...note, lastEditTime: time } : note,
+    ),
+  );
+}
+
 function writeInOrder(title: string, content: string): Promise<void> {
   pendingWrite = pendingWrite
     .then(() => window.notes.writeNote(title, content))
+    .then(() => markEdited(noteIdForTitle(title), Date.now()))
     .catch((err) => console.error("Auto-save failed:", err));
   return pendingWrite;
 }
