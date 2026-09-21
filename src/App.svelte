@@ -92,7 +92,7 @@
     ></div>
   {/if}
 
-  <div class="editor-column flex min-w-0 flex-1 flex-col">
+  <div class="editor-column flex min-w-80 flex-1 flex-col">
     <TabBar />
     <div
       class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"

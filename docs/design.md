@@ -136,6 +136,7 @@ Structure, left to right: **left rail → sidebar column → editor column → r
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
 - Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
 - **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space. The tab strip gains a 24px draggable gap before the first tab, and the editor panel's top-left corner becomes rounded.
+- **Minimum sizes:** the window is at least 640×400 (half of a 1366px screen still fits). The editor column never shrinks below 320px; when space runs out, the sidebar gives way. Its saved width is kept and comes back when the window is wide enough.
 
 Because each column owns its own header, the tab strip always starts at the editor's left edge (plus the drag gap when the sidebar is collapsed), whatever the sidebar's width.
 

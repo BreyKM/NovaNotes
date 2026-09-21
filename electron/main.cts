@@ -59,6 +59,8 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     width: 1050,
     height: 800,
+    minWidth: 640,
+    minHeight: 400,
     autoHideMenuBar: true,
     center: true,
     title: "Nova Notes",
