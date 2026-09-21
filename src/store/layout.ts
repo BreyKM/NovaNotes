@@ -1,4 +1,5 @@
 import { get, writable, type Writable } from "svelte/store";
+import type { NoteSort } from "../../shared/types";
 
 export const MIN_SIDEBAR_WIDTH = 160;
 export const MAX_SIDEBAR_WIDTH = 420;
@@ -29,6 +30,7 @@ function saveLayout(): void {
   window.layout.set({
     sidebarWidth: get(sidebarWidth),
     sidebarCollapsed: get(sidebarCollapsed),
+    noteSort: get(noteSort),
   });
 }
 
@@ -42,6 +44,10 @@ export async function loadLayout(): Promise<void> {
   if (typeof saved.sidebarCollapsed === "boolean") {
     sidebarCollapsed.set(saved.sidebarCollapsed);
   }
+
+  if (saved.noteSort && NOTE_SORTS.includes(saved.noteSort)) {
+    noteSort.set(saved.noteSort);
+  }
 }
 
 export function setSidebarWidth(width: number): void {
@@ -54,6 +60,15 @@ export function setSidebarCollapsed(collapsed: boolean): void {
   saveLayout();
 }
 
+export const noteSort: Writable<NoteSort> = writable("edited");
+
+const NOTE_SORTS: readonly NoteSort[] = ["name", "edited", "created"];
+
 export function toggleSidebar(): void {
   setSidebarCollapsed(!get(sidebarCollapsed));
+}
+
+export function setNoteSort(sort: NoteSort): void {
+  noteSort.set(sort);
+  saveLayout();
 }

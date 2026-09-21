@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import {
     loadNotes,
-    notesStore,
+    sortedNotesStore,
     selectedNoteIdStore,
     handleNoteSelect,
   } from "../../../store/Store";
@@ -34,12 +34,12 @@
       <p class="flex h-full w-full items-center justify-center text-2xl">
         Loading...
       </p>
-    {:else if isEmpty($notesStore)}
+    {:else if isEmpty($sortedNotesStore)}
       <p class="flex h-full w-full items-center justify-center text-2xl">
         No notes yet!
       </p>
     {:else}
-      {#each $notesStore as note}
+      {#each $sortedNotesStore as note}
         <NotePreview
           title={note.title}
           isActive={$selectedNoteIdStore === note.id}

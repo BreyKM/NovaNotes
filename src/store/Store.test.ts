@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { splitFrontmatter, findNextAvailableTitle } from "./Store";
+import { splitFrontmatter, findNextAvailableTitle, sortNotes } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
 const note = (title: string): NoteMeta => ({
@@ -77,5 +77,57 @@ describe("findNextAvailableTitle", () => {
 
   it("ignores titles that are not Untitled", () => {
     expect(findNextAvailableTitle([note("My Note")])).toBe("Untitled");
+  });
+});
+
+describe("sortNotes", () => {
+  const dated = (title: string, created: number, edited: number): NoteMeta => ({
+    ...note(title),
+    creationTime: created,
+    lastEditTime: edited,
+  });
+
+  const notes = [
+    dated("Untitled 10", 1, 30),
+    dated("beta", 3, 10),
+    dated("Untitled 2", 2, 20),
+    dated("Alpha", 4, 5),
+  ];
+
+  const titles = (list: NoteMeta[]) => list.map((n) => n.title);
+
+  it("sorts by name, ignoring case and reading numbers as numbers", () => {
+    expect(titles(sortNotes(notes, "name"))).toEqual([
+      "Alpha",
+      "beta",
+      "Untitled 2",
+      "Untitled 10",
+    ]);
+  });
+
+  it("puts the most recently edited first", () => {
+    expect(titles(sortNotes(notes, "edited"))).toEqual([
+      "Untitled 10",
+      "Untitled 2",
+      "beta",
+      "Alpha",
+    ]);
+  });
+
+  it("puts the most recently created first", () => {
+    expect(titles(sortNotes(notes, "created"))).toEqual([
+      "Alpha",
+      "beta",
+      "Untitled 2",
+      "Untitled 10",
+    ]);
+  });
+
+  it("leaves the original list untouched", () => {
+    const before = titles(notes);
+
+    sortNotes(notes, "name");
+
+    expect(titles(notes)).toEqual(before);
   });
 });

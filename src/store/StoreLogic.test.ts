@@ -18,6 +18,7 @@ import {
   userInputNotebookNameStore,
   rootNotebookDirPathStore,
   openExistingNotebook,
+  createEmptyNote,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -38,6 +39,9 @@ const createNotebookDirIpc = vi.fn();
 const createWelcomeNote = vi.fn().mockResolvedValue(undefined);
 const openExistingNotebookIpc = vi.fn();
 const openMainWindow = vi.fn();
+const createNoteIpc = vi.fn().mockResolvedValue(undefined);
+const getNotes = vi.fn();
+const createTabForNewNote = vi.fn().mockResolvedValue(undefined);
 
 let finishHeldWrite: () => void = () => {};
 
@@ -57,8 +61,14 @@ beforeEach(() => {
       writeNote,
       renameNote: renameNoteIpc,
       createWelcomeNote,
+      createNote: createNoteIpc,
+      getNotes,
     },
-    tab: { loadNoteIntoActiveTab, updateTabs },
+    tab: {
+      loadNoteIntoActiveTab,
+      updateTabs,
+      createTabForNewNote,
+    },
     nav: { readyToClose },
     directory: {
       createNotebookDir: createNotebookDirIpc,
@@ -490,5 +500,22 @@ describe("openExistingNotebook", () => {
     await openExistingNotebook();
 
     expect(openMainWindow).not.toHaveBeenCalled();
+  });
+});
+
+describe("createEmptyNote", () => {
+  it("selects the note it created, not whichever note sorts first", async () => {
+    const existing = { ...noteFixture("Zeta"), lastEditTime: 200 };
+    const created = { ...noteFixture("Untitled"), lastEditTime: 100 };
+    getNotes.mockResolvedValue([existing, created]);
+
+    await createEmptyNote();
+
+    expect(createNoteIpc).toHaveBeenCalledWith({
+      title: "Untitled",
+      content: "",
+    });
+    expect(get(selectedNoteIdStore)).toBe("Untitled.md");
+    expect(loadNoteIntoActiveTab).toHaveBeenCalledWith(created);
   });
 });

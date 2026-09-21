@@ -12,6 +12,8 @@ import {
   COLLAPSE_BELOW_WIDTH,
   setSidebarCollapsed,
   sidebarDragResult,
+  noteSort,
+  setNoteSort,
 } from "./layout";
 
 const getLayout = vi.fn();
@@ -22,6 +24,7 @@ beforeEach(() => {
   getLayout.mockResolvedValue({});
   sidebarWidth.set(220);
   sidebarCollapsed.set(false);
+  noteSort.set("edited");
   vi.clearAllMocks();
 });
 
@@ -85,6 +88,7 @@ describe("setSidebarWidth", () => {
     expect(setLayout).toHaveBeenCalledWith({
       sidebarWidth: MIN_SIDEBAR_WIDTH,
       sidebarCollapsed: false,
+      noteSort: "edited",
     });
   });
 });
@@ -97,6 +101,7 @@ describe("toggleSidebar", () => {
     expect(setLayout).toHaveBeenCalledWith({
       sidebarWidth: 220,
       sidebarCollapsed: true,
+      noteSort: "edited",
     });
 
     toggleSidebar();
@@ -133,6 +138,35 @@ describe("setSidebarCollapsed", () => {
     expect(setLayout).toHaveBeenCalledWith({
       sidebarWidth: 310,
       sidebarCollapsed: true,
+      noteSort: "edited",
+    });
+  });
+});
+
+describe("noteSort", () => {
+  it("loads a saved sort", async () => {
+    getLayout.mockResolvedValue({ noteSort: "name" });
+
+    await loadLayout();
+
+    expect(get(noteSort)).toBe("name");
+  });
+
+  it("ignores a sort it does not recognise", async () => {
+    getLayout.mockResolvedValue({ noteSort: "size" });
+
+    await loadLayout();
+
+    expect(get(noteSort)).toBe("edited");
+  });
+
+  it("saves a new sort with the rest of the layout", () => {
+    setNoteSort("created");
+
+    expect(setLayout).toHaveBeenCalledWith({
+      sidebarWidth: 220,
+      sidebarCollapsed: false,
+      noteSort: "created",
     });
   });
 });
