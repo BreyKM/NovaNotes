@@ -44,6 +44,7 @@
     font-family: inherit;
     line-height: 1.6;
     padding-inline: 2rem;
+    scrollbar-gutter: stable;
   }
 
   .cm-host :global(.cm-content) {

@@ -41,11 +41,8 @@
 </script>
 
 <div
-  class="note-preview-list-container [&::-webkit-scrollbar-thumb]:bg-surface-chrome flex min-h-0 flex-1 flex-col overflow-y-auto
-  px-1.5
-  [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-transparent"
+  class="note-preview-list-container flex min-h-0 flex-1 flex-col overflow-y-auto pl-1.5
+[scrollbar=gutter:stable]"
 >
   {#if isLoading}
     <p class="text-text-muted px-2 py-1 text-xs">Loading...</p>
