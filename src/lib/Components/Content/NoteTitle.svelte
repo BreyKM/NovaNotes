@@ -59,7 +59,9 @@
   }
 </script>
 
-<div class="note-title-container relative mb-4 w-full max-w-[700px]">
+<div
+  class="note-title-container relative mx-auto mb-4 w-full max-w-(--editor-width)"
+>
   <div
     class="note-title text-4xl font-bold outline-none"
     tabindex="-1"

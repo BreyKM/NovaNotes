@@ -3,7 +3,9 @@
   import NoteTitle from "./NoteTitle.svelte";
 </script>
 
-<div class="mx-auto flex min-h-0 w-[80%] flex-1 flex-col px-8 pt-10">
-  <NoteTitle />
+<div class="flex min-h-0 flex-1 flex-col pt-10">
+  <div class="px-8">
+    <NoteTitle />
+  </div>
   <CodeMirrorEditor />
 </div>

@@ -29,10 +29,7 @@
   });
 </script>
 
-<div
-  bind:this={editorContainer}
-  class="cm-host min-h-0 w-full max-w-[700px] flex-1"
-></div>
+<div bind:this={editorContainer} class="cm-host min-h-0 w-full flex-1"></div>
 
 <style>
   .cm-host :global(.cm-editor) {
@@ -46,10 +43,13 @@
   .cm-host :global(.cm-scroller) {
     font-family: inherit;
     line-height: 1.6;
+    padding-inline: 2rem;
   }
 
   .cm-host :global(.cm-content) {
     caret-color: var(--color-text-primary);
+    max-width: var(--editor-width);
+    margin-inline: auto;
   }
 
   .cm-host :global(.cm-heading) {
