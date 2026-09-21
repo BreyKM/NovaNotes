@@ -86,11 +86,12 @@
 
   /* Layout */
   --editor-width: 46rem;
+  --scrollbar-size: 9px;
 }
 
 ::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
 }
 
 ::-webkit-scrollbar-track,
