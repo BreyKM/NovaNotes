@@ -63,6 +63,7 @@
     "@codemirror/view": "^6.43.12",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
+    "@lucide/svelte": "^1.47.0",
     "electron-squirrel-startup": "^1.0.1",
     "fs-extra": "^11.3.0",
     "lodash": "^4.17.21",

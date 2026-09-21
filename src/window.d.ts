@@ -4,6 +4,7 @@ import type {
   Tab,
   TabsState,
   CreateNotebookResult,
+  LayoutState,
 } from "../shared/types";
 
 declare global {
@@ -42,6 +43,10 @@ declare global {
       readNote: (filename: string) => Promise<string>;
       writeNote: (filename: string, content: string) => Promise<void>;
       renameNote: (oldTitle: string, newTitle: string) => Promise<boolean>;
+    };
+    layout: {
+      get: () => Promise<LayoutState>;
+      set: (layout: LayoutState) => void;
     };
     tab: {
       getTabs: () => Promise<TabsState>;

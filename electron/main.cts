@@ -3,7 +3,13 @@ import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "path";
 import fse from "fs-extra";
 import ElectronStore from "./electronStore.cjs";
-import type { Tab, TabsState, NoteMeta, NewNote } from "../shared/types";
+import type {
+  Tab,
+  TabsState,
+  NoteMeta,
+  NewNote,
+  LayoutState,
+} from "../shared/types";
 
 // util functions
 import {
@@ -186,6 +192,14 @@ app.whenReady().then(() => {
     }
     useNotebook(dir);
     return true;
+  });
+
+  ipcMain.handle("getLayout", (): LayoutState => {
+    return (electronStore.get("layout") as LayoutState | undefined) ?? {};
+  });
+
+  ipcMain.on("setLayout", (_event, layout: LayoutState) => {
+    electronStore.set("layout", layout);
   });
 
   ipcMain.handle("getActiveFolder", async () => {

@@ -2,62 +2,95 @@
   import { onMount } from "svelte";
   import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
+  import AppRail from "./lib/Components/Rail/AppRail.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
   import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
-  import { onDrag } from "./lib/placeholder/dragMe";
+  import {
+    loadLayout,
+    setSidebarCollapsed,
+    setSidebarWidth,
+    sidebarCollapsed,
+    sidebarDragResult,
+    sidebarWidth,
+  } from "./store/layout";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
 
-  const MIN_SIDEBAR_WIDTH = 160;
-  const MAX_SIDEBAR_WIDTH = 420;
   const isMac = window.api.platform() === "darwin";
 
-  let sidebarWidth = 220;
-  let resizeWidth = sidebarWidth;
-  let isDragging = false;
+  let resize: { pointerId: number; startX: number; startWidth: number } | null =
+    null;
+  let previewWidth = 0;
+  let previewCollapsed = false;
+
+  $: width = resize ? (previewCollapsed ? 0 : previewWidth) : $sidebarWidth;
 
   onMount(() => {
     window.nav.onSaveBeforeClose(saveBeforeClose);
+    void loadLayout();
   });
 
-  function handleDrag(
-    event: CustomEvent<{ delta: number; initialWidth: number }>,
-  ): void {
-    const { delta, initialWidth } = event.detail;
-    resizeWidth = Math.min(
-      MAX_SIDEBAR_WIDTH,
-      Math.max(MIN_SIDEBAR_WIDTH, initialWidth + delta),
+  function startResize(event: PointerEvent): void {
+    const handle = event.currentTarget as HTMLElement;
+    handle.setPointerCapture(event.pointerId);
+    previewWidth = $sidebarWidth;
+    previewCollapsed = false;
+    resize = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startWidth: $sidebarWidth,
+    };
+  }
+
+  function moveResize(event: PointerEvent): void {
+    if (!resize || event.pointerId !== resize.pointerId) {
+      return;
+    }
+    const result = sidebarDragResult(
+      resize.startWidth + event.clientX - resize.startX,
     );
+    previewCollapsed = result.collapsed;
+    if (!result.collapsed) {
+      previewWidth = result.width;
+    }
   }
 
-  function handleDragStart(): void {
-    isDragging = true;
-  }
-
-  function handleDragEnd(): void {
-    isDragging = false;
-    sidebarWidth = resizeWidth;
+  function endResize(event: PointerEvent): void {
+    if (!resize || event.pointerId !== resize.pointerId) {
+      return;
+    }
+    if (previewCollapsed) {
+      setSidebarCollapsed(true);
+    } else {
+      setSidebarWidth(previewWidth);
+    }
+    resize = null;
   }
 </script>
 
 <main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
-  <div
-    class="sidebar-column flex flex-col"
-    style="width:{resizeWidth}px; flex-shrink: 0"
-  >
-    <div class="drag-region h-[26px] flex-none" class:pl-[78px]={isMac}></div>
-    <MainSideBar />
-  </div>
-  <div
-    role="separator"
-    aria-orientation="vertical"
-    aria-label="Resize sidebar"
-    class="separator"
-    class:dragging={isDragging}
-    use:onDrag={{ orientation: "vertical", initialWidth: sidebarWidth }}
-    on:dragStart={handleDragStart}
-    on:drag={handleDrag}
-    on:dragEnd={handleDragEnd}
-  ></div>
+  <AppRail />
+
+  {#if $sidebarCollapsed}
+    <div
+      class="sidebar-column flex flex-col overflow-hidden"
+      style="width:{width}px;"
+    >
+      <div class="drag-region h-[26px] flex-none" class:pl-[52px]={isMac}></div>
+      <MainSideBar />
+    </div>
+
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize sidebar"
+      class="separator"
+      class:dragging={resize != null}
+      onpointerdown={startResize}
+      onpointermove={moveResize}
+      onpointerup={endResize}
+      onpointercancel={endResize}
+    ></div>
+  {/if}
 
   <div class="editor-column flex min-w-0 flex-1 flex-col">
     <TabBar />
@@ -84,6 +117,7 @@
     background-clip: content-box;
     padding: 0 1px;
     cursor: col-resize;
+    touch-action: none;
     z-index: 20;
     transition: background-color 150ms ease-in-out;
   }

@@ -24,3 +24,8 @@ export interface TabsState {
 export type CreateNotebookResult =
   | { ok: true; fullPath: string; name: string }
   | { ok: false; reason: "exists" | "invalid-name" };
+
+export interface LayoutState {
+  sidebarWidth?: number;
+  sidebarCollapsed?: boolean;
+}

@@ -5,6 +5,7 @@ import type {
   Tab,
   TabsState,
   CreateNotebookResult,
+  LayoutState,
 } from "../shared/types";
 
 const api = {
@@ -82,6 +83,12 @@ contextBridge.exposeInMainWorld("notes", {
 
   renameNote: (oldTitle: string, newTitle: string): Promise<boolean> =>
     ipcRenderer.invoke("renameNote", oldTitle, newTitle),
+});
+
+contextBridge.exposeInMainWorld("layout", {
+  get: (): Promise<LayoutState> => ipcRenderer.invoke("getLayout"),
+
+  set: (layout: LayoutState): void => ipcRenderer.send("sendLayout", layout),
 });
 
 contextBridge.exposeInMainWorld("tab", {
