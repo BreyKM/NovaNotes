@@ -106,6 +106,12 @@ describe("toggleSidebar", () => {
 });
 
 describe("sidebarDragResult", () => {
+  it("collapses once the drag passes the threshold", () => {
+    expect(sidebarDragResult(COLLAPSE_BELOW_WIDTH - 1)).toEqual({
+      collapsed: true,
+    });
+  });
+
   it("holds at the minimum between the threshold and the minimum", () => {
     expect(sidebarDragResult(COLLAPSE_BELOW_WIDTH + 10)).toEqual({
       collapsed: false,

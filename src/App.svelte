@@ -70,7 +70,7 @@
 <main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
   <AppRail />
 
-  {#if $sidebarCollapsed}
+  {#if !$sidebarCollapsed}
     <div
       class="sidebar-column flex flex-col overflow-hidden"
       style="width:{width}px;"
