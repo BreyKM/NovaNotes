@@ -88,7 +88,7 @@ contextBridge.exposeInMainWorld("notes", {
 contextBridge.exposeInMainWorld("layout", {
   get: (): Promise<LayoutState> => ipcRenderer.invoke("getLayout"),
 
-  set: (layout: LayoutState): void => ipcRenderer.send("sendLayout", layout),
+  set: (layout: LayoutState): void => ipcRenderer.send("setLayout", layout),
 });
 
 contextBridge.exposeInMainWorld("tab", {
