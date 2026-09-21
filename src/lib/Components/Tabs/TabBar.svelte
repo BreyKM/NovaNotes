@@ -15,6 +15,7 @@
   } from "../../../store/Store";
   import { get } from "svelte/store";
   import WindowControls from "./WindowControls.svelte";
+  import { sidebarCollapsed } from "../../../store/layout";
 
   onMount(() => {
     const observer = new ResizeObserver(updateScrollHints);
@@ -109,6 +110,9 @@
 </script>
 
 <div class="flex h-[26px] items-end">
+  {#if $sidebarCollapsed}
+    <div class="drag-region h-full w-6 flex-none"></div>
+  {/if}
   <div
     bind:this={strip}
     class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-x-auto"
@@ -141,7 +145,7 @@
       /></svg
     ></button
   >
-  <div class="drag-region h-full flex-1"></div>
+  <div class="drag-region h-full min-w-12 flex-1"></div>
   <WindowControls />
 </div>
 

@@ -96,6 +96,7 @@
     <TabBar />
     <div
       class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+      class:rounded-tl-md={$sidebarCollapsed}
     >
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />

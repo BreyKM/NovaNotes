@@ -134,10 +134,10 @@ Structure, left to right: **left rail → sidebar column → editor column → r
 - **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane has a header (new note, new folder, sort, collapse-all), the list, and the notebook switcher pinned at the bottom. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
 - **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
-- Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none.
-- **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space.
+- Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
+- **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space. The tab strip gains a 24px draggable gap before the first tab, and the editor panel's top-left corner becomes rounded.
 
-Because each column owns its own header, the tab strip always starts exactly at the editor's left edge, whatever the sidebar's width.
+Because each column owns its own header, the tab strip always starts at the editor's left edge (plus the drag gap when the sidebar is collapsed), whatever the sidebar's width.
 
 ### 7. Components
 
