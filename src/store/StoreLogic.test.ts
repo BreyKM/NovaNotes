@@ -19,6 +19,8 @@ import {
   rootNotebookDirPathStore,
   openExistingNotebook,
   createEmptyNote,
+  saveStatusStore,
+  lastSavedAtStore,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -87,6 +89,8 @@ beforeEach(() => {
   tabStore.set([]);
   userInputNotebookNameStore.set(null);
   rootNotebookDirPathStore.set(null);
+  saveStatusStore.set("saved");
+  lastSavedAtStore.set(null);
 
   vi.clearAllMocks();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -252,6 +256,53 @@ describe("saveNow", () => {
     await saveNow();
 
     expect(get(notesStore)[0].lastEditTime).toBe(0);
+  });
+});
+
+describe("save status", () => {
+  const selectTarget = () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+  };
+
+  it("is pending from the first edit until the write lands", async () => {
+    selectTarget();
+
+    updateNoteContent("changed");
+    expect(get(saveStatusStore)).toBe("pending");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
+    expect(get(lastSavedAtStore)).not.toBeNull();
+  });
+
+  it("stays pending when an edit arrives during a write", async () => {
+    selectTarget();
+    holdNextWrite();
+
+    updateNoteContent("first");
+    handleAutoSaving.flush();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    updateNoteContent("second");
+
+    finishHeldWrite();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(get(saveStatusStore)).toBe("pending");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
+  });
+
+  it("reports a failed write", async () => {
+    selectTarget();
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    expect(get(saveStatusStore)).toBe("failed");
+    expect(get(lastSavedAtStore)).toBeNull();
   });
 });
 
