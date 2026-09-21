@@ -12,6 +12,7 @@ declare global {
       node: () => string;
       chrome: () => string;
       electron: () => string;
+      platform: () => string;
     };
     nav: {
       minimize: () => void;

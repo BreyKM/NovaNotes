@@ -11,6 +11,7 @@ const api = {
   node: (): string => process.versions.node,
   chrome: (): string => process.versions.chrome,
   electron: (): string => process.versions.electron,
+  platform: (): string => process.platform,
 };
 
 contextBridge.exposeInMainWorld("api", api);

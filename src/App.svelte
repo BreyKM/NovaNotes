@@ -2,72 +2,68 @@
   import { onMount } from "svelte";
   import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
-  import Nav from "./lib/Components/Nav/Nav.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
   import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
   import { onDrag } from "./lib/placeholder/dragMe";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
 
-  let width = 0;
-  let resizeWidth = width;
-  let isDragging = false;
+  const MIN_SIDEBAR_WIDTH = 160;
+  const MAX_SIDEBAR_WIDTH = 420;
+  const isMac = window.api.platform() === "darwin";
 
-  let mainSideBarRef: HTMLDivElement | undefined;
-  let minWidthInPixels = 0;
+  let sidebarWidth = 220;
+  let resizeWidth = sidebarWidth;
+  let isDragging = false;
 
   onMount(() => {
     window.nav.onSaveBeforeClose(saveBeforeClose);
-
-    if (mainSideBarRef) {
-      const rect = mainSideBarRef.getBoundingClientRect();
-      minWidthInPixels = rect.width;
-
-      width = rect.width;
-      resizeWidth = rect.width;
-    }
   });
 
   function handleDrag(
     event: CustomEvent<{ delta: number; initialWidth: number }>,
   ): void {
     const { delta, initialWidth } = event.detail;
-    const newWidth = initialWidth + delta;
-
-    resizeWidth = Math.max(minWidthInPixels, newWidth);
-  }
-
-  function handleDragEnd(): void {
-    isDragging = false;
-    width = resizeWidth;
+    resizeWidth = Math.min(
+      MAX_SIDEBAR_WIDTH,
+      Math.max(MIN_SIDEBAR_WIDTH, initialWidth + delta),
+    );
   }
 
   function handleDragStart(): void {
     isDragging = true;
   }
+
+  function handleDragEnd(): void {
+    isDragging = false;
+    sidebarWidth = resizeWidth;
+  }
 </script>
 
-<main class="relative flex h-screen flex-col overflow-hidden">
-  <Nav />
-  <div class="content-wrapper flex h-full w-full">
-    <MainSideBar
-      bind:containerElement={mainSideBarRef}
-      style="width:{resizeWidth}px; flex-shrink: 0;"
-    />
-    <hr
-      aria-orientation="vertical"
-      style=" cursor: col-resize; z-index: 999;"
-      class="separator"
-      class:dragging={isDragging}
-      use:onDrag={{ orientation: "vertical", initialWidth: width }}
-      on:dragStart={handleDragStart}
-      on:drag={handleDrag}
-      on:dragEnd={handleDragEnd}
-    />
-    <div class="MainContent flex h-full w-full flex-col overflow-x-hidden">
-      <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
-      Live Width: {Math.round(resizeWidth)}px
-    </div> -->
-      <TabBar />
+<main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
+  <div
+    class="sidebar-column flex flex-col"
+    style="width:{resizeWidth}px; flex-shrink: 0"
+  >
+    <div class="drag-region h-[26px] flex-none" class:pl-[78px]={isMac}></div>
+    <MainSideBar />
+  </div>
+  <div
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize sidebar"
+    class="separator"
+    class:dragging={isDragging}
+    use:onDrag={{ orientation: "vertical", initialWidth: sidebarWidth }}
+    on:dragStart={handleDragStart}
+    on:drag={handleDrag}
+    on:dragEnd={handleDragEnd}
+  ></div>
+
+  <div class="editor-column flex min-w-0 flex-1 flex-col">
+    <TabBar />
+    <div
+      class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+    >
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
       {:else}
@@ -79,27 +75,21 @@
 
 <style>
   .separator {
-    height: 100%;
     position: relative;
-    background-color: transparent;
-    border-color: var(--color-surface-chrome);
+    align-self: stretch;
     width: 3px;
-    border-width: 0px;
-    border-left-width: 1px;
-
-    margin-top: 40px;
-    transition:
-      background-color 200ms,
-      ease-in-out,
-      border-color 200ms ease-in-out,
-      margin-top 50ms ease-in-out;
+    margin: 0px -3px;
+    border: 0;
+    background-color: var(--color-surface-raised);
+    background-clip: content-box;
+    padding: 0 1px;
+    cursor: col-resize;
+    z-index: 20;
+    transition: background-color 150ms ease-in-out;
   }
 
   .separator:hover,
   .separator.dragging {
-    width: 3px;
     background-color: var(--color-accent);
-    margin-top: 0px;
-    border-color: var(--color-accent);
   }
 </style>

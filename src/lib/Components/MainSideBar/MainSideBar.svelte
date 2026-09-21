@@ -6,11 +6,7 @@
     createEmptyNote,
   } from "../../../store/Store";
   import NotePreviewList from "./notePreviewList.svelte";
-  import NovaNotesIcon from "../../../assets/NovaNotesIcon.svelte";
   import NoteEditIcon from "../../../assets/noteEditsvg.svelte";
-
-  export let style = "";
-  export let containerElement: HTMLDivElement | undefined = undefined;
 
   onMount(() => {
     getActiveFolder();
@@ -18,17 +14,11 @@
 </script>
 
 <div
-  bind:this={containerElement}
-  class="left-container h-100% bg-surface-panel flex max-w-3/4 min-w-1/5 flex-col"
-  {style}
+  class="left-container bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-md"
 >
   <div
-    class="titlebar-title bg-surface-chrome z-100 flex h-10 px-3 text-center text-[1.75rem]"
+    class="sidebar-main relative isolate flex min-h-0 flex-1 flex-col overflow-hidden"
   >
-    <NovaNotesIcon width="40" height="40" />
-    <div class="mt-1 ml-2 h-full self-center text-center">Nova</div>
-  </div>
-  <div class="sidebar-main relative isolate flex flex-col overflow-hidden">
     <div class="Notebook-name-container mx-2 my-2">
       {#if $activeNotebookNameStore}
         <div
