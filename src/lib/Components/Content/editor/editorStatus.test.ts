@@ -14,6 +14,12 @@ describe("countWords", () => {
     ["   \n\t ", 0],
     ["one", 1],
     ["one two  three\nfour", 4],
+    ["see [the docs](https://example.com) now", 4],
+    ["before\n```js\nconst x = 1;\n```\nafter", 2],
+    ["café naïve", 2],
+    ["use the ` key\n\nthen run `npm test` again", 6],
+    ["# Title\n\n- [ ] buy milk", 3],
+    ["![diagram](a.png) caption", 1],
   ])("counts %j as %i words", (text, expected) => {
     expect(countWords(text)).toBe(expected);
   });
