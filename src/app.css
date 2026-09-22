@@ -1,10 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
-
 @import "tailwindcss";
+@import "@fontsource-variable/red-hat-text";
+@import "@fontsource-variable/red-hat-text/wght-italic.css";
+@import "@fontsource-variable/red-hat-mono";
+@import "@fontsource-variable/red-hat-mono/whgt-italic.css";
 
 @theme {
   /* Fonts */
-  --font-main: "Epilogue", sans-serif;
+  --font-sans: "Red Hat Text Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    "Red Hat Mono Variable", ui-monospace, "Cascadia Code", Consolas, monospace;
 
   /* Accent */
   --color-accent: #3e92cc;
@@ -70,7 +74,7 @@
 }
 
 :root {
-  font-family: var(--font-main);
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
 

@@ -108,7 +108,7 @@
 
   .cm-host :global(.cm-codeblock) {
     background-color: var(--color-surface-panel);
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.9em;
   }
 
@@ -124,7 +124,7 @@
 
   .cm-host :global(.cm-inline-code) {
     background-color: var(--color-surface-panel);
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.9em;
     border-radius: 4px;
     padding: 0.1em 0.3em;
@@ -148,7 +148,7 @@
   }
 
   .cm-host :global(.cm-codeblock-language) {
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75em;
     color: inherit;
     opacity: 0.6;
@@ -175,7 +175,7 @@
     color: inherit;
     opacity: 0.6;
     cursor: pointer;
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75em;
   }
   .cm-host :global(.cm-codeblock-copy:hover) {
