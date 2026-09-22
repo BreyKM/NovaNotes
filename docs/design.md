@@ -131,17 +131,18 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
 - **Left rail:** collapse toggle at the top, a divider, then quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
-- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane has a header (new note, new folder, sort, collapse-all), the list, and the notebook switcher pinned at the bottom.
+- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane has a header (new note, new folder, sort, collapse-all), the list, and the notebook switcher pinned at the bottom. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
 - **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
-- Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none.
-- **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space.
+- Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
+- **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space. The tab strip gains a 24px draggable gap before the first tab, and the editor panel's top-left corner becomes rounded.
+- **Minimum sizes:** the window is at least 640×400 (half of a 1366px screen still fits). The editor column never shrinks below 320px; when space runs out, the sidebar gives way. Its saved width is kept and comes back when the window is wide enough.
 
-Because each column owns its own header, the tab strip always starts exactly at the editor's left edge, whatever the sidebar's width.
+Because each column owns its own header, the tab strip always starts at the editor's left edge (plus the drag gap when the sidebar is collapsed), whatever the sidebar's width.
 
 ### 7. Components
 
-**Tabs.** Height 26px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink to a minimum of 120px, then the strip scrolls horizontally. Close button appears on hover and on the active tab.
+**Tabs.** Height 26px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
 
 **Rail buttons.** 26×26px, icon 15px, `--text-muted`. Hover: `--surface-raised`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
@@ -151,7 +152,7 @@ Because each column owns its own header, the tab strip always starts exactly at 
 
 **Scrollbar.** Always visible. 9px wide track (transparent), 5px thumb in `--scrollbar-thumb`, radius 3px, hover `--border-strong`. Flush with the panel's right edge. `scrollbar-gutter: stable` on one edge only.
 
-**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-raised`, `--border`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. "saved" uses `--accent`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters.
+**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-raised`, `--border`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters. "saved" turns `--accent` once the write has landed. A failed write shows `not saved` in `--danger`; that chip does not fade while typing and stays until a later write succeeds.
 
 **Buttons.** Primary: `--accent-fill`, white text, faceted with `--facet-sm`. Secondary: transparent, `--border-strong`, hover `--surface-raised`. Icon-only buttons are 26×26 with an `aria-label`.
 

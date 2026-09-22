@@ -5,12 +5,14 @@ import type {
   Tab,
   TabsState,
   CreateNotebookResult,
+  LayoutState,
 } from "../shared/types";
 
 const api = {
   node: (): string => process.versions.node,
   chrome: (): string => process.versions.chrome,
   electron: (): string => process.versions.electron,
+  platform: (): string => process.platform,
 };
 
 contextBridge.exposeInMainWorld("api", api);
@@ -81,6 +83,12 @@ contextBridge.exposeInMainWorld("notes", {
 
   renameNote: (oldTitle: string, newTitle: string): Promise<boolean> =>
     ipcRenderer.invoke("renameNote", oldTitle, newTitle),
+});
+
+contextBridge.exposeInMainWorld("layout", {
+  get: (): Promise<LayoutState> => ipcRenderer.invoke("getLayout"),
+
+  set: (layout: LayoutState): void => ipcRenderer.send("setLayout", layout),
 });
 
 contextBridge.exposeInMainWorld("tab", {

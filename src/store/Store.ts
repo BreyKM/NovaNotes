@@ -1,6 +1,7 @@
 import { get, writable, derived, type Writable } from "svelte/store";
 import { throttle } from "lodash";
-import type { NoteMeta, NewNote, Tab } from "../../shared/types";
+import type { NoteMeta, NewNote, NoteSort, Tab } from "../../shared/types";
+import { noteSort } from "./layout";
 
 const welcome = `This is your new **Notebook**.
 
@@ -35,6 +36,12 @@ export const isSwitchingTabs: Writable<boolean> = writable(false);
 
 export const activeTabIndexStore: Writable<number> = writable(0);
 
+export type SaveStatus = "saved" | "pending" | "failed";
+
+export const saveStatusStore: Writable<SaveStatus> = writable("saved");
+
+export const lastSavedAtStore: Writable<number | null> = writable(null);
+
 const FRONTMATTER_PATTERN = /^---\r?\n[\s\S]*?\r?\n---(\r?\n|$)(\r?\n)*/;
 
 export function splitFrontmatter(raw: string): {
@@ -46,6 +53,27 @@ export function splitFrontmatter(raw: string): {
     return { frontmatter: "", body: raw };
   }
   return { frontmatter: match[0], body: raw.slice(match[0].length) };
+}
+
+const byName = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: "base",
+});
+
+export function sortNotes(notes: NoteMeta[], sort: NoteSort): NoteMeta[] {
+  const sorted = [...notes];
+  switch (sort) {
+    case "name":
+      return sorted.sort((a, b) => byName.compare(a.title, b.title));
+    case "created":
+      return sorted.sort((a, b) => b.creationTime - a.creationTime);
+    case "edited":
+      return sorted.sort((a, b) => b.lastEditTime - a.lastEditTime);
+  }
+}
+
+export function noteIdForTitle(title: string): string {
+  return `${title}.md`;
 }
 
 let latestLoad = 0;
@@ -97,6 +125,11 @@ export const selectedNoteStore = derived(
     }
     return null;
   },
+);
+
+export const sortedNotesStore = derived(
+  [notesStore, noteSort],
+  ([$notesStore, $noteSort]) => sortNotes($notesStore, $noteSort),
 );
 
 export async function handleNoteSelect(
@@ -154,16 +187,39 @@ export function updateNoteContent(newContent: string): void {
       return c;
     });
     const frontmatter = get(noteFrontmatterStore)[selectedNote.id] ?? "";
+    editVersion++;
+    if (get(saveStatusStore) !== "failed") {
+      saveStatusStore.set("pending");
+    }
     handleAutoSaving(selectedNote.title, frontmatter + newContent);
   }
 }
 
 let pendingWrite: Promise<void> = Promise.resolve();
+let editVersion = 0;
+
+function markEdited(id: string, time: number): void {
+  notesStore.update((notes) =>
+    notes.map((note) =>
+      note.id === id ? { ...note, lastEditTime: time } : note,
+    ),
+  );
+}
 
 function writeInOrder(title: string, content: string): Promise<void> {
+  const version = editVersion;
   pendingWrite = pendingWrite
     .then(() => window.notes.writeNote(title, content))
-    .catch((err) => console.error("Auto-save failed:", err));
+    .then(() => {
+      const savedAt = Date.now();
+      markEdited(noteIdForTitle(title), savedAt);
+      lastSavedAtStore.set(savedAt);
+      saveStatusStore.set(version === editVersion ? "saved" : "pending");
+    })
+    .catch((err) => {
+      console.error("Auto-save failed:", err);
+      saveStatusStore.set("failed");
+    });
   return pendingWrite;
 }
 
@@ -219,7 +275,9 @@ export async function createEmptyNote(): Promise<void> {
 
     await window.notes.createNote(newNote);
     await loadNotes();
-    const newlyCreatedNote = get(notesStore)[0];
+    const newlyCreatedNote = get(notesStore).find(
+      (note) => note.id === noteIdForTitle(title),
+    );
 
     if (!newlyCreatedNote) {
       console.error("Could not find the newly created note after loading.");
@@ -299,9 +357,7 @@ export async function getActiveFolder(): Promise<void> {
 }
 
 export async function loadNotes(): Promise<void> {
-  const notes = await window.notes.getNotes();
-  const sortedNotes = notes.sort((a, b) => b.lastEditTime - a.lastEditTime);
-  notesStore.set(sortedNotes);
+  notesStore.set(await window.notes.getNotes());
 }
 
 function rekey<T>(
@@ -330,7 +386,7 @@ export async function renameNote(): Promise<void> {
 
     if (success) {
       const oldId = selectedNote.id;
-      const newId = `${newTitle}.md`;
+      const newId = noteIdForTitle(newTitle);
 
       notesStore.update((allNotes) =>
         allNotes.map((note) =>

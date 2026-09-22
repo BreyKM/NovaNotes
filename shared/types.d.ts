@@ -24,3 +24,11 @@ export interface TabsState {
 export type CreateNotebookResult =
   | { ok: true; fullPath: string; name: string }
   | { ok: false; reason: "exists" | "invalid-name" };
+
+export type NoteSort = "name" | "edited" | "created";
+
+export interface LayoutState {
+  sidebarWidth?: number;
+  sidebarCollapsed?: boolean;
+  noteSort?: NoteSort;
+}

@@ -18,6 +18,9 @@ import {
   userInputNotebookNameStore,
   rootNotebookDirPathStore,
   openExistingNotebook,
+  createEmptyNote,
+  saveStatusStore,
+  lastSavedAtStore,
 } from "./Store";
 import type { NoteMeta } from "../../shared/types";
 
@@ -38,6 +41,9 @@ const createNotebookDirIpc = vi.fn();
 const createWelcomeNote = vi.fn().mockResolvedValue(undefined);
 const openExistingNotebookIpc = vi.fn();
 const openMainWindow = vi.fn();
+const createNoteIpc = vi.fn().mockResolvedValue(undefined);
+const getNotes = vi.fn();
+const createTabForNewNote = vi.fn().mockResolvedValue(undefined);
 
 let finishHeldWrite: () => void = () => {};
 
@@ -57,8 +63,14 @@ beforeEach(() => {
       writeNote,
       renameNote: renameNoteIpc,
       createWelcomeNote,
+      createNote: createNoteIpc,
+      getNotes,
     },
-    tab: { loadNoteIntoActiveTab, updateTabs },
+    tab: {
+      loadNoteIntoActiveTab,
+      updateTabs,
+      createTabForNewNote,
+    },
     nav: { readyToClose },
     directory: {
       createNotebookDir: createNotebookDirIpc,
@@ -77,6 +89,8 @@ beforeEach(() => {
   tabStore.set([]);
   userInputNotebookNameStore.set(null);
   rootNotebookDirPathStore.set(null);
+  saveStatusStore.set("saved");
+  lastSavedAtStore.set(null);
 
   vi.clearAllMocks();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -217,6 +231,91 @@ describe("saveNow", () => {
 
     expect(writeNote).toHaveBeenCalledTimes(2);
     expect(writeNote).toHaveBeenCalledWith("Test", "second");
+  });
+
+  it("updates the note's edited time once the write lands", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target, noteFixture("Other")]);
+    selectedNoteIdStore.set(target.id);
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    const [saved, other] = get(notesStore);
+    expect(saved.lastEditTime).toBeGreaterThan(0);
+    expect(other.lastEditTime).toBe(0);
+  });
+
+  it("keeps the old edited time when the write fails", async () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    expect(get(notesStore)[0].lastEditTime).toBe(0);
+  });
+});
+
+describe("save status", () => {
+  const selectTarget = () => {
+    const target = noteFixture("Test");
+    notesStore.set([target]);
+    selectedNoteIdStore.set(target.id);
+  };
+
+  it("is pending from the first edit until the write lands", async () => {
+    selectTarget();
+
+    updateNoteContent("changed");
+    expect(get(saveStatusStore)).toBe("pending");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
+    expect(get(lastSavedAtStore)).not.toBeNull();
+  });
+
+  it("stays pending when an edit arrives during a write", async () => {
+    selectTarget();
+    holdNextWrite();
+
+    updateNoteContent("first");
+    handleAutoSaving.flush();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    updateNoteContent("second");
+
+    finishHeldWrite();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(get(saveStatusStore)).toBe("pending");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
+  });
+
+  it("reports a failed write", async () => {
+    selectTarget();
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+
+    expect(get(saveStatusStore)).toBe("failed");
+    expect(get(lastSavedAtStore)).toBeNull();
+  });
+
+  it("keeps reporting a failure until a later write lands", async () => {
+    selectTarget();
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+    updateNoteContent("changed again");
+    expect(get(saveStatusStore)).toBe("failed");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
   });
 });
 
@@ -490,5 +589,22 @@ describe("openExistingNotebook", () => {
     await openExistingNotebook();
 
     expect(openMainWindow).not.toHaveBeenCalled();
+  });
+});
+
+describe("createEmptyNote", () => {
+  it("selects the note it created, not whichever note sorts first", async () => {
+    const existing = { ...noteFixture("Zeta"), lastEditTime: 200 };
+    const created = { ...noteFixture("Untitled"), lastEditTime: 100 };
+    getNotes.mockResolvedValue([existing, created]);
+
+    await createEmptyNote();
+
+    expect(createNoteIpc).toHaveBeenCalledWith({
+      title: "Untitled",
+      content: "",
+    });
+    expect(get(selectedNoteIdStore)).toBe("Untitled.md");
+    expect(loadNoteIntoActiveTab).toHaveBeenCalledWith(created);
   });
 });

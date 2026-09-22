@@ -3,7 +3,13 @@ import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "path";
 import fse from "fs-extra";
 import ElectronStore from "./electronStore.cjs";
-import type { Tab, TabsState, NoteMeta, NewNote } from "../shared/types";
+import type {
+  Tab,
+  TabsState,
+  NoteMeta,
+  NewNote,
+  LayoutState,
+} from "../shared/types";
 
 // util functions
 import {
@@ -53,10 +59,14 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     width: 1050,
     height: 800,
+    minWidth: 640,
+    minHeight: 400,
     autoHideMenuBar: true,
     center: true,
     title: "Nova Notes",
-    frame: false,
+    ...(process.platform === "darwin"
+      ? { titleBarStyle: "hiddenInset" as const }
+      : { frame: false }),
     icon: path.join(__dirname, "..", "src", "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
@@ -186,6 +196,14 @@ app.whenReady().then(() => {
     }
     useNotebook(dir);
     return true;
+  });
+
+  ipcMain.handle("getLayout", (): LayoutState => {
+    return (electronStore.get("layout") as LayoutState | undefined) ?? {};
+  });
+
+  ipcMain.on("setLayout", (_event, layout: LayoutState) => {
+    electronStore.set("layout", layout);
   });
 
   ipcMain.handle("getActiveFolder", async () => {

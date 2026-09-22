@@ -2,72 +2,102 @@
   import { onMount } from "svelte";
   import NewNoteScreen from "./lib/Components/Content/NewNoteScreen.svelte";
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
-  import Nav from "./lib/Components/Nav/Nav.svelte";
+  import AppRail from "./lib/Components/Rail/AppRail.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
   import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
-  import { onDrag } from "./lib/placeholder/dragMe";
+  import {
+    loadLayout,
+    setSidebarCollapsed,
+    setSidebarWidth,
+    sidebarCollapsed,
+    sidebarDragResult,
+    sidebarWidth,
+  } from "./store/layout";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
 
-  let width = 0;
-  let resizeWidth = width;
-  let isDragging = false;
+  const isMac = window.api.platform() === "darwin";
 
-  let mainSideBarRef: HTMLDivElement | undefined;
-  let minWidthInPixels = 0;
+  let resize: { pointerId: number; startX: number; startWidth: number } | null =
+    null;
+  let previewWidth = 0;
+  let previewCollapsed = false;
+
+  $: width = resize ? (previewCollapsed ? 0 : previewWidth) : $sidebarWidth;
 
   onMount(() => {
     window.nav.onSaveBeforeClose(saveBeforeClose);
-
-    if (mainSideBarRef) {
-      const rect = mainSideBarRef.getBoundingClientRect();
-      minWidthInPixels = rect.width;
-
-      width = rect.width;
-      resizeWidth = rect.width;
-    }
+    void loadLayout();
   });
 
-  function handleDrag(
-    event: CustomEvent<{ delta: number; initialWidth: number }>,
-  ): void {
-    const { delta, initialWidth } = event.detail;
-    const newWidth = initialWidth + delta;
-
-    resizeWidth = Math.max(minWidthInPixels, newWidth);
+  function startResize(event: PointerEvent): void {
+    const handle = event.currentTarget as HTMLElement;
+    handle.setPointerCapture(event.pointerId);
+    previewWidth = $sidebarWidth;
+    previewCollapsed = false;
+    resize = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startWidth: $sidebarWidth,
+    };
   }
 
-  function handleDragEnd(): void {
-    isDragging = false;
-    width = resizeWidth;
+  function moveResize(event: PointerEvent): void {
+    if (!resize || event.pointerId !== resize.pointerId) {
+      return;
+    }
+    const result = sidebarDragResult(
+      resize.startWidth + event.clientX - resize.startX,
+    );
+    previewCollapsed = result.collapsed;
+    if (!result.collapsed) {
+      previewWidth = result.width;
+    }
   }
 
-  function handleDragStart(): void {
-    isDragging = true;
+  function endResize(event: PointerEvent): void {
+    if (!resize || event.pointerId !== resize.pointerId) {
+      return;
+    }
+    if (previewCollapsed) {
+      setSidebarCollapsed(true);
+    } else {
+      setSidebarWidth(previewWidth);
+    }
+    resize = null;
   }
 </script>
 
-<main class="relative flex h-screen flex-col overflow-hidden">
-  <Nav />
-  <div class="content-wrapper flex h-full w-full">
-    <MainSideBar
-      bind:containerElement={mainSideBarRef}
-      style="width:{resizeWidth}px; flex-shrink: 0;"
-    />
-    <hr
+<main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
+  <AppRail />
+
+  {#if !$sidebarCollapsed}
+    <div
+      class="sidebar-column flex flex-col overflow-hidden"
+      style="width:{width}px;"
+    >
+      <div class="drag-region h-[26px] flex-none" class:pl-[52px]={isMac}></div>
+      <MainSideBar />
+    </div>
+
+    <div
+      role="separator"
       aria-orientation="vertical"
-      style=" cursor: col-resize; z-index: 999;"
+      aria-label="Resize sidebar"
       class="separator"
-      class:dragging={isDragging}
-      use:onDrag={{ orientation: "vertical", initialWidth: width }}
-      on:dragStart={handleDragStart}
-      on:drag={handleDrag}
-      on:dragEnd={handleDragEnd}
-    />
-    <div class="MainContent flex h-full w-full flex-col overflow-x-hidden">
-      <!-- <div style="position:absolute; top: 10px; left: 10px; background: black; color: white; padding: 5px; z-index: 1000;">
-      Live Width: {Math.round(resizeWidth)}px
-    </div> -->
-      <TabBar />
+      class:dragging={resize != null}
+      onpointerdown={startResize}
+      onpointermove={moveResize}
+      onpointerup={endResize}
+      onpointercancel={endResize}
+    ></div>
+  {/if}
+
+  <div class="editor-column flex min-w-80 flex-1 flex-col">
+    <TabBar />
+    <div
+      class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+      class:rounded-tl-md={$sidebarCollapsed}
+    >
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
       {:else}
@@ -79,27 +109,22 @@
 
 <style>
   .separator {
-    height: 100%;
     position: relative;
-    background-color: transparent;
-    border-color: var(--color-surface-chrome);
+    align-self: stretch;
     width: 3px;
-    border-width: 0px;
-    border-left-width: 1px;
-
-    margin-top: 40px;
-    transition:
-      background-color 200ms,
-      ease-in-out,
-      border-color 200ms ease-in-out,
-      margin-top 50ms ease-in-out;
+    margin: 0px -3px;
+    border: 0;
+    background-color: var(--color-surface-raised);
+    background-clip: content-box;
+    padding: 0 1px;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 20;
+    transition: background-color 150ms ease-in-out;
   }
 
   .separator:hover,
   .separator.dragging {
-    width: 3px;
     background-color: var(--color-accent);
-    margin-top: 0px;
-    border-color: var(--color-accent);
   }
 </style>

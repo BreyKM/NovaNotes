@@ -1,22 +1,32 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
-  const dispatch = createEventDispatcher<{ click: void }>();
-
-  function handleClick(): void {
-    dispatch("click");
+  interface Props {
+    title: string;
+    isActive?: boolean;
+    onclick: () => void;
+    onpointerenter: (event: PointerEvent) => void;
+    onpointerleave: () => void;
   }
 
-  export let title: string;
-  export let isActive = false;
+  let {
+    title,
+    isActive = false,
+    onclick,
+    onpointerenter,
+    onpointerleave,
+  }: Props = $props();
 </script>
 
-<div
-  on:click={handleClick}
-  role="none"
-  class="mt-0.5 cursor-pointer rounded-sm px-2.5 py-1 transition-colors duration-75"
-  class:bg-surface-raised={isActive}
-  class:hover:bg-surface-raised={!isActive}
+<button
+  type="button"
+  {onclick}
+  {onpointerenter}
+  {onpointerleave}
+  class={[
+    "flex h-[26px] w-full flex-none items-center rounded-sm px-2 text-left text-xs",
+    isActive
+      ? "bg-surface-raised text-text-primary"
+      : "text-text-primary/80 hover:bg-surface-raised",
+  ]}
 >
-  <div class=" w-full truncate font-bold">{title}</div>
-</div>
+  <span class="truncate">{title}</span>
+</button>

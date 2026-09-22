@@ -4,8 +4,15 @@
   import { EditorState } from "@codemirror/state";
   import { noteContentStore, updateNoteContent } from "../../../../store/Store";
   import { loadNote, noteExtensions } from "./noteEditor";
+  import { editorStatsStore, markTyping, statsFor } from "./editorStatus";
 
-  const extensions = noteExtensions(updateNoteContent);
+  const extensions = noteExtensions(
+    (text) => {
+      updateNoteContent(text);
+      markTyping();
+    },
+    (stats) => editorStatsStore.set(stats),
+  );
   let editorContainer: HTMLDivElement | undefined;
   let view: EditorView | null = null;
 
@@ -18,21 +25,21 @@
       parent: editorContainer,
       state: EditorState.create({ doc: $noteContentStore, extensions }),
     });
+    editorStatsStore.set(statsFor(view.state));
   });
 
   $: if (view != null && $noteContentStore !== view.state.doc.toString()) {
     loadNote(view, $noteContentStore, extensions);
+    editorStatsStore.set(statsFor(view.state));
   }
 
   onDestroy(() => {
     view?.destroy();
+    editorStatsStore.set(null);
   });
 </script>
 
-<div
-  bind:this={editorContainer}
-  class="cm-host min-h-0 w-full max-w-[700px] flex-1"
-></div>
+<div bind:this={editorContainer} class="cm-host min-h-0 w-full flex-1"></div>
 
 <style>
   .cm-host :global(.cm-editor) {
@@ -46,10 +53,14 @@
   .cm-host :global(.cm-scroller) {
     font-family: inherit;
     line-height: 1.6;
+    padding-inline: 2rem;
+    scrollbar-gutter: stable;
   }
 
   .cm-host :global(.cm-content) {
     caret-color: var(--color-text-primary);
+    max-width: var(--editor-width);
+    margin-inline: auto;
   }
 
   .cm-host :global(.cm-heading) {

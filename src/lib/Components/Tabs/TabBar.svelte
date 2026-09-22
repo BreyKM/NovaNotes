@@ -14,8 +14,15 @@
     handleAutoSaving,
   } from "../../../store/Store";
   import { get } from "svelte/store";
+  import WindowControls from "./WindowControls.svelte";
+  import { sidebarCollapsed } from "../../../store/layout";
 
   onMount(() => {
+    const observer = new ResizeObserver(updateScrollHints);
+    if (strip) {
+      observer.observe(strip);
+    }
+
     window.tab.getTabs().then(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
       activeTabIndexStore.set(activeIndex);
@@ -27,6 +34,8 @@
       activeTabIndexStore.set(activeIndex);
       syncContentView(activeIndex, false);
     });
+
+    return () => observer.disconnect();
   });
 
   async function syncContentView(
@@ -69,30 +78,66 @@
     isSwitchingTabs.set(false);
   }
 
+  let strip: HTMLDivElement | undefined;
+  let canScrollLeft = false;
+  let canScrollRight = false;
+
+  function updateScrollHints(): void {
+    if (!strip) {
+      return;
+    }
+    canScrollLeft = strip.scrollLeft > 1;
+    canScrollRight =
+      strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 1;
+  }
+
+  $: if (strip && $tabStore) {
+    queueMicrotask(updateScrollHints);
+  }
+
+  function scrollTabs(event: WheelEvent): void {
+    const strip = event.currentTarget as HTMLDivElement;
+    if (event.deltaY === 0 || strip.scrollWidth <= strip.clientWidth) {
+      return;
+    }
+    event.preventDefault();
+    strip.scrollLeft += event.deltaY;
+  }
+
   function createTab(): void {
     window.tab.createTab();
   }
 </script>
 
-<div
-  class="tab-bar z-11 mr-10 flex w-6/10 max-w-6/10 items-end overflow-hidden rounded-t"
->
-  {#each $tabStore as tab, i}
-    <Tab
-      title={tab.title}
-      active={i === $activeTabIndexStore}
-      on:close={() => closeTab(i)}
-      on:click={() => syncContentView(i, true)}
-    />
-  {/each}
+<div class="flex h-[26px] items-end">
+  {#if $sidebarCollapsed}
+    <div class="drag-region h-full w-6 flex-none"></div>
+  {/if}
+  <div
+    bind:this={strip}
+    class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-x-auto"
+    class:fade-left={canScrollLeft}
+    class:fade-right={canScrollRight}
+    onwheel={scrollTabs}
+    onscroll={updateScrollHints}
+  >
+    {#each $tabStore as tab, i (tab.tabId)}
+      <Tab
+        title={tab.title}
+        active={i === $activeTabIndexStore}
+        on:close={() => closeTab(i)}
+        on:click={() => syncContentView(i, true)}
+      />
+    {/each}
+  </div>
   <button
-    aria-label="create Tab"
-    class="hover:bg-surface-chrome-hover new-tab-btn z-[999] mb-1 ml-2 rounded p-0.5"
+    aria-label="createTab"
+    class="hover:bg-surface-raised text-text-muted mb-0.5 ml-1 flex-none rounded p-0.5"
     onclick={createTab}
     ><svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1.25em"
-      height="1.25em"
+      width="1.1em"
+      height="1.1em"
       viewBox="0 0 24 24"
       ><path
         fill="currentColor"
@@ -100,4 +145,38 @@
       /></svg
     ></button
   >
+  <div class="drag-region h-full min-w-12 flex-1"></div>
+  <WindowControls />
 </div>
+
+<style>
+  /* isolation keeps the scrolled tabs out of the window drag-region
+     calculation; without it, scrolling the strip stops the sidebar header
+     dragging the window. See electron/electron#52063. */
+  .tab-strip {
+    scrollbar-width: none;
+    isolation: isolate;
+  }
+
+  .tab-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-strip.fade-right {
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  }
+
+  .tab-strip.fade-left {
+    mask-image: linear-gradient(to right, transparent, black 24px);
+  }
+
+  .tab-strip.fade-left.fade-right {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 24px,
+      black calc(100% - 24px),
+      transparent
+    );
+  }
+</style>
