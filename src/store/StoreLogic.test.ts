@@ -304,6 +304,19 @@ describe("save status", () => {
     expect(get(saveStatusStore)).toBe("failed");
     expect(get(lastSavedAtStore)).toBeNull();
   });
+
+  it("keeps reporting a failure until a later write lands", async () => {
+    selectTarget();
+    writeNote.mockRejectedValueOnce(new Error("disk full"));
+
+    updateNoteContent("changed");
+    await saveNow();
+    updateNoteContent("changed again");
+    expect(get(saveStatusStore)).toBe("failed");
+
+    await saveNow();
+    expect(get(saveStatusStore)).toBe("saved");
+  });
 });
 
 describe("saveBeforeClose", () => {

@@ -188,7 +188,9 @@ export function updateNoteContent(newContent: string): void {
     });
     const frontmatter = get(noteFrontmatterStore)[selectedNote.id] ?? "";
     editVersion++;
-    saveStatusStore.set("pending");
+    if (get(saveStatusStore) !== "failed") {
+      saveStatusStore.set("pending");
+    }
     handleAutoSaving(selectedNote.title, frontmatter + newContent);
   }
 }
@@ -212,9 +214,7 @@ function writeInOrder(title: string, content: string): Promise<void> {
       const savedAt = Date.now();
       markEdited(noteIdForTitle(title), savedAt);
       lastSavedAtStore.set(savedAt);
-      if (version === editVersion) {
-        saveStatusStore.set("saved");
-      }
+      saveStatusStore.set(version === editVersion ? "saved" : "pending");
     })
     .catch((err) => {
       console.error("Auto-save failed:", err);
