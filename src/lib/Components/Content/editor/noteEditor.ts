@@ -14,8 +14,12 @@ import { autoPair } from "./autoPairs";
 import { indentKeymap } from "./indentKeymap";
 import { codeHighlight } from "./codeBlocks";
 import { resolveLanguage } from "./codeLanguages";
+import { statsFor, type EditorStats } from "./editorStatus";
 
-export function noteExtensions(onEdit: (text: string) => void): Extension[] {
+export function noteExtensions(
+  onEdit: (text: string) => void,
+  onStats: (stats: EditorStats) => void = () => {},
+): Extension[] {
   return [
     history(),
     keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
@@ -30,6 +34,9 @@ export function noteExtensions(onEdit: (text: string) => void): Extension[] {
     EditorView.updateListener.of((update) => {
       if (update.docChanged) {
         onEdit(update.state.doc.toString());
+      }
+      if (update.docChanged || update.selectionSet) {
+        onStats(statsFor(update.state));
       }
     }),
   ];

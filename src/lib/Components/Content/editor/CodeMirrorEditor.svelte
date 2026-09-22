@@ -4,8 +4,15 @@
   import { EditorState } from "@codemirror/state";
   import { noteContentStore, updateNoteContent } from "../../../../store/Store";
   import { loadNote, noteExtensions } from "./noteEditor";
+  import { editorStatsStore, markTyping, statsFor } from "./editorStatus";
 
-  const extensions = noteExtensions(updateNoteContent);
+  const extensions = noteExtensions(
+    (text) => {
+      updateNoteContent(text);
+      markTyping();
+    },
+    (stats) => editorStatsStore.set(stats),
+  );
   let editorContainer: HTMLDivElement | undefined;
   let view: EditorView | null = null;
 
@@ -18,14 +25,17 @@
       parent: editorContainer,
       state: EditorState.create({ doc: $noteContentStore, extensions }),
     });
+    editorStatsStore.set(statsFor(view.state));
   });
 
   $: if (view != null && $noteContentStore !== view.state.doc.toString()) {
     loadNote(view, $noteContentStore, extensions);
+    editorStatsStore.set(statsFor(view.state));
   }
 
   onDestroy(() => {
     view?.destroy();
+    editorStatsStore.set(null);
   });
 </script>
 

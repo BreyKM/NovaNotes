@@ -36,6 +36,12 @@ export const isSwitchingTabs: Writable<boolean> = writable(false);
 
 export const activeTabIndexStore: Writable<number> = writable(0);
 
+export type SaveStatus = "saved" | "pending" | "failed";
+
+export const saveStatusStore: Writable<SaveStatus> = writable("saved");
+
+export const lastSavedAtStore: Writable<number | null> = writable(null);
+
 const FRONTMATTER_PATTERN = /^---\r?\n[\s\S]*?\r?\n---(\r?\n|$)(\r?\n)*/;
 
 export function splitFrontmatter(raw: string): {
@@ -181,11 +187,14 @@ export function updateNoteContent(newContent: string): void {
       return c;
     });
     const frontmatter = get(noteFrontmatterStore)[selectedNote.id] ?? "";
+    editVersion++;
+    saveStatusStore.set("pending");
     handleAutoSaving(selectedNote.title, frontmatter + newContent);
   }
 }
 
 let pendingWrite: Promise<void> = Promise.resolve();
+let editVersion = 0;
 
 function markEdited(id: string, time: number): void {
   notesStore.update((notes) =>
@@ -196,10 +205,21 @@ function markEdited(id: string, time: number): void {
 }
 
 function writeInOrder(title: string, content: string): Promise<void> {
+  const version = editVersion;
   pendingWrite = pendingWrite
     .then(() => window.notes.writeNote(title, content))
-    .then(() => markEdited(noteIdForTitle(title), Date.now()))
-    .catch((err) => console.error("Auto-save failed:", err));
+    .then(() => {
+      const savedAt = Date.now();
+      markEdited(noteIdForTitle(title), savedAt);
+      lastSavedAtStore.set(savedAt);
+      if (version === editVersion) {
+        saveStatusStore.set("saved");
+      }
+    })
+    .catch((err) => {
+      console.error("Auto-save failed:", err);
+      saveStatusStore.set("failed");
+    });
   return pendingWrite;
 }
 

@@ -49,3 +49,33 @@ describe("loadNote", () => {
     expect(onEdit).toHaveBeenCalledWith("note B!");
   });
 });
+
+describe("noteExtensions stats", () => {
+  let view: EditorView;
+
+  afterEach(() => view.destroy());
+
+  it("reports stats when the text changes and when the cursor moves", () => {
+    const onStats = vi.fn();
+    view = new EditorView({
+      state: EditorState.create({
+        doc: "one\ntwo",
+        extensions: noteExtensions(vi.fn(), onStats),
+      }),
+    });
+
+    view.dispatch({ changes: { from: 0, insert: "zero " } });
+    expect(onStats).toHaveBeenLastCalledWith({
+      line: 1,
+      words: 3,
+      characters: 12,
+    });
+
+    view.dispatch({ selection: { anchor: view.state.doc.length } });
+    expect(onStats).toHaveBeenLastCalledWith({
+      line: 2,
+      words: 3,
+      characters: 12,
+    });
+  });
+});
