@@ -152,7 +152,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Scrollbar.** Always visible. 9px wide track (transparent), 5px thumb in `--scrollbar-thumb`, radius 3px, hover `--border-strong`. Flush with the panel's right edge. `scrollbar-gutter: stable` on one edge only.
 
-**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-raised`, `--border`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. "saved" uses `--accent`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters. "saved" turns `--accent` once the write has landed. A failed write shows `not saved` in `--danger`; that chip does not fade while typing and stays until a later write succeeds.
+**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-raised`, `--border`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters. "saved" turns `--accent` once the write has landed. A failed write shows `not saved` in `--danger`; that chip does not fade while typing and stays until a later write succeeds.
 
 **Buttons.** Primary: `--accent-fill`, white text, faceted with `--facet-sm`. Secondary: transparent, `--border-strong`, hover `--surface-raised`. Icon-only buttons are 26×26 with an `aria-label`.
 
