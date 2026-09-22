@@ -64,7 +64,9 @@ const createWindow = (): void => {
     autoHideMenuBar: true,
     center: true,
     title: "Nova Notes",
-    frame: false,
+    ...(process.platform === "darwin"
+      ? { titleBarStyle: "hiddenInset" as const }
+      : { frame: false }),
     icon: path.join(__dirname, "..", "src", "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
