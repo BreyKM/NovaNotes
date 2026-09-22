@@ -67,7 +67,7 @@
 {#if details}
   <div
     role="tooltip"
-    class="bg-surface-base border-surface-raised pointer-events-none fixed z-40 max-w-[240px]
+    class="bg-surface-raised border-border-strong pointer-events-none fixed z-40 max-w-[240px]
 rounded-md border px-2.5 py-1.5 text-xs shadow-lg"
     style="top: {details.top}px; left: {details.left}px;"
   >

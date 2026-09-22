@@ -19,7 +19,7 @@
   <PaneHeader />
   <NotePreviewList />
   <div
-    class="border-surface-raised text-text-muted flex h-[30px] flex-none items-center gap-1.5
+    class="border-border-subtle text-text-muted flex h-[30px] flex-none items-center gap-1.5
 border-t px-3 text-xs"
   >
     <BookIcon size={14} strokeWidth={1.5} />

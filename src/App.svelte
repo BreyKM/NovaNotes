@@ -95,7 +95,7 @@
   <div class="editor-column flex min-w-80 flex-1 flex-col">
     <TabBar />
     <div
-      class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+      class="bg-surface-editor flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
       class:rounded-tl-md={$sidebarCollapsed}
     >
       {#if $selectedNoteIdStore === null}
@@ -114,7 +114,7 @@
     width: 3px;
     margin: 0px -3px;
     border: 0;
-    background-color: var(--color-surface-raised);
+    background-color: var(--color-border);
     background-clip: content-box;
     padding: 0 1px;
     cursor: col-resize;

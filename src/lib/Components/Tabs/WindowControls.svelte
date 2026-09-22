@@ -6,7 +6,7 @@
   <div class="flex items-center self-stretch">
     <button
       on:click={() => window.nav.minimize()}
-      class="hover:bg-surface-chrome-hover flex h-full items-center px-3 transition ease-in-out"
+      class="hover:bg-surface-raised flex h-full items-center px-3 transition ease-in-out"
       aria-label="minimize"
     >
       <svg
@@ -24,7 +24,7 @@
     </button>
     <button
       on:click={() => window.nav.maximize()}
-      class="hover:bg-surface-chrome-hover flex h-full items-center px-3 transition ease-in-out"
+      class="hover:bg-surface-raised flex h-full items-center px-3 transition ease-in-out"
       aria-label="maximize"
     >
       <svg

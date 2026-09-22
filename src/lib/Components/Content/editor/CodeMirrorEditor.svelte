@@ -58,6 +58,7 @@
   }
 
   .cm-host :global(.cm-content) {
+    color: var(--color-text-secondary);
     caret-color: var(--color-text-primary);
     max-width: var(--editor-width);
     margin-inline: auto;
@@ -107,7 +108,7 @@
   }
 
   .cm-host :global(.cm-codeblock) {
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     font-family: var(--font-mono);
     font-size: 0.9em;
   }
@@ -123,7 +124,7 @@
   }
 
   .cm-host :global(.cm-inline-code) {
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     font-family: var(--font-mono);
     font-size: 0.9em;
     border-radius: 4px;
@@ -136,7 +137,7 @@
     align-items: center;
     gap: 8px;
     padding: 2px 10px;
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     user-select: none;
@@ -162,7 +163,7 @@
     opacity: 1;
   }
   .cm-host :global(.cm-codeblock-language option) {
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     color: var(--color-text-primary);
   }
 

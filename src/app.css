@@ -4,34 +4,40 @@
 @import "@fontsource-variable/red-hat-mono";
 @import "@fontsource-variable/red-hat-mono/wght-italic.css";
 
-@theme {
+@theme static {
   /* Fonts */
   --font-sans: "Red Hat Text Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono:
     "Red Hat Mono Variable", ui-monospace, "Cascadia Code", Consolas, monospace;
 
   /* Accent */
-  --color-accent: #3e92cc;
-  --color-accent-hover: #69b5ec;
+  --color-accent: #3a8ee6;
+  --color-accent-hover: #529dee;
+  --color-accent-fill: #1f6fc4;
+  --color-accent-quiet: rgba(58, 142, 230, 0.14);
 
   /* Text */
-  --color-text-primary: #f2f2f2;
-  --color-text-muted: #9a9a9a;
+  --color-text-primary: #e4e9ef;
+  --color-text-secondary: #c3cbd5;
+  --color-text-muted: #8d98a6;
+  --color-text-faint: #6d7885;
 
   /* Surfaces */
-  --color-surface-base: #1b1b1b;
-  --color-surface-panel: #262626;
-  --color-surface-raised: #3d3d3d;
-  --color-surface-chrome: #3d3d3d;
-  --color-surface-chrome-hover: #757575;
+  --color-surface-base: #0c0f13;
+  --color-surface-panel: #13171d;
+  --color-surface-editor: #171c23;
+  --color-surface-sunken: #0f1318;
+  --color-surface-raised: #1b2029;
+  --color-surface-selected: #1b3552;
 
   /* Lines and status */
-  --color-border: #808080;
+  --color-border-subtle: #20262f;
+  --color-border: #232b36;
+  --color-border-strong: #2b3440;
   --color-danger: #ed4337;
 
   /* Scrollbar */
   --color-scrollbar-thumb: #3d3d3d;
-  --color-scrollbar-thumb-hover: #5c5c5c;
 
   /* Tab open and close */
   --animate-expand-in: expand-in 0.15s ease-out;
@@ -111,7 +117,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-scrollbar-thumb-hover);
+  background-color: var(--color-border-strong);
 }
 
 .drag-region {
