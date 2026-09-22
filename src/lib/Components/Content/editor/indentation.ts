@@ -30,12 +30,15 @@ class IndentWidget extends WidgetType {
   }
 }
 
+const guide = (token: string): string =>
+  `color-mix(in srgb, var(${token}) 40%, transparent)`;
+
 const GUIDE_COLORS = [
-  "#e06c7566",
-  "#e5c07b66",
-  "#98c37966",
-  "#61afef66",
-  "#c678dd66",
+  guide("--color-accent"),
+  guide("--code-string"),
+  guide("--code-function"),
+  guide("--code-number"),
+  guide("--code-tag"),
 ];
 
 interface GuideSpacing {

@@ -37,7 +37,7 @@
   --color-danger: #ed4337;
 
   /* Scrollbar */
-  --color-scrollbar-thumb: #3d3d3d;
+  --color-scrollbar-thumb: #2f3743;
 
   /* Tab open and close */
   --animate-expand-in: expand-in 0.15s ease-out;
@@ -97,6 +97,16 @@
   /* Layout */
   --editor-width: 46rem;
   --scrollbar-size: 9px;
+
+  /* Syntax */
+  --code-keyword: #6fa8f5;
+  --code-string: #7fc8a9;
+  --code-number: #e0a46a;
+  --code-function: #c9a8f0;
+  --code-type: #e3c583;
+  --code-tag: #e0847c;
+  --code-comment: #6b7686;
+  --code-punctuation: #97a3b2;
 }
 
 ::-webkit-scrollbar {

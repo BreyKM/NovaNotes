@@ -178,18 +178,23 @@ export function fencedCodeDecorations(
 }
 
 export const codeHighlight = HighlightStyle.define([
-  { tag: t.keyword, color: "#c678dd" },
-  { tag: [t.string, t.regexp], color: "#c678dd" },
-  { tag: t.comment, color: "#7d8799", fontStyle: "italic" },
-  { tag: [t.number, t.bool, t.null, t.atom], color: "#d19a66" },
+  { tag: [t.keyword, t.operatorKeyword], color: "var(--code-keyword)" },
+  { tag: [t.string, t.regexp], color: "var(--code-string)" },
+  { tag: t.comment, color: "var(--code-comment)", fontStyle: "italic" },
+  { tag: [t.number, t.bool, t.null, t.atom], color: "var(--code-number)" },
   {
     tag: [t.function(t.variableName), t.function(t.propertyName)],
-    color: "#61afef",
+    color: "var(--code-function)",
   },
-  { tag: [t.typeName, t.className, t.namespace], color: "#e5c07b" },
-  { tag: [t.propertyName, t.tagName], color: "#e06c75" },
-  { tag: t.attributeName, color: "#d19a66" },
-  { tag: t.operator, color: "#56b6c2" },
+  { tag: [t.typeName, t.className, t.namespace], color: "var(--code-type)" },
+  {
+    tag: [t.propertyName, t.tagName, t.attributeName],
+    color: "var(--code-tag)",
+  },
+  {
+    tag: [t.operator, t.punctuation, t.bracket],
+    color: "var(--code-punctuation)",
+  },
 ]);
 
 const COPY_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 12.9V17.1C16 20.6 14.6 22 11.1 22H6.9C3.4 22 2 20.6 2 17.1V12.9C2 9.4 3.4 8 6.9 8H11.1C14.6 8 16 9.4 16 12.9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6.9V11.1C22 14.6 20.6 16 17.1 16H16V12.9C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2H17.1C20.6 2 22 3.4 22 6.9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;

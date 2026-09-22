@@ -45,9 +45,15 @@ describe("indentDecorations", () => {
     const state = EditorState.create({ doc: "            a" });
     const [line] = indentDecorations(state).filter((r) => r.to === r.from);
 
-    expect(
-      line.value.spec.attributes.style.match(/#[0-9a-f]{8} \d+ch/g),
-    ).toEqual(["#e06c7566 2ch", "#e5c07b66 6ch", "#98c37966 10ch"]);
+    const guides = line.value.spec.attributes.style.match(
+      /--[\w-]+(?=\) 40%, transparent\) \d+ch/g,
+    );
+
+    expect(guides).toEqual([
+      "--color-accent",
+      "--code-string",
+      "--code-function",
+    ]);
   });
 
   it("draws no guide for indents too shallow to reach one", () => {
@@ -122,7 +128,7 @@ describe("guide spacing inside fenced code", () => {
       (r) => r.from === from && r.to === from,
     );
     const style: string = deco ? deco.value.spec.attributes.style : "";
-    return (style.match(/#[0-9a-f]{8} [\d.]+ch/g) ?? []).map(
+    return (style.match(/transparent\) [\d.]+ch/g) ?? []).map(
       (s) => s.split(" ")[1],
     );
   }
