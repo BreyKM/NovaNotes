@@ -63,7 +63,7 @@
   class="note-title-container relative mx-auto mb-4 w-full max-w-(--editor-width)"
 >
   <div
-    class="note-title text-4xl font-bold outline-none"
+    class="note-title text-title font-medium outline-none"
     tabindex="-1"
     onkeydown={handleTitleKeydown}
     onblur={commitTitle}

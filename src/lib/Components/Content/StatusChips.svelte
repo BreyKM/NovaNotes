@@ -17,7 +17,7 @@
 
 {#if $editorStatsStore}
   <div
-    class="text-text-muted absolute right-4 bottom-2 z-10 flex gap-1 font-mono text-[11px]"
+    class="text-text-muted text-label absolute right-4 bottom-2 z-10 flex gap-1 font-mono"
   >
     <span class={[chip, $isTypingStore && hidden]}>
       ln {$editorStatsStore.line}

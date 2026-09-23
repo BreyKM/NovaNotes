@@ -46,7 +46,7 @@ describe("indentDecorations", () => {
     const [line] = indentDecorations(state).filter((r) => r.to === r.from);
 
     const guides = line.value.spec.attributes.style.match(
-      /--[\w-]+(?=\) 40%, transparent\) \d+ch/g,
+      /--[\w-]+(?=\) 40%, transparent\) \d+ch)/g,
     );
 
     expect(guides).toEqual([

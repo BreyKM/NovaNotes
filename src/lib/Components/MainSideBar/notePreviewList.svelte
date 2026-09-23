@@ -45,9 +45,9 @@
 [scrollbar=gutter:stable]"
 >
   {#if isLoading}
-    <p class="text-text-muted px-2 py-1 text-xs">Loading...</p>
+    <p class="text-text-muted text-ui px-2 py-1">Loading...</p>
   {:else if $sortedNotesStore.length === 0}
-    <p class="text-text-muted px-2 py-1 text-xs">No notes yet</p>
+    <p class="text-text-muted text-ui px-2 py-1">No notes yet</p>
   {:else}
     {#each $sortedNotesStore as note (note.id)}
       <NotePreview
@@ -67,12 +67,12 @@
 {#if details}
   <div
     role="tooltip"
-    class="bg-surface-raised border-border-strong pointer-events-none fixed z-40 max-w-[240px]
-rounded-md border px-2.5 py-1.5 text-xs shadow-lg"
+    class="bg-surface-raised border-border-strong text-ui pointer-events-none fixed z-40
+max-w-[240px] rounded-md border px-2.5 py-1.5 shadow-lg"
     style="top: {details.top}px; left: {details.left}px;"
   >
     <div class="text-text-primary truncate">{details.note.title}</div>
-    <div class="text-text-muted truncate font-mono text-[11px]">
+    <div class="text-text-muted text-label truncate font-mono">
       {details.note.id}
     </div>
     <div class="text-text-muted">

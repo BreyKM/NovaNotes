@@ -88,10 +88,10 @@ Red Hat Text and Red Hat Mono, bundled locally through `@fontsource-variable/red
 | `--text-label` | 11px / 1.4, mono                                                            | Breadcrumb, chips, pane labels |
 | `--text-ui`    | 13px / 1.5                                                                  | All interface text             |
 | `--text-body`  | 16px / 1.65                                                                 | Editor prose                   |
-| `--text-title` | 21px / 1.3, weight 500                                                      | Note title                     |
+| `--text-title` | 28px / 1.3, weight 500                                                      | Note title                     |
 | Headings       | h1 1.6em, h2 1.4em, h3 1.25em, h4 1.1em, h5 1em, h6 0.95em of `--text-body` | In-editor headings             |
 
-Two weights only: 400 and 500. Code in the editor is `--text-body` minus 1px in mono.
+Weights: 400 for text, 500 for headings and the note title, 600 for bold in prose. Bold also takes `--text-primary` against `--text-secondary` body text, because weight alone is hard to see at 16px. Code in the editor is `--text-body` minus 1px in mono.
 
 ### 5. Space, radius, facet
 
