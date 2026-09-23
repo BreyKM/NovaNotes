@@ -22,7 +22,7 @@
   {onpointerenter}
   {onpointerleave}
   class={[
-    "text-ui flex h-[26px] w-full flex-none items-center rounded-sm px-2 text-left",
+    "text-ui flex h-[30px] w-full flex-none items-center rounded-sm px-2.5 text-left",
     isActive
       ? "bg-surface-selected text-text-primary"
       : "text-text-secondary hover:bg-surface-raised",

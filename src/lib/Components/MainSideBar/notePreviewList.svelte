@@ -41,8 +41,8 @@
 </script>
 
 <div
-  class="note-preview-list-container flex min-h-0 flex-1 flex-col overflow-y-auto pl-1.5
-[scrollbar=gutter:stable]"
+  class="note-preview-list-container flex min-h-0 flex-1 scrollbar-gutter-stable flex-col gap-0.5 overflow-y-auto
+pl-1.5"
 >
   {#if isLoading}
     <p class="text-text-muted text-ui px-2 py-1">Loading...</p>
