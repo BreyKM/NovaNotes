@@ -25,6 +25,7 @@ Values are role tokens. Components never use a raw hex.
 | `--border-subtle`    | `#20262F`               | Dividers inside a panel               |
 | `--border`           | `#232B36`               | Default hairline                      |
 | `--border-strong`    | `#2B3440`               | Hover, popup edges                    |
+| `--danger`           | `#C0362C`               | Failed save (4.7)                     |
 | `--text-primary`     | `#E4E9EF`               | Titles, active items (14.0)           |
 | `--text-secondary`   | `#C3CBD5`               | Body text (10.5)                      |
 | `--text-muted`       | `#8D98A6`               | Labels, inactive icons (5.9)          |
