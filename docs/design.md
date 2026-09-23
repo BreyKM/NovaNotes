@@ -133,7 +133,7 @@ Structure, left to right: **left rail → sidebar column → editor column → r
 
 - **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. The theme toggle sits at the bottom, where settings will go. On macOS the rail's contents start ~28px lower, below the traffic lights.
 - **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane header holds the notebook name and switcher with the sort control at its right end; the list fills the rest. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
-- **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
+- **Editor column:** tab strip on top, then the editor panel. The panel has a 1px `--border` outline. The active tab is a matching outline box filled with `--surface-editor`, overlapping the panel's top border by 1px, so tab and panel read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
 - Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
 - **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space. The tab strip gains a 24px draggable gap before the first tab, and the editor panel's top-left corner becomes rounded.
@@ -143,7 +143,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 7. Components
 
-**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds every tab at its current width until the pointer leaves the strip, so the close button stays under the cursor. The add-tab button follows the last tab.
+**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds the remaining tabs at their current width until the pointer leaves the strip, so repeated closes don't resize under the cursor; the add-tab button follows the last tab immediately.
 
 **Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 

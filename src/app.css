@@ -95,7 +95,6 @@
   font-family: var(--font-sans);
   font-weight: 400;
 
-  color-scheme: light dark;
   color: var(--color-text-primary);
   background-color: var(--color-surface-base);
 
