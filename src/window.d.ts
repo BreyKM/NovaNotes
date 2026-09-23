@@ -5,6 +5,7 @@ import type {
   TabsState,
   CreateNotebookResult,
   LayoutState,
+  ThemeName,
 } from "../shared/types";
 
 declare global {
@@ -56,6 +57,10 @@ declare global {
       createTab: () => void;
       createTabForNewNote: (note: NoteMeta) => Promise<void>;
       onTabsUpdated: (callback: (state: TabsState) => void) => () => void;
+    };
+    theme: {
+      initial: () => ThemeName;
+      set: (theme: ThemeName) => void;
     };
   }
 }

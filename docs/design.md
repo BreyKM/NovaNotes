@@ -59,7 +59,7 @@ Values are role tokens. Components never use a raw hex.
 | `--accent-quiet`     | `rgba(31,111,196,0.12)` |                                 |
 | `--scrollbar-thumb`  | `#C4CCD6`               |                                 |
 
-Dark is the default. The user switches themes in settings; the choice is stored in electron-store and applied as `data-theme` on `<html>` before first paint, so there's no flash.
+Dark is the default. The theme toggle sits at the bottom of the rail until a settings screen exists; the choice is stored in electron-store and handed to the window as a launch argument, so it is applied before first paint and there is no flash.
 
 **Rule:** `--text-faint` never carries information you must read. Everything else meets 4.5:1 on its own surface.
 
@@ -131,7 +131,7 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
-- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
+- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. The theme toggle sits at the bottom, where settings will go. On macOS the rail's contents start ~28px lower, below the traffic lights.
 - **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane header holds the notebook name and switcher with the sort control at its right end; the list fills the rest. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
 - **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.

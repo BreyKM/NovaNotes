@@ -9,6 +9,7 @@ import type {
   NoteMeta,
   NewNote,
   LayoutState,
+  ThemeName,
 } from "../shared/types";
 
 // util functions
@@ -54,6 +55,13 @@ const useNotebook = (dir: string): void => {
   electronStore.set("activeNotebookPath", dir);
 };
 
+const savedTheme = (): ThemeName =>
+  electronStore.get("theme") === "light" ? "light" : "dark";
+
+// The renderer needs the theme before it paints, so it travels as a launch
+// argument rather than an IPC round trip.
+const themeArgument = (): string[] => [`--nova-theme=${savedTheme()}`];
+
 const createWindow = (): void => {
   // Create the main browser window.
   mainWindow = new BrowserWindow({
@@ -70,6 +78,7 @@ const createWindow = (): void => {
     icon: path.join(__dirname, "..", "src", "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
+      additionalArguments: themeArgument(),
     },
   });
 
@@ -135,6 +144,7 @@ const createStarterWindow = (): void => {
     title: "Nova Starter Page",
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
+      additionalArguments: themeArgument(),
     },
     resizable: false,
   });
@@ -204,6 +214,10 @@ app.whenReady().then(() => {
 
   ipcMain.on("setLayout", (_event, layout: LayoutState) => {
     electronStore.set("layout", layout);
+  });
+
+  ipcMain.on("setTheme", (_event, theme: ThemeName) => {
+    electronStore.set("theme", theme);
   });
 
   ipcMain.handle("getActiveFolder", async () => {
