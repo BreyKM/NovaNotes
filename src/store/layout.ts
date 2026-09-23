@@ -1,4 +1,4 @@
-import { get, writable, type Writable } from "svelte/store";
+import { derived, get, writable, type Writable } from "svelte/store";
 import type { NoteSort } from "../../shared/types";
 
 export const MIN_SIDEBAR_WIDTH = 160;
@@ -18,6 +18,22 @@ export function clampSidebarWidth(width: number): number {
 
 export type SidebarDrag =
   { collapsed: true } | { collapsed: false; width: number };
+
+export const sidebarDrag: Writable<SidebarDrag | null> = writable(null);
+
+export const sidebarCollapsedView = derived(
+  [sidebarCollapsed, sidebarDrag],
+  ([$sidebarCollapsed, $sidebarDrag]) =>
+    $sidebarDrag ? $sidebarDrag.collapsed : $sidebarCollapsed,
+);
+
+export const sidebarWidthView = derived(
+  [sidebarWidth, sidebarDrag],
+  ([$sidebarWidth, $sidebarDrag]) =>
+    $sidebarDrag && !$sidebarDrag.collapsed
+      ? $sidebarDrag.width
+      : $sidebarWidth,
+);
 
 export function sidebarDragResult(rawWidth: number): SidebarDrag {
   if (rawWidth < COLLAPSE_BELOW_WIDTH) {

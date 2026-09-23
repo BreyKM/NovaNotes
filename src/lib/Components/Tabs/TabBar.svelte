@@ -15,7 +15,7 @@
   } from "../../../store/Store";
   import { get } from "svelte/store";
   import WindowControls from "./WindowControls.svelte";
-  import { sidebarCollapsed } from "../../../store/layout";
+  import { sidebarCollapsedView, sidebarDrag } from "../../../store/layout";
 
   onMount(() => {
     const observer = new ResizeObserver(updateScrollHints);
@@ -110,9 +110,11 @@
 </script>
 
 <div class="flex h-[32px] items-end">
-  {#if $sidebarCollapsed}
-    <div class="drag-region h-full w-6 flex-none"></div>
-  {/if}
+  <div
+    class="drag-region sidebar-gap h-full flex-none"
+    class:animated={$sidebarDrag == null}
+    style="width:{$sidebarCollapsedView ? 24 : 0}px"
+  ></div>
   <div
     bind:this={strip}
     class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-x-auto"
@@ -150,6 +152,16 @@
 </div>
 
 <style>
+  .sidebar-gap.animated {
+    transition: width 150ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-gap.animated {
+      transition: none;
+    }
+  }
+
   /* isolation keeps the scrolled tabs out of the window drag-region
      calculation; without it, scrolling the strip stops the sidebar header
      dragging the window. See electron/electron#52063. */
