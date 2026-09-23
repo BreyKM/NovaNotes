@@ -146,7 +146,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
-**Pane rows.** One line, `--row-height`, radius `--radius-sm`, text `--text-ui`, 2px apart. Hover: `--surface-raised` and, after 400ms, a details popup (title, path in mono, edited time, word count) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. Selected: `--surface-selected` with `--text-primary`.
+**Pane rows.** One line, `--row-height`, radius `--radius-sm`, text `--text-ui`, 2px apart. Hover: `--surface-raised` and, after 400ms, a details popup (title, edited time) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. While a popup is open, moving to another row moves it there at once; it fades out 150ms after the pointer leaves the list. Selected: `--surface-selected` with `--text-primary`.
 
 **Editor.** The scroller fills the panel; the text column is centred at `--editor-width`. Breadcrumb in mono `--text-label` above the title.
 
