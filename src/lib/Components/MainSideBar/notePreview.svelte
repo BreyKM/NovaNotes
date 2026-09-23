@@ -22,10 +22,10 @@
   {onpointerenter}
   {onpointerleave}
   class={[
-    "flex h-[26px] w-full flex-none items-center rounded-sm px-2 text-left text-xs",
+    "text-ui flex h-[30px] w-full flex-none items-center rounded-sm px-2.5 text-left",
     isActive
-      ? "bg-surface-raised text-text-primary"
-      : "text-text-primary/80 hover:bg-surface-raised",
+      ? "bg-surface-selected text-text-primary"
+      : "text-text-secondary hover:bg-surface-raised",
   ]}
 >
   <span class="truncate">{title}</span>

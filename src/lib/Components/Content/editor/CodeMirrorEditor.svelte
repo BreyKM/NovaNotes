@@ -52,43 +52,46 @@
 
   .cm-host :global(.cm-scroller) {
     font-family: inherit;
-    line-height: 1.6;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
     padding-inline: 2rem;
     scrollbar-gutter: stable;
   }
 
   .cm-host :global(.cm-content) {
+    color: var(--color-text-secondary);
     caret-color: var(--color-text-primary);
     max-width: var(--editor-width);
     margin-inline: auto;
   }
 
   .cm-host :global(.cm-heading) {
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1.3;
   }
 
   .cm-host :global(.cm-heading-1) {
-    font-size: 1.9em;
-  }
-  .cm-host :global(.cm-heading-2) {
     font-size: 1.6em;
   }
+  .cm-host :global(.cm-heading-2) {
+    font-size: 1.4em;
+  }
   .cm-host :global(.cm-heading-3) {
-    font-size: 1.35em;
+    font-size: 1.25em;
   }
   .cm-host :global(.cm-heading-4) {
-    font-size: 1.2em;
-  }
-  .cm-host :global(.cm-heading-5) {
     font-size: 1.1em;
   }
-  .cm-host :global(.cm-heading-6) {
+  .cm-host :global(.cm-heading-5) {
     font-size: 1em;
+  }
+  .cm-host :global(.cm-heading-6) {
+    font-size: 0.95em;
   }
 
   .cm-host :global(.cm-strong) {
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--color-text-primary);
   }
   .cm-host :global(.cm-emphasis) {
     font-style: italic;
@@ -107,14 +110,21 @@
   }
 
   .cm-host :global(.cm-codeblock) {
-    background-color: var(--color-surface-panel);
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-    font-size: 0.9em;
+    background-color: var(--color-surface-sunken);
+    font-family: var(--font-mono);
+    font-size: calc(var(--text-body) - 1px);
   }
 
-  .cm-host :global(.cm-codeblock-first) {
+  .cm-host :global(.cm-codeblock-first),
+  .cm-host :global(.cm-codeblock-header) {
     border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--facet)) 0,
+      100% var(--facet),
+      100% 100%,
+      0 100%
+    );
   }
 
   .cm-host :global(.cm-codeblock-last) {
@@ -123,9 +133,9 @@
   }
 
   .cm-host :global(.cm-inline-code) {
-    background-color: var(--color-surface-panel);
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-    font-size: 0.9em;
+    background-color: var(--color-surface-sunken);
+    font-family: var(--font-mono);
+    font-size: calc(var(--text-body) - 1px);
     border-radius: 4px;
     padding: 0.1em 0.3em;
   }
@@ -136,7 +146,7 @@
     align-items: center;
     gap: 8px;
     padding: 2px 10px;
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     user-select: none;
@@ -148,7 +158,7 @@
   }
 
   .cm-host :global(.cm-codeblock-language) {
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75em;
     color: inherit;
     opacity: 0.6;
@@ -162,7 +172,7 @@
     opacity: 1;
   }
   .cm-host :global(.cm-codeblock-language option) {
-    background-color: var(--color-surface-panel);
+    background-color: var(--color-surface-sunken);
     color: var(--color-text-primary);
   }
 
@@ -175,7 +185,7 @@
     color: inherit;
     opacity: 0.6;
     cursor: pointer;
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75em;
   }
   .cm-host :global(.cm-codeblock-copy:hover) {

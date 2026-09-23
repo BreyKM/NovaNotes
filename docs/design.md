@@ -88,10 +88,10 @@ Red Hat Text and Red Hat Mono, bundled locally through `@fontsource-variable/red
 | `--text-label` | 11px / 1.4, mono                                                            | Breadcrumb, chips, pane labels |
 | `--text-ui`    | 13px / 1.5                                                                  | All interface text             |
 | `--text-body`  | 16px / 1.65                                                                 | Editor prose                   |
-| `--text-title` | 21px / 1.3, weight 500                                                      | Note title                     |
+| `--text-title` | 28px / 1.3, weight 500                                                      | Note title                     |
 | Headings       | h1 1.6em, h2 1.4em, h3 1.25em, h4 1.1em, h5 1em, h6 0.95em of `--text-body` | In-editor headings             |
 
-Two weights only: 400 and 500. Code in the editor is `--text-body` minus 1px in mono.
+Weights: 400 for text, 500 for headings and the note title, 600 for bold in prose. Bold also takes `--text-primary` against `--text-secondary` body text, because weight alone is hard to see at 16px. Code in the editor is `--text-body` minus 1px in mono.
 
 ### 5. Space, radius, facet
 
@@ -101,7 +101,7 @@ Two weights only: 400 and 500. Code in the editor is `--text-body` minus 1px in 
 --radius-sm: 4px (rows, chips, inputs)
 --radius: 6px (panels, code blocks)
 
---facet: 8px (the cut)
+--facet: 12px (the cut)
 --facet-sm: 5px (small elements: chips, rows, buttons)
 
 **The facet rule.** Cut the **top-right** corner, and only on: the active tab, code blocks, popups, and filled buttons. Everything else uses `--radius`. One utility implements it:
@@ -120,18 +120,18 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 
 ### 6. Layout
 
---rail-width: 26px
+--rail-width: 32px
 --rail-right-width: 22px
 --gap: 6px
 --sidebar-width: 220px (resizable 160–420px, remembered)
 --editor-width: 46rem (text column inside the editor panel)
---row-height: 26px
---header-height: 26px
+--row-height: 30px
+--header-height: 32px
 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
-- **Left rail:** collapse toggle at the top, a divider, then quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
-- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane has a header (new note, new folder, sort, collapse-all), the list, and the notebook switcher pinned at the bottom. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
+- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
+- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane header holds the notebook name and switcher with the sort control at its right end; the list fills the rest. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
 - **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
 - Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
@@ -142,17 +142,17 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 7. Components
 
-**Tabs.** Height 26px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
+**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds every tab at its current width until the pointer leaves the strip, so the close button stays under the cursor. The add-tab button follows the last tab.
 
-**Rail buttons.** 26×26px, icon 15px, `--text-muted`. Hover: `--surface-raised`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
+**Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
-**Pane rows.** One line, `--row-height`, radius `--radius-sm`, text 12px. Hover: `--surface-raised` and, after 400ms, a details popup (title, path in mono, edited time, word count) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. Selected: `--surface-selected` with `--text-primary`.
+**Pane rows.** One line, `--row-height`, radius `--radius-sm`, text `--text-ui`, 2px apart. Hover: `--surface-raised` and, after 400ms, a details popup (title, edited time) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. While a popup is open, moving to another row moves it there at once; it fades out 150ms after the pointer leaves the list. Selected: `--surface-selected` with `--text-primary`.
 
 **Editor.** The scroller fills the panel; the text column is centred at `--editor-width`. Breadcrumb in mono `--text-label` above the title.
 
 **Scrollbar.** Always visible. 9px wide track (transparent), 5px thumb in `--scrollbar-thumb`, radius 3px, hover `--border-strong`. Flush with the panel's right edge. `scrollbar-gutter: stable` on one edge only.
 
-**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-raised`, `--border`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters. "saved" turns `--accent` once the write has landed. A failed write shows `not saved` in `--danger`; that chip does not fade while typing and stays until a later write succeeds.
+**Status chips.** Bottom-right of the editor panel, 16px from the right (clear of the scrollbar), 8px from the bottom. Mono 11px, `--surface-base`, `--border-strong`, radius `--radius-sm`. Order: `ln 12`, `182 words`, `saved`. Fade to 0 in 150ms while typing, return 1s after typing stops. Hover reveals detail (last save time); click toggles words and characters. "saved" turns `--accent` once the write has landed. A failed write shows `not saved` in `--danger`; that chip does not fade while typing and stays until a later write succeeds.
 
 **Buttons.** Primary: `--accent-fill`, white text, faceted with `--facet-sm`. Secondary: transparent, `--border-strong`, hover `--surface-raised`. Icon-only buttons are 26×26 with an `aria-label`.
 
@@ -162,7 +162,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 8. Motion
 
-150ms `ease-out` for hover, fades and panel collapse; 250ms for the sidebar width. No motion on theme change. Everything inside `@media (prefers-reduced-motion: reduce)` drops to 0ms.
+250ms `ease-out` for hover and fades; 250ms for width changes that move the layout (the sidebar, the tab strip's gap, tab widths). No motion on theme change. Everything inside `@media (prefers-reduced-motion: reduce)` drops to 0ms.
 
 ### 9. Accessibility
 

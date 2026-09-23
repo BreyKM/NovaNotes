@@ -9,7 +9,7 @@
   });
 
   const chip =
-    "bg-surface-raised border-border/40 rounded-sm border px-1.5 py-px transition-opacity duration-150 ease-out";
+    "bg-surface-base border-border-strong rounded-sm border px-1.5 py-px transition-opacity duration-150 ease-out";
   const hidden = "pointer-events-none opacity-0";
 
   let showCharacters = $state(false);
@@ -17,7 +17,7 @@
 
 {#if $editorStatsStore}
   <div
-    class="text-text-muted absolute right-4 bottom-2 z-10 flex gap-1 font-mono text-[11px]"
+    class="text-text-muted text-label absolute right-4 bottom-2 z-10 flex gap-1 font-mono"
   >
     <span class={[chip, $isTypingStore && hidden]}>
       ln {$editorStatsStore.line}

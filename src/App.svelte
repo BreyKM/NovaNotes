@@ -9,9 +9,11 @@
     loadLayout,
     setSidebarCollapsed,
     setSidebarWidth,
-    sidebarCollapsed,
+    sidebarCollapsedView,
+    sidebarDrag,
     sidebarDragResult,
     sidebarWidth,
+    sidebarWidthView,
   } from "./store/layout";
   import NotePane from "./lib/Components/Content/NotePane.svelte";
 
@@ -19,10 +21,8 @@
 
   let resize: { pointerId: number; startX: number; startWidth: number } | null =
     null;
-  let previewWidth = 0;
-  let previewCollapsed = false;
 
-  $: width = resize ? (previewCollapsed ? 0 : previewWidth) : $sidebarWidth;
+  $: width = $sidebarCollapsedView ? 0 : $sidebarWidthView;
 
   onMount(() => {
     window.nav.onSaveBeforeClose(saveBeforeClose);
@@ -32,8 +32,7 @@
   function startResize(event: PointerEvent): void {
     const handle = event.currentTarget as HTMLElement;
     handle.setPointerCapture(event.pointerId);
-    previewWidth = $sidebarWidth;
-    previewCollapsed = false;
+    sidebarDrag.set({ collapsed: false, width: $sidebarWidth });
     resize = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -45,24 +44,22 @@
     if (!resize || event.pointerId !== resize.pointerId) {
       return;
     }
-    const result = sidebarDragResult(
-      resize.startWidth + event.clientX - resize.startX,
+    sidebarDrag.set(
+      sidebarDragResult(resize.startWidth + event.clientX - resize.startX),
     );
-    previewCollapsed = result.collapsed;
-    if (!result.collapsed) {
-      previewWidth = result.width;
-    }
   }
 
   function endResize(event: PointerEvent): void {
     if (!resize || event.pointerId !== resize.pointerId) {
       return;
     }
-    if (previewCollapsed) {
+    const result = $sidebarDrag;
+    if (result?.collapsed) {
       setSidebarCollapsed(true);
-    } else {
-      setSidebarWidth(previewWidth);
+    } else if (result) {
+      setSidebarWidth(result.width);
     }
+    sidebarDrag.set(null);
     resize = null;
   }
 </script>
@@ -70,33 +67,39 @@
 <main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
   <AppRail />
 
-  {#if !$sidebarCollapsed}
+  <div
+    class="sidebar-column flex flex-col overflow-hidden"
+    class:animated={resize == null}
+    class:-mr-1.5={$sidebarCollapsedView}
+    style="width:{width}px;"
+  >
     <div
-      class="sidebar-column flex flex-col overflow-hidden"
-      style="width:{width}px;"
+      class="flex min-h-0 flex-1 flex-col"
+      style="width:{$sidebarWidthView}px;"
     >
-      <div class="drag-region h-[26px] flex-none" class:pl-[52px]={isMac}></div>
+      <div class="drag-region h-[32px] flex-none" class:pl-[52px]={isMac}></div>
       <MainSideBar />
     </div>
+  </div>
 
-    <div
-      role="separator"
-      aria-orientation="vertical"
-      aria-label="Resize sidebar"
-      class="separator"
-      class:dragging={resize != null}
-      onpointerdown={startResize}
-      onpointermove={moveResize}
-      onpointerup={endResize}
-      onpointercancel={endResize}
-    ></div>
-  {/if}
+  <div
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize sidebar"
+    class="separator"
+    class:dragging={resize != null}
+    class:invisible={$sidebarCollapsedView && resize == null}
+    onpointerdown={startResize}
+    onpointermove={moveResize}
+    onpointerup={endResize}
+    onpointercancel={endResize}
+  ></div>
 
   <div class="editor-column flex min-w-80 flex-1 flex-col">
     <TabBar />
     <div
-      class="bg-surface-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
-      class:rounded-tl-md={$sidebarCollapsed}
+      class="bg-surface-editor flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+      class:rounded-tl-md={$sidebarCollapsedView}
     >
       {#if $selectedNoteIdStore === null}
         <NewNoteScreen />
@@ -108,13 +111,25 @@
 </main>
 
 <style>
+  .sidebar-column.animated {
+    transition:
+      width 150ms ease-out,
+      margin-right 150ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-column.animated {
+      transition: none;
+    }
+  }
+
   .separator {
     position: relative;
     align-self: stretch;
     width: 3px;
     margin: 0px -3px;
     border: 0;
-    background-color: var(--color-surface-raised);
+    background-color: var(--color-border);
     background-clip: content-box;
     padding: 0 1px;
     cursor: col-resize;

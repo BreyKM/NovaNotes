@@ -7,12 +7,6 @@
 
   const dispatch = createEventDispatcher<{ click: void; close: void }>();
 
-  let element: HTMLElement | undefined;
-
-  $: if (active && element) {
-    element.scrollIntoView({ block: "nearest", inline: "nearest" });
-  }
-
   function slideIn(node: HTMLElement): TransitionConfig {
     node.classList.add("animate-expand-in");
     return { duration: 150 };
@@ -25,9 +19,9 @@
 </script>
 
 <div
-  bind:this={element}
-  class="group flex h-[26px] w-[180px] min-w-[48px] shrink items-center overflow-hidden rounded-t-md pr-1 text-xs"
-  class:bg-surface-panel={active}
+  class="tab group flex h-[32px] w-[var(--tab-width,180px)] min-w-0 [flex-shrink:var(--tab-shrink,1)] items-center justify-end overflow-hidden rounded-t-md pr-1 text-xs"
+  class:bg-surface-editor={active}
+  class:active
   class:text-text-primary={active}
   class:text-text-muted={!active}
   class:hover:bg-surface-raised={!active}
@@ -58,3 +52,27 @@
     >
   </button>
 </div>
+
+<style>
+  .tab {
+    position: relative;
+    transition: width var(--tab-transition, 250ms) ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab {
+      transition: none;
+    }
+  }
+
+  .tab.active,
+  .tab:hover {
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--facet)) 0,
+      100% var(--facet),
+      100% 100%,
+      0 100%
+    );
+  }
+</style>

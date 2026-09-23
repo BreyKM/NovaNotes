@@ -15,13 +15,12 @@
   } from "../../../store/Store";
   import { get } from "svelte/store";
   import WindowControls from "./WindowControls.svelte";
-  import { sidebarCollapsed } from "../../../store/layout";
+  import { sidebarCollapsedView, sidebarDrag } from "../../../store/layout";
+
+  const TAB_GAP = 2;
 
   onMount(() => {
-    const observer = new ResizeObserver(updateScrollHints);
-    if (strip) {
-      observer.observe(strip);
-    }
+    bar?.addEventListener("pointerleave", releaseTabWidth);
 
     window.tab.getTabs().then(({ tabs, activeIndex }) => {
       tabStore.set(tabs);
@@ -35,7 +34,9 @@
       syncContentView(activeIndex, false);
     });
 
-    return () => observer.disconnect();
+    return () => {
+      bar?.removeEventListener("pointerleave", releaseTabWidth);
+    };
   });
 
   async function syncContentView(
@@ -78,66 +79,71 @@
     isSwitchingTabs.set(false);
   }
 
+  let bar: HTMLDivElement | undefined;
   let strip: HTMLDivElement | undefined;
-  let canScrollLeft = false;
-  let canScrollRight = false;
+  let lockedTabWidth: number | null = null;
+  let heldWidth = 0;
 
-  function updateScrollHints(): void {
-    if (!strip) {
-      return;
+  function closeTabAt(index: number): void {
+    const openTab = strip?.firstElementChild;
+    if (openTab && get(tabStore).length > 1) {
+      const box = openTab.getBoundingClientRect();
+      lockedTabWidth = box.width;
+      // hold the strip's scrollable width too, or the browser clamps
+      // scrollLeft the moment the tabs fit and everything jumps sideways
+      heldWidth += box.width + TAB_GAP;
     }
-    canScrollLeft = strip.scrollLeft > 1;
-    canScrollRight =
-      strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 1;
+    closeTab(index);
   }
 
-  $: if (strip && $tabStore) {
-    queueMicrotask(updateScrollHints);
+  function releaseTabWidth(): void {
+    lockedTabWidth = null;
+    heldWidth = 0;
   }
 
-  function scrollTabs(event: WheelEvent): void {
-    const strip = event.currentTarget as HTMLDivElement;
-    if (event.deltaY === 0 || strip.scrollWidth <= strip.clientWidth) {
-      return;
-    }
-    event.preventDefault();
-    strip.scrollLeft += event.deltaY;
-  }
+  $: stripStyle = [
+    lockedTabWidth === null
+      ? ""
+      : `--tab-width:${lockedTabWidth}px; --tab-shrink:0;`,
+    lockedTabWidth !== null || $sidebarDrag ? "--tab-transition:0ms;" : "",
+  ].join(" ");
 
   function createTab(): void {
     window.tab.createTab();
   }
 </script>
 
-<div class="flex h-[26px] items-end">
-  {#if $sidebarCollapsed}
-    <div class="drag-region h-full w-6 flex-none"></div>
-  {/if}
+<div bind:this={bar} class="flex h-[32px] items-end">
+  <div
+    class="drag-region sidebar-gap h-full flex-none"
+    class:animated={$sidebarDrag == null}
+    style="width:{$sidebarCollapsedView ? 24 : 0}px"
+  ></div>
   <div
     bind:this={strip}
-    class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-x-auto"
-    class:fade-left={canScrollLeft}
-    class:fade-right={canScrollRight}
-    onwheel={scrollTabs}
-    onscroll={updateScrollHints}
+    class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-hidden"
+    style={stripStyle}
   >
     {#each $tabStore as tab, i (tab.tabId)}
       <Tab
         title={tab.title}
         active={i === $activeTabIndexStore}
-        on:close={() => closeTab(i)}
+        on:close={() => closeTabAt(i)}
         on:click={() => syncContentView(i, true)}
       />
     {/each}
+    {#if heldWidth > 0}
+      <div class="flex-none" style="width:{heldWidth}px"></div>
+    {/if}
   </div>
   <button
     aria-label="createTab"
-    class="hover:bg-surface-raised text-text-muted mb-0.5 ml-1 flex-none rounded p-0.5"
+    class="hover:bg-surface-raised text-text-muted hover:text-text-primary ml-1 flex h-6 w-6 flex-none items-center justify-center self-center rounded"
     onclick={createTab}
     ><svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1.1em"
-      height="1.1em"
+      width="17"
+      height="17"
       viewBox="0 0 24 24"
       ><path
         fill="currentColor"
@@ -150,33 +156,35 @@
 </div>
 
 <style>
+  .sidebar-gap.animated {
+    transition: width 250ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-gap.animated {
+      transition: none;
+    }
+  }
+
   /* isolation keeps the scrolled tabs out of the window drag-region
      calculation; without it, scrolling the strip stops the sidebar header
      dragging the window. See electron/electron#52063. */
   .tab-strip {
-    scrollbar-width: none;
     isolation: isolate;
   }
 
-  .tab-strip::-webkit-scrollbar {
+  .tab-strip :global(.tab + .tab)::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 0;
+    width: 1px;
+    background-color: var(--color-border);
+  }
+
+  .tab-strip :global(.tab.active)::before,
+  .tab-strip :global(.tab:hover)::before {
     display: none;
-  }
-
-  .tab-strip.fade-right {
-    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
-  }
-
-  .tab-strip.fade-left {
-    mask-image: linear-gradient(to right, transparent, black 24px);
-  }
-
-  .tab-strip.fade-left.fade-right {
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 24px,
-      black calc(100% - 24px),
-      transparent
-    );
   }
 </style>
