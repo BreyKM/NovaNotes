@@ -9,7 +9,7 @@
   });
 
   const chip =
-    "bg-surface-raised border-border rounded-sm border px-1.5 py-px transition-opacity duration-150 ease-out";
+    "bg-surface-base border-border-strong rounded-sm border px-1.5 py-px transition-opacity duration-150 ease-out";
   const hidden = "pointer-events-none opacity-0";
 
   let showCharacters = $state(false);
