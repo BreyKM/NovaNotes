@@ -120,7 +120,7 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 
 ### 6. Layout
 
---rail-width: 26px
+--rail-width: 32px
 --rail-right-width: 22px
 --gap: 6px
 --sidebar-width: 220px (resizable 160–420px, remembered)
@@ -130,8 +130,8 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
-- **Left rail:** collapse toggle at the top, a divider, then quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
-- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane has a header (new note, new folder, sort, collapse-all), the list, and the notebook switcher pinned at the bottom. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
+- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
+- **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane header holds the notebook name and switcher with the sort control at its right end; the list fills the rest. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
 - **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
 - Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
@@ -144,7 +144,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
 
-**Rail buttons.** 26×26px, icon 15px, `--text-muted`. Hover: `--surface-raised`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
+**Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
 **Pane rows.** One line, `--row-height`, radius `--radius-sm`, text 12px. Hover: `--surface-raised` and, after 400ms, a details popup (title, path in mono, edited time, word count) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. Selected: `--surface-selected` with `--text-primary`.
 

@@ -67,11 +67,11 @@
 {#if details}
   <div
     class="facet bg-border-strong pointer-events-none fixed z-40 max-w-[240px] rounded-md p-px"
+    style="top: {details.top}px; left: {details.left}px;"
   >
     <div
       role="tooltip"
       class="facet bg-surface-raised text-ui rounded-md px-2.5 py-1.5"
-      style="top: {details.top}px; left: {details.left}px;"
     >
       <div class="text-text-primary truncate">{details.note.title}</div>
       <div class="text-text-muted text-label truncate font-mono">
