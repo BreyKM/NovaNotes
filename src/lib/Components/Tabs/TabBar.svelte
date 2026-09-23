@@ -109,7 +109,7 @@
   }
 </script>
 
-<div class="flex h-[26px] items-end">
+<div class="flex h-[32px] items-end">
   {#if $sidebarCollapsed}
     <div class="drag-region h-full w-6 flex-none"></div>
   {/if}
@@ -132,12 +132,12 @@
   </div>
   <button
     aria-label="createTab"
-    class="hover:bg-surface-raised text-text-muted mb-0.5 ml-1 flex-none rounded p-0.5"
+    class="hover:bg-surface-raised text-text-muted hover:text-text-primary ml-1 flex h-6 w-6 flex-none items-center justify-center self-center rounded"
     onclick={createTab}
     ><svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1.1em"
-      height="1.1em"
+      width="17"
+      height="17"
       viewBox="0 0 24 24"
       ><path
         fill="currentColor"

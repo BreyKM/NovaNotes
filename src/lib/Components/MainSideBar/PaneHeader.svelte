@@ -57,25 +57,28 @@
 
     {#if menuOpen}
       <div
-        role="menu"
-        class="bg-surface-raised border-border-strong absolute top-full left-0 z-30 min-w-[168px]
-rounded-md border py-1 text-xs shadow-lg"
+        class="facet bg-border-strong absolute top-full left-0 z-30 min-w-[168px] rounded-md p-px"
       >
-        {#each SORT_OPTIONS as option (option.value)}
-          <button
-            role="menuitemradio"
-            aria-checked={$noteSort === option.value}
-            onclick={() => choose(option.value)}
-            class="hover:bg-surface-raised flex w-full items-center gap-2 px-2 py-1 text-left"
-          >
-            <span class="flex w-3.5 justify-center">
-              {#if $noteSort === option.value}
-                <Check size={13} strokeWidth={2} />
-              {/if}
-            </span>
-            {option.label}
-          </button>
-        {/each}
+        <div
+          role="menu"
+          class="facet bg-surface-raised text-ui rounded-md py-1"
+        >
+          {#each SORT_OPTIONS as option (option.value)}
+            <button
+              role="menuitemradio"
+              aria-checked={$noteSort === option.value}
+              onclick={() => choose(option.value)}
+              class="hover:bg-surface-raised flex w-full items-center gap-2 px-2 py-1 text-left"
+            >
+              <span class="flex w-3.5 justify-center">
+                {#if $noteSort === option.value}
+                  <Check size={13} strokeWidth={2} />
+                {/if}
+              </span>
+              {option.label}
+            </button>
+          {/each}
+        </div>
       </div>
     {/if}
   </div>

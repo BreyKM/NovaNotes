@@ -12,7 +12,7 @@
 
   /* Type Scale */
   --text-label: 11px;
-  --text-label-line-height: 1.4;
+  --text-label--line-height: 1.4;
   --text-ui: 13px;
   --text-ui--line-height: 1.5;
   --text-body: 16px;
@@ -107,6 +107,10 @@
   --editor-width: 46rem;
   --scrollbar-size: 9px;
 
+  /* Facet */
+  --facet: 12px;
+  --facet-sm: 5px;
+
   /* Syntax */
   --code-keyword: #6fa8f5;
   --code-string: #7fc8a9;
@@ -142,6 +146,32 @@
 body {
   font-size: var(--text-ui);
   line-height: var(--text-ui--line-height);
+}
+
+.facet {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--facet)) 0,
+    100% var(--facet),
+    100% 100%,
+    0 100%
+  );
+}
+
+.facet-sm {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--facet-sm)) 0,
+    100% var(--facet-sm),
+    100% 100%,
+    0 100%
+  );
+}
+
+.facet:focus-visible,
+.facet-sm:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
 .drag-region {

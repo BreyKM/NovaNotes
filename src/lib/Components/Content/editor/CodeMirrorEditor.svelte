@@ -115,9 +115,16 @@
     font-size: calc(var(--text-body) - 1px);
   }
 
-  .cm-host :global(.cm-codeblock-first) {
+  .cm-host :global(.cm-codeblock-first),
+  .cm-host :global(.cm-codeblock-header) {
     border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--facet)) 0,
+      100% var(--facet),
+      100% 100%,
+      0 100%
+    );
   }
 
   .cm-host :global(.cm-codeblock-last) {

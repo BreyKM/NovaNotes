@@ -101,7 +101,7 @@ Weights: 400 for text, 500 for headings and the note title, 600 for bold in pros
 --radius-sm: 4px (rows, chips, inputs)
 --radius: 6px (panels, code blocks)
 
---facet: 8px (the cut)
+--facet: 12px (the cut)
 --facet-sm: 5px (small elements: chips, rows, buttons)
 
 **The facet rule.** Cut the **top-right** corner, and only on: the active tab, code blocks, popups, and filled buttons. Everything else uses `--radius`. One utility implements it:
@@ -126,7 +126,7 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 --sidebar-width: 220px (resizable 160–420px, remembered)
 --editor-width: 46rem (text column inside the editor panel)
 --row-height: 26px
---header-height: 26px
+--header-height: 32px
 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
@@ -142,7 +142,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 7. Components
 
-**Tabs.** Height 26px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
+**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
 
 **Rail buttons.** 26×26px, icon 15px, `--text-muted`. Hover: `--surface-raised`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 

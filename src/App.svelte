@@ -75,7 +75,7 @@
       class="sidebar-column flex flex-col overflow-hidden"
       style="width:{width}px;"
     >
-      <div class="drag-region h-[26px] flex-none" class:pl-[52px]={isMac}></div>
+      <div class="drag-region h-[32px] flex-none" class:pl-[52px]={isMac}></div>
       <MainSideBar />
     </div>
 

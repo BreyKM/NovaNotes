@@ -26,8 +26,9 @@
 
 <div
   bind:this={element}
-  class="group flex h-[26px] w-[180px] min-w-[48px] shrink items-center overflow-hidden rounded-t-md pr-1 text-xs"
+  class="group flex h-[32px] w-[180px] min-w-[48px] shrink items-center overflow-hidden rounded-t-md pr-1 text-xs"
   class:bg-surface-editor={active}
+  class:facet={active}
   class:text-text-primary={active}
   class:text-text-muted={!active}
   class:hover:bg-surface-raised={!active}
