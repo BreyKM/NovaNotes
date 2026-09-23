@@ -142,7 +142,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 7. Components
 
-**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px down to 48px, slightly wider than the close button, so more tabs are visible. Past that the strip scrolls horizontally, and the scroll wheel scrolls it. The add-tab button follows the last tab and stays outside the scrolling strip. Close button appears on hover and on the active tab. It has its own hover (a 10% `--text-primary` wash, icon to `--text-primary`) and a 20% wash while pressed, so it stays visible on the hovered tab's `--surface-raised`.
+**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds every tab at its current width until the pointer leaves the strip, so the close button stays under the cursor. The add-tab button follows the last tab.
 
 **Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
@@ -162,7 +162,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 8. Motion
 
-150ms `ease-out` for hover, fades and panel collapse; 250ms for the sidebar width. No motion on theme change. Everything inside `@media (prefers-reduced-motion: reduce)` drops to 0ms.
+250ms `ease-out` for hover and fades; 250ms for width changes that move the layout (the sidebar, the tab strip's gap, tab widths). No motion on theme change. Everything inside `@media (prefers-reduced-motion: reduce)` drops to 0ms.
 
 ### 9. Accessibility
 

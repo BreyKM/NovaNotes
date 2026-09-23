@@ -3,10 +3,10 @@
 </script>
 
 {#if !isMac}
-  <div class="flex items-center self-stretch">
+  <div class="-mt-1.5 -mr-1.5 flex h-[38px] items-center self-start">
     <button
       on:click={() => window.nav.minimize()}
-      class="hover:bg-surface-raised flex h-full items-center px-3 transition ease-in-out"
+      class="hover:bg-surface-raised flex h-full items-center px-3 pt-1.5 transition ease-in-out"
       aria-label="minimize"
     >
       <svg
@@ -24,7 +24,7 @@
     </button>
     <button
       on:click={() => window.nav.maximize()}
-      class="hover:bg-surface-raised flex h-full items-center px-3 transition ease-in-out"
+      class="hover:bg-surface-raised flex h-full items-center px-3 pt-1.5 transition ease-in-out"
       aria-label="maximize"
     >
       <svg
@@ -40,7 +40,7 @@
     </button>
     <button
       on:click={() => window.nav.close()}
-      class="hover:bg-danger flex h-full items-center px-3 transition ease-in-out"
+      class="hover:bg-danger flex h-full items-center px-3 pt-1.5 transition ease-in-out"
       aria-label="close window"
     >
       <svg
