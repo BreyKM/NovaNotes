@@ -157,9 +157,11 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Buttons.** Primary: `--accent-fill`, white text, faceted with `--facet-sm`. Secondary: transparent, `--border-strong`, hover `--surface-raised`. Icon-only buttons are 26×26 with an `aria-label`.
 
-**Inputs.** `--surface-sunken`, `--border`, radius `--radius-sm`, focus ring `0 0 0 2px var(--accent-quiet)` plus a `--accent` border.
+**Inputs.** `--surface-sunken`, `--border-strong`, radius `--radius-sm`, focus ring `0 0 0 2px var(--accent-quiet)` plus an `--accent` border.
 
 **Empty state (no note open).** Faceted logo mark at 15% opacity above a primary "New note" button, then up to three recently edited notes with their edited times, and a muted `Ctrl N` hint. The mark sits in the stack rather than behind the content, so nothing is read through it. The hint names `Ctrl N` until the command palette exists.
+
+**Starter window.** Left third is `--surface-panel` with the logo mark at 15%, the app name in `--text-title` and a one-line description. The right side offers a primary "Create a new notebook" and a secondary "Open a folder of markdown notes", then the create form: name and location rows with §7 inputs and buttons. Errors appear as a faceted `--danger` toast at the top right.
 
 ### 8. Motion
 
