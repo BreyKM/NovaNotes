@@ -149,6 +149,8 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Pane rows.** One line, `--row-height`, radius `--radius-sm`, text `--text-ui`, 2px apart. Hover: `--surface-raised` and, after 400ms, a details popup (title, edited time) anchored to the row's right edge, faceted, `--surface-raised` with `--border-strong`. While a popup is open, moving to another row moves it there at once; it fades out 150ms after the pointer leaves the list. Selected: `--surface-selected` with `--text-primary`.
 
+**Task lists.** `- [ ]` and `- [x]` draw a checkbox in `--accent`, replacing the marker. Clicking it writes the flipped marker to the file; the text is never changed by rendering.
+
 **Editor.** The scroller fills the panel; the text column is centred at `--editor-width`. Breadcrumb in mono `--text-label` above the title.
 
 **Scrollbar.** Always visible. 9px wide track (transparent), 5px thumb in `--scrollbar-thumb`, radius 3px, hover `--border-strong`. Flush with the panel's right edge. `scrollbar-gutter: stable` on one edge only.

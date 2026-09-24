@@ -6,7 +6,7 @@ import {
   historyKeymap,
   indentWithTab,
 } from "@codemirror/commands";
-import { markdown } from "@codemirror/lang-markdown";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { indentUnit, syntaxHighlighting } from "@codemirror/language";
 import { livePreview } from "./livePreview";
 import { openLinkOnClick } from "./linkClick";
@@ -24,7 +24,7 @@ export function noteExtensions(
     history(),
     keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
     indentUnit.of("    "),
-    markdown({ codeLanguages: resolveLanguage }),
+    markdown({ base: markdownLanguage, codeLanguages: resolveLanguage }),
     syntaxHighlighting(codeHighlight),
     livePreview,
     openLinkOnClick,

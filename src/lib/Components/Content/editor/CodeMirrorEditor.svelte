@@ -89,6 +89,13 @@
     font-size: 0.95em;
   }
 
+  .cm-host :global(.cm-task-checkbox) {
+    margin: 0 0.4em 0 0;
+    vertical-align: -0.1em;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+
   .cm-host :global(.cm-strong) {
     font-weight: 600;
     color: var(--color-text-primary);
