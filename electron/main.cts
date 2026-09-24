@@ -9,6 +9,7 @@ import type {
   NoteMeta,
   NewNote,
   LayoutState,
+  ThemeName,
 } from "../shared/types";
 
 // util functions
@@ -54,6 +55,35 @@ const useNotebook = (dir: string): void => {
   electronStore.set("activeNotebookPath", dir);
 };
 
+const registerWindowControls = () => {
+  ipcMain.on("minimize", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize();
+  });
+
+  ipcMain.on("maximize", (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (!window) {
+      return;
+    }
+    if (window.isMaximized()) {
+      window.unmaximize();
+    } else {
+      window.maximize();
+    }
+  });
+
+  ipcMain.on("close", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
+  });
+};
+
+const savedTheme = (): ThemeName =>
+  electronStore.get("theme") === "light" ? "light" : "dark";
+
+// The renderer needs the theme before it paints, so it travels as a launch
+// argument rather than an IPC round trip.
+const themeArgument = (): string[] => [`--nova-theme=${savedTheme()}`];
+
 const createWindow = (): void => {
   // Create the main browser window.
   mainWindow = new BrowserWindow({
@@ -70,6 +100,7 @@ const createWindow = (): void => {
     icon: path.join(__dirname, "..", "src", "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
+      additionalArguments: themeArgument(),
     },
   });
 
@@ -87,22 +118,6 @@ const createWindow = (): void => {
     mainWindow.loadFile(path.join(__dirname, "build", "index.html"));
     console.log("Electron running in prod mode: 🚀");
   }
-
-  ipcMain.on("minimize", () => {
-    mainWindow?.minimize();
-  });
-
-  ipcMain.on("maximize", () => {
-    if (mainWindow?.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow?.maximize();
-    }
-  });
-
-  ipcMain.on("close", () => {
-    mainWindow?.close();
-  });
 
   mainWindow.on("close", (event) => {
     event.preventDefault();
@@ -133,8 +148,12 @@ const createStarterWindow = (): void => {
     autoHideMenuBar: true,
     center: true,
     title: "Nova Starter Page",
+    ...(process.platform === "darwin"
+      ? { titleBarStyle: "hiddenInset" as const }
+      : { frame: false }),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
+      additionalArguments: themeArgument(),
     },
     resizable: false,
   });
@@ -151,6 +170,7 @@ const createStarterWindow = (): void => {
 };
 
 app.whenReady().then(() => {
+  registerWindowControls();
   const activeNotebookPath = electronStore.get("activeNotebookPath") as
     string | undefined;
 
@@ -204,6 +224,10 @@ app.whenReady().then(() => {
 
   ipcMain.on("setLayout", (_event, layout: LayoutState) => {
     electronStore.set("layout", layout);
+  });
+
+  ipcMain.on("setTheme", (_event, theme: ThemeName) => {
+    electronStore.set("theme", theme);
   });
 
   ipcMain.handle("getActiveFolder", async () => {

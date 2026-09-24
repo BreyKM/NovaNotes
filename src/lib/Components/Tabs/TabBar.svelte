@@ -17,8 +17,6 @@
   import WindowControls from "./WindowControls.svelte";
   import { sidebarCollapsedView, sidebarDrag } from "../../../store/layout";
 
-  const TAB_GAP = 2;
-
   onMount(() => {
     bar?.addEventListener("pointerleave", releaseTabWidth);
 
@@ -82,23 +80,17 @@
   let bar: HTMLDivElement | undefined;
   let strip: HTMLDivElement | undefined;
   let lockedTabWidth: number | null = null;
-  let heldWidth = 0;
 
   function closeTabAt(index: number): void {
     const openTab = strip?.firstElementChild;
     if (openTab && get(tabStore).length > 1) {
-      const box = openTab.getBoundingClientRect();
-      lockedTabWidth = box.width;
-      // hold the strip's scrollable width too, or the browser clamps
-      // scrollLeft the moment the tabs fit and everything jumps sideways
-      heldWidth += box.width + TAB_GAP;
+      lockedTabWidth = openTab.getBoundingClientRect().width;
     }
     closeTab(index);
   }
 
   function releaseTabWidth(): void {
     lockedTabWidth = null;
-    heldWidth = 0;
   }
 
   $: stripStyle = [
@@ -113,7 +105,7 @@
   }
 </script>
 
-<div bind:this={bar} class="flex h-[32px] items-end">
+<div bind:this={bar} class="relative z-10 flex h-[32px] items-end">
   <div
     class="drag-region sidebar-gap h-full flex-none"
     class:animated={$sidebarDrag == null}
@@ -121,7 +113,7 @@
   ></div>
   <div
     bind:this={strip}
-    class="tab-strip flex min-w-0 shrink items-end gap-0.5 overflow-hidden"
+    class="tab-strip -mb-px flex min-w-0 shrink items-end gap-0.5 overflow-hidden pb-px"
     style={stripStyle}
   >
     {#each $tabStore as tab, i (tab.tabId)}
@@ -132,9 +124,6 @@
         on:click={() => syncContentView(i, true)}
       />
     {/each}
-    {#if heldWidth > 0}
-      <div class="flex-none" style="width:{heldWidth}px"></div>
-    {/if}
   </div>
   <button
     aria-label="createTab"

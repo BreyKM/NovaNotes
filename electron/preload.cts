@@ -6,6 +6,7 @@ import type {
   TabsState,
   CreateNotebookResult,
   LayoutState,
+  ThemeName,
 } from "../shared/types";
 
 const api = {
@@ -89,6 +90,17 @@ contextBridge.exposeInMainWorld("layout", {
   get: (): Promise<LayoutState> => ipcRenderer.invoke("getLayout"),
 
   set: (layout: LayoutState): void => ipcRenderer.send("setLayout", layout),
+});
+
+const themeArgument = process.argv.find((arg) =>
+  arg.startsWith("--nova-theme="),
+);
+
+contextBridge.exposeInMainWorld("theme", {
+  initial: (): ThemeName =>
+    themeArgument?.split("=")[1] === "light" ? "light" : "dark",
+
+  set: (theme: ThemeName): void => ipcRenderer.send("setTheme", theme),
 });
 
 contextBridge.exposeInMainWorld("tab", {

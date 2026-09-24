@@ -1,6 +1,9 @@
 import "./app.css";
+import { loadTheme } from "./store/theme";
 import App from "./App.svelte";
 import { mount } from "svelte";
+
+loadTheme();
 
 const target = document.getElementById("app");
 if (!target) {

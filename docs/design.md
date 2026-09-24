@@ -25,6 +25,7 @@ Values are role tokens. Components never use a raw hex.
 | `--border-subtle`    | `#20262F`               | Dividers inside a panel               |
 | `--border`           | `#232B36`               | Default hairline                      |
 | `--border-strong`    | `#2B3440`               | Hover, popup edges                    |
+| `--danger`           | `#C0362C`               | Failed save (4.7)                     |
 | `--text-primary`     | `#E4E9EF`               | Titles, active items (14.0)           |
 | `--text-secondary`   | `#C3CBD5`               | Body text (10.5)                      |
 | `--text-muted`       | `#8D98A6`               | Labels, inactive icons (5.9)          |
@@ -58,7 +59,7 @@ Values are role tokens. Components never use a raw hex.
 | `--accent-quiet`     | `rgba(31,111,196,0.12)` |                                 |
 | `--scrollbar-thumb`  | `#C4CCD6`               |                                 |
 
-Dark is the default. The user switches themes in settings; the choice is stored in electron-store and applied as `data-theme` on `<html>` before first paint, so there's no flash.
+Dark is the default. The theme toggle sits at the bottom of the rail until a settings screen exists; the choice is stored in electron-store and handed to the window as a launch argument, so it is applied before first paint and there is no flash.
 
 **Rule:** `--text-faint` never carries information you must read. Everything else meets 4.5:1 on its own surface.
 
@@ -130,9 +131,9 @@ Because `clip-path` also clips shadows and outlines, focus on a faceted element 
 
 Structure, left to right: **left rail → sidebar column → editor column → right rail**, all full height, with `--gap` between them and `--gap` of padding around the whole window.
 
-- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. Settings pinned at the bottom. On macOS the rail's contents start ~28px lower, below the traffic lights.
+- **Left rail:** collapse toggle at the top, a divider, then new note, quick switcher, command palette, diagrams. The theme toggle sits at the bottom, where settings will go. On macOS the rail's contents start ~28px lower, below the traffic lights.
 - **Sidebar column:** switcher strip (notes, search) on top, then the pane. The pane header holds the notebook name and switcher with the sort control at its right end; the list fills the rest. Dragging the resizer below half the minimum width (80px) collapses the sidebar live, and dragging back reopens it. Collapsing keeps the last width, so reopening restores it.
-- **Editor column:** tab strip on top, then the editor panel. The active tab shares `--surface-editor` and sits directly on the panel, so they read as one shape. The panel's top-left corner is square; the other three use `--radius`.
+- **Editor column:** tab strip on top, then the editor panel. The panel has a 1px `--border` outline. The active tab is a matching outline box filled with `--surface-editor`, overlapping the panel's top border by 1px, so tab and panel read as one shape. The panel's top-left corner is square; the other three use `--radius`.
 - **Right rail:** outline, backlinks, tags. Its panel, when opened, **pushes** the editor narrower.
 - Window controls sit at the right end of the tab strip, flush with the window edge, directly above the right rail. macOS draws none. At least 48px of empty, draggable strip always separates them from the add-tab button, so the window can be moved however many tabs are open.
 - **Collapsed sidebar:** the pane and the switcher strip both disappear; only the rail's collapse button remains, and the editor column takes the space. The tab strip gains a 24px draggable gap before the first tab, and the editor panel's top-left corner becomes rounded.
@@ -142,7 +143,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 ### 7. Components
 
-**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds every tab at its current width until the pointer leaves the strip, so the close button stays under the cursor. The add-tab button follows the last tab.
+**Tabs.** Height 32px, text 12px. Active: `--surface-editor`, `--text-primary`, faceted. Inactive: transparent, `--text-muted`, hover `--surface-raised`. Shrink from 180px with no floor. The title clips before the close button does, so the smallest tab is just its close button, and no tab is ever hidden; an overflow dropdown replaces this later. A 1px `--border` hairline separates neighbouring tabs, hidden on the active and hovered tabs. Hovering an inactive tab previews the cut. Closing a tab holds the remaining tabs at their current width until the pointer leaves the strip, so repeated closes don't resize under the cursor; the add-tab button follows the last tab immediately.
 
 **Rail buttons.** 24×24px, icon 17px, `--text-muted`. Hover: `--surface-raised` and `--text-primary`. Active view: `--accent` icon. Tooltip after 500ms, showing the name and shortcut.
 
@@ -156,9 +157,11 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Buttons.** Primary: `--accent-fill`, white text, faceted with `--facet-sm`. Secondary: transparent, `--border-strong`, hover `--surface-raised`. Icon-only buttons are 26×26 with an `aria-label`.
 
-**Inputs.** `--surface-sunken`, `--border`, radius `--radius-sm`, focus ring `0 0 0 2px var(--accent-quiet)` plus a `--accent` border.
+**Inputs.** `--surface-sunken`, `--border-strong`, radius `--radius-sm`, focus ring `0 0 0 2px var(--accent-quiet)` plus an `--accent` border.
 
-**Empty state (no note open).** Faceted logo mark at 15% opacity, a primary "New note" button, up to three recent notes, and a muted `Ctrl K` hint.
+**Empty state (no note open).** Faceted logo mark at 15% opacity above a primary "New note" button, then up to three recently edited notes with their edited times, and a muted `Ctrl N` hint. The mark sits in the stack rather than behind the content, so nothing is read through it. The hint names `Ctrl N` until the command palette exists.
+
+**Starter window.** Left third is `--surface-panel` with the logo mark at 15%, the app name in `--text-title` and a one-line description. The right side offers a primary "Create a new notebook" and a secondary "Open a folder of markdown notes", then the create form: name and location rows with §7 inputs and buttons. Errors appear as a faceted `--danger` toast at the top right.
 
 ### 8. Motion
 

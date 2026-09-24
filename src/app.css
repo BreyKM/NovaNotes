@@ -76,24 +76,12 @@
   }
 }
 
-@layer components {
-  .btn-primary {
-    border-radius: 1rem;
-    color: var(--color-white);
-    box-shadow: var(--shadow-md);
-    &:hover {
-      @media (hover: hover) {
-        cursor: pointer;
-      }
-    }
-  }
-}
-
 :root {
+  color-scheme: dark;
+
   font-family: var(--font-sans);
   font-weight: 400;
 
-  color-scheme: light dark;
   color: var(--color-text-primary);
   background-color: var(--color-surface-base);
 
@@ -120,6 +108,51 @@
   --code-tag: #e0847c;
   --code-comment: #6b7686;
   --code-punctuation: #97a3b2;
+}
+
+/* Light theme: the same token names with the light values from docs/design.md.
+   Dark stays the default, so only this block has to be kept in step. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Accent */
+  --color-accent: #1f6fc4;
+  --color-accent-hover: #1a5fa8;
+  --color-accent-fill: #1f6fc4;
+  --color-accent-quiet: rgba(31, 111, 196, 0.12);
+
+  /* Text */
+  --color-text-primary: #17202b;
+  --color-text-secondary: #3a4654;
+  --color-text-muted: #5b6878;
+  --color-text-faint: #7a8595;
+
+  /* Surfaces */
+  --color-surface-base: #e9edf2;
+  --color-surface-panel: #f4f6f9;
+  --color-surface-editor: #ffffff;
+  --color-surface-sunken: #eef2f6;
+  --color-surface-raised: #ffffff;
+  --color-surface-selected: #d7e8fa;
+
+  /* Lines and status */
+  --color-border-subtle: #e3e8ee;
+  --color-border: #d9dfe7;
+  --color-border-strong: #c4ccd6;
+  --color-danger: #c0362c;
+
+  /* Scrollbar */
+  --color-scrollbar-thumb: #c4ccd6;
+
+  /* Syntax */
+  --code-keyboard: #1f6fc4;
+  --code-string: #2f7d5e;
+  --code-number: #a85e17;
+  --code-function: #6b44b8;
+  --code-type: #8a6a12;
+  --code-tag: #b2483e;
+  --code-comment: #7a8595;
+  --code-punctuation: #4c5769;
 }
 
 ::-webkit-scrollbar {

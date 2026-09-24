@@ -4,7 +4,11 @@
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
   import AppRail from "./lib/Components/Rail/AppRail.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
-  import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
+  import {
+    createEmptyNote,
+    selectedNoteIdStore,
+    saveBeforeClose,
+  } from "./store/Store";
   import {
     loadLayout,
     setSidebarCollapsed,
@@ -28,6 +32,13 @@
     window.nav.onSaveBeforeClose(saveBeforeClose);
     void loadLayout();
   });
+
+  function handleShortcut(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "n") {
+      event.preventDefault();
+      void createEmptyNote();
+    }
+  }
 
   function startResize(event: PointerEvent): void {
     const handle = event.currentTarget as HTMLElement;
@@ -64,6 +75,8 @@
   }
 </script>
 
+<svelte:window onkeydown={handleShortcut} />
+
 <main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
   <AppRail />
 
@@ -98,7 +111,7 @@
   <div class="editor-column flex min-w-80 flex-1 flex-col">
     <TabBar />
     <div
-      class="bg-surface-editor flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md"
+      class="bg-surface-editor border-border flex min-h-0 flex-1 flex-col overflow-hidden rounded-tr-md rounded-b-md border"
       class:rounded-tl-md={$sidebarCollapsedView}
     >
       {#if $selectedNoteIdStore === null}

@@ -2,9 +2,11 @@
   import { onDestroy } from "svelte";
   import { quadInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
-  import AddFolderIcon from "../../../assets/addFolder.svelte";
-  import OpenFolderIcon from "../../../assets/openFolder.svelte";
-  import BackIcon from "../../../assets/backSvg.svelte";
+  import ChevronLeft from "@lucide/svelte/icons/chevron-left";
+  import FolderOpen from "@lucide/svelte/icons/folder-open";
+  import FolderPlus from "@lucide/svelte/icons/folder-plus";
+  import NovaNotesIcon from "../../../assets/NovaNotesIcon.svelte";
+  import WindowControls from "../Tabs/WindowControls.svelte";
 
   import {
     rootDirSelection,
@@ -15,6 +17,12 @@
   } from "../../../store/Store";
 
   import isValidFilename from "valid-filename";
+
+  const primaryButton =
+    "facet bg-accent-fill hover:bg-accent-hover cursor-pointer px-4 py-2 text-white";
+
+  const secondaryButton =
+    "border-border-strong hover:bg-surface-raised cursor-pointer rounded-sm border px-4 py-2";
 
   //variables
   let userInputNotebookName = $state("");
@@ -64,20 +72,31 @@
   });
 </script>
 
-<main class="starter-container flex">
-  <div class="left-container bg-surface-panel flex h-screen w-1/3">
-    <div class="recent-folder-container mx-2 my-5">
-      <ul class="list">
-        <li>Blank</li>
-        <li>Blank</li>
-        <li>Blank</li>
-      </ul>
+<div
+  class="drag-region absolute top-0 right-0 left-0 z-10 flex h-[32px] justify-end"
+>
+  <WindowControls canMaximize={false} bleed={false} />
+</div>
+
+<main
+  class="starter-container text-text-secondary text-body flex h-screen overflow-hidden"
+>
+  <div
+    class="bg-surface-panel flex w-1/3 flex-col items-center justify-center gap-4"
+  >
+    <div aria-hidden="true" class="opacity-15">
+      <NovaNotesIcon width="120" height="120" />
+    </div>
+    <div class="text-text-primary text-title font-medium">NovaNotes</div>
+    <div class="text-text-muted text-ui text-center">
+      Markdown notes for technical work
     </div>
   </div>
-  <!-- Vertical Divider -->
-  <div class="vertical-divider bg-border h-screen w-px"></div>
+
+  <div class="bg-border w-px"></div>
+
   <div
-    class="main-container relative mx-10 flex w-full flex-row overflow-hidden"
+    class="main-container relative mx-10 flex min-w-0 flex-1 flex-row overflow-hidden"
   >
     {#if showContentA}
       <div
@@ -85,31 +104,40 @@
         in:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
         out:fly={{ x: "-100%", duration: 300, easing: quadInOut }}
       >
-        <div class="my-2 flex flex-col items-center">
+        <div class="my-2 flex flex-col items-center gap-4">
           <button
             onclick={showNextContent}
-            class="btn-primary bg-accent hover:bg-accent-hover mb-6 flex h-24 w-24 items-center justify-center"
-            aria-label="Add folder icon"
+            class="facet bg-accent-fill hover:bg-accent-hover flex h-24 w-24 cursor-pointer items-center justify-center rounded-md text-white"
+            aria-label="Create a new notebook"
           >
-            <AddFolderIcon width="4rem" height="4rem" stroke="#f2f2f2" />
+            <FolderPlus size={44} strokeWidth={1.25} />
           </button>
-          <div class="flex w-64 flex-col items-center">
-            <div class="text-center text-base">Create a new NoteBook</div>
-            <div class="text-xs">Create a new folder to store notes in.</div>
+          <div class="flex w-64 flex-col items-center gap-1">
+            <div class="text-text-primary text-center text-2xl">
+              Create a new NoteBook
+            </div>
+            <div class="text-text-muted text-ui text-center">
+              A folder to keep your notes in.
+            </div>
           </div>
         </div>
-        <div class="horizontal-divider bg-border my-6 h-px"></div>
-        <div class="my-2 flex flex-col items-center">
+
+        <div class="bg-border-subtle my-6 h-px"></div>
+
+        <div class="my-2 flex flex-col items-center gap-4">
           <button
             onclick={openExistingNotebook}
-            class="btn-primary bg-surface-panel hover:bg-surface-raised mb-6 flex h-24 w-24 items-center justify-center"
-            aria-label="open an existing notebook"
+            class="border-border-strong hover:bg-surface-raised text-text-muted hover:text-text-primary flex h-24 w-24 cursor-pointer items-center justify-center rounded-md border"
+            aria-label="Open an existing notebook"
           >
-            <OpenFolderIcon width="4rem" height="4rem" fill="#f2f2f2" />
+            <FolderOpen size={44} strokeWidth={1.25} />
           </button>
-          <div class="flex w-64 flex-col items-center">
-            <div class="text-center text-base">
+          <div class="flex w-64 flex-col items-center gap-1">
+            <div class="text-text-primary text-center text-2xl">
               Open a folder of markdown notes
+            </div>
+            <div class="text-text-muted text-ui text-center">
+              Your existing notes stay where they are.
             </div>
           </div>
         </div>
@@ -124,40 +152,43 @@
       >
         <button
           onclick={showPreviousContent}
-          class="group flex h-fit w-fit items-center hover:cursor-pointer"
+          class="group text-text-muted hover:text-text-primary flex h-fit w-fit cursor-pointer items-center gap-1"
         >
-          <BackIcon
-            width="1.5rem"
-            height="1.5rem"
-            fill="#9A9A9A"
-            class="icon group-hover:fill-text-primary"
-          />
-          <div class="text-text-muted group-hover:text-text-primary">back</div>
+          <ChevronLeft size={17} strokeWidth={1.5} />
+          <div>back</div>
         </button>
 
-        <div class="my-2 text-4xl">Create new notebook</div>
-        <div class="horizontal-divider bg-border my-1 h-px"></div>
+        <div class="text-text-primary text-title my-2 font-medium">
+          Create new notebook
+        </div>
+        <div class="bg-border-subtle my-1 h-px"></div>
+
         <div class="my-5 flex items-center justify-between">
           <div class="w-64">
-            <div class="text-lg">Name your notebook</div>
-            <div class="text-sm">Pick a name for your new notebook.</div>
+            <div class="text-text-primary">Name your notebook</div>
+            <div class="text-text-muted">
+              Pick a name for your new notebook.
+            </div>
           </div>
 
           <input
-            class="bg-surface-panel w-48 rounded-sm px-2 py-2 text-sm"
+            class="bg-surface-sunken border-border-strong focus:border-accent focus:border-accent w-56 rounded-none rounded-sm border border-0 border-b-2 px-3 py-2 outline-none"
             bind:value={userInputNotebookName}
             placeholder="Notebook name"
           />
         </div>
+
         <div class=" my-5 flex items-center justify-between">
           <div class="w-64">
-            <div class="text-lg">Location</div>
+            <div class="text-text-primary">Location</div>
             {#if $rootNotebookDirPathStore != null}
-              <div class="text-accent text-sm wrap-break-word">
+              <div class="text-accent text-ui wrap-break-word">
                 {$rootNotebookDirPathStore}
               </div>
             {:else}
-              <div class="text-xs">Choose a location for Notebook folder</div>
+              <div class="text-text-muted text-ui">
+                Choose a location for Notebook folder
+              </div>
             {/if}
           </div>
 
@@ -165,8 +196,7 @@
             onclick={() => {
               rootDirSelection();
             }}
-            class="bg-surface-panel hover:bg-surface-raised h-8 w-24 rounded-md shadow-md hover:cursor-pointer"
-            >Browse</button
+            class={secondaryButton}>Browse</button
           >
         </div>
 
@@ -200,14 +230,14 @@
               }
             }
           }}
-          class="bg-accent hover:bg-accent-hover h-8 w-24 self-center rounded-md shadow-md hover:cursor-pointer"
-          >Create</button
+          class={`${primaryButton} self-center rounded-md`}>Create</button
         >
       </div>
     {/if}
+
     {#if popupMessage}
       <div
-        class="invalid-directory bg-danger absolute top-4 right-0 rounded-lg p-2 text-sm shadow-lg"
+        class="facet-sm bg-danger text-ui absolute top-4 right-0 p-2 text-white"
         in:fly={{ x: "100%", duration: 250, easing: quadInOut }}
         out:fly={{ x: "100%", duration: 250, easing: quadInOut }}
       >
@@ -216,6 +246,3 @@
     {/if}
   </div>
 </main>
-
-<style>
-</style>

@@ -1,3 +1,5 @@
+export type ThemeName = "dark" | "light";
+
 export interface NoteMeta {
   title: string;
   creationTime: number;
