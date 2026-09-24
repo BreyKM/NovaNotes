@@ -5,6 +5,7 @@ import { emphasisDecorations } from "./emphasis";
 import { listMarkDecorations } from "./lists";
 import { indentDecorations } from "./indentation";
 import { codeBlockLines, fencedCodeDecorations } from "./codeBlocks";
+import { taskMarkerDecoration } from "./taskList";
 
 const hiddenMark = Decoration.replace({});
 const linkText = Decoration.mark({ class: "cm-link" });
@@ -73,6 +74,11 @@ function buildDecorations(state: EditorState): DecorationSet {
           return;
         }
         decorations.push(hiddenMark.range(node.from, node.to));
+        return;
+      }
+
+      if (name === "TaskMarker") {
+        decorations.push(...taskMarkerDecoration(state, node.from, node.to));
         return;
       }
 
