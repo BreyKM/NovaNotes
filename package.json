@@ -1,9 +1,10 @@
 {
-  "name": "vite-svelte-electron-tailwind",
-  "description": "Vite + Svelte + Electron + Tailwind",
+  "name": "novanotes",
+  "productName": "novanotes",
+  "description": "A markdown notes app for technical work",
   "license": "MIT",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
