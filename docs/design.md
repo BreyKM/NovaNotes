@@ -159,7 +159,7 @@ Because each column owns its own header, the tab strip always starts at the edit
 
 **Inputs.** `--surface-sunken`, `--border`, radius `--radius-sm`, focus ring `0 0 0 2px var(--accent-quiet)` plus a `--accent` border.
 
-**Empty state (no note open).** Faceted logo mark at 15% opacity, a primary "New note" button, up to three recent notes, and a muted `Ctrl K` hint.
+**Empty state (no note open).** Faceted logo mark at 15% opacity above a primary "New note" button, then up to three recently edited notes with their edited times, and a muted `Ctrl N` hint. The mark sits in the stack rather than behind the content, so nothing is read through it. The hint names `Ctrl N` until the command palette exists.
 
 ### 8. Motion
 

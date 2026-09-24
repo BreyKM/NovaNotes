@@ -4,7 +4,11 @@
   import MainSideBar from "./lib/Components/MainSideBar/MainSideBar.svelte";
   import AppRail from "./lib/Components/Rail/AppRail.svelte";
   import TabBar from "./lib/Components/Tabs/TabBar.svelte";
-  import { selectedNoteIdStore, saveBeforeClose } from "./store/Store";
+  import {
+    createEmptyNote,
+    selectedNoteIdStore,
+    saveBeforeClose,
+  } from "./store/Store";
   import {
     loadLayout,
     setSidebarCollapsed,
@@ -28,6 +32,13 @@
     window.nav.onSaveBeforeClose(saveBeforeClose);
     void loadLayout();
   });
+
+  function handleShortcut(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "n") {
+      event.preventDefault();
+      void createEmptyNote();
+    }
+  }
 
   function startResize(event: PointerEvent): void {
     const handle = event.currentTarget as HTMLElement;
@@ -63,6 +74,8 @@
     resize = null;
   }
 </script>
+
+<svelte:window onkeydown={handleShortcut} />
 
 <main class="bg-surface-base flex h-screen gap-1.5 overflow-hidden p-1.5">
   <AppRail />
