@@ -55,6 +55,28 @@ const useNotebook = (dir: string): void => {
   electronStore.set("activeNotebookPath", dir);
 };
 
+const registerWindowControls = () => {
+  ipcMain.on("minimize", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize();
+  });
+
+  ipcMain.on("maximize", (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (!window) {
+      return;
+    }
+    if (window.isMaximized()) {
+      window.unmaximize();
+    } else {
+      window.maximize();
+    }
+  });
+
+  ipcMain.on("close", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
+  });
+};
+
 const savedTheme = (): ThemeName =>
   electronStore.get("theme") === "light" ? "light" : "dark";
 
@@ -97,22 +119,6 @@ const createWindow = (): void => {
     console.log("Electron running in prod mode: 🚀");
   }
 
-  ipcMain.on("minimize", () => {
-    mainWindow?.minimize();
-  });
-
-  ipcMain.on("maximize", () => {
-    if (mainWindow?.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow?.maximize();
-    }
-  });
-
-  ipcMain.on("close", () => {
-    mainWindow?.close();
-  });
-
   mainWindow.on("close", (event) => {
     event.preventDefault();
     mainWindow?.webContents.send("saveBeforeClose");
@@ -142,6 +148,9 @@ const createStarterWindow = (): void => {
     autoHideMenuBar: true,
     center: true,
     title: "Nova Starter Page",
+    ...(process.platform === "darwin"
+      ? { titleBarStyle: "hiddenInset" as const }
+      : { frame: false }),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       additionalArguments: themeArgument(),
@@ -161,6 +170,7 @@ const createStarterWindow = (): void => {
 };
 
 app.whenReady().then(() => {
+  registerWindowControls();
   const activeNotebookPath = electronStore.get("activeNotebookPath") as
     string | undefined;
 

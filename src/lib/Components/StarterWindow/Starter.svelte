@@ -6,6 +6,7 @@
   import FolderOpen from "@lucide/svelte/icons/folder-open";
   import FolderPlus from "@lucide/svelte/icons/folder-plus";
   import NovaNotesIcon from "../../../assets/NovaNotesIcon.svelte";
+  import WindowControls from "../Tabs/WindowControls.svelte";
 
   import {
     rootDirSelection,
@@ -71,9 +72,17 @@
   });
 </script>
 
-<main class="starter-container text-text-secondary text-body flex">
+<div
+  class="drag-region absolute top-0 right-0 left-0 z-10 flex h-[32px] justify-end"
+>
+  <WindowControls canMaximize={false} bleed={false} />
+</div>
+
+<main
+  class="starter-container text-text-secondary text-body flex h-screen overflow-hidden"
+>
   <div
-    class="bg-surface-panel flex h-screen w-1/3 flex-col items-center justify-center gap-4"
+    class="bg-surface-panel flex w-1/3 flex-col items-center justify-center gap-4"
   >
     <div aria-hidden="true" class="opacity-15">
       <NovaNotesIcon width="120" height="120" />
@@ -84,10 +93,10 @@
     </div>
   </div>
 
-  <div class="bg-border h-screen w-px"></div>
+  <div class="bg-border w-px"></div>
 
   <div
-    class="main-container relative mx-10 flex w-full flex-row overflow-hidden"
+    class="main-container relative mx-10 flex min-w-0 flex-1 flex-row overflow-hidden"
   >
     {#if showContentA}
       <div
